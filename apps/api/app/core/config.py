@@ -16,15 +16,17 @@ class Settings(BaseSettings):
 
     # Public URLs
     public_base_url: str = "http://localhost:3000"  # what QR codes and share links point to
-    api_base_url: str = "http://localhost:8000"
+    # Browser-facing base for API-served URLs (upload parts, media, test KYC). In local dev the web app
+    # proxies /api/v1 and /media, so pointing this at the web origin keeps everything same-origin.
+    api_base_url: str = "http://localhost:3000"
     cdn_base_url: str = ""  # public media base; empty → served by the API at /media
 
     # Data stores
     database_url: str = "sqlite+aiosqlite:///./var/karu.db"
     redis_url: str = ""  # empty → in-memory rate limits, in-process jobs
 
-    # Jobs: "inline" runs jobs in-process (dev); "celery" sends them to workers; "sync" awaits (tests)
-    task_mode: Literal["inline", "celery", "sync"] = "inline"
+    # Jobs: "inline" runs jobs in-process (dev, tests); "celery" sends them to Redis-backed workers
+    task_mode: Literal["inline", "celery"] = "inline"
     run_scheduler: bool = True  # in-process periodic jobs when not using Celery Beat
 
     # Object storage

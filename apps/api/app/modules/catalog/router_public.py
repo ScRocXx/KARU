@@ -190,6 +190,34 @@ async def product(code: str, locale: str = Depends(locale_dep), user=Depends(opt
     return data
 
 
+@router.get("/catalog/cards")
+async def cards_by_id(ids: str = Query(..., max_length=2000), locale: str = Depends(locale_dep), user=Depends(optional_user),
+                      db: AsyncSession = Depends(get_db)):
+    """Product cards for given listing ids (buy-now checkout, wishlists synced from devices)."""
+    wanted = []
+    for raw in ids.split(",")[:50]:
+        try:
+            wanted.append(uuid.UUID(raw.strip()))
+        except ValueError:
+            continue
+    rows = list((await db.execute(_public_listing_q().where(Listing.id.in_(wanted)))).scalars()) if wanted else []
+    return {"items": await cards(db, rows, locale, user.id if user else None)}
+
+
+@router.get("/catalog/products/{code}/og.jpg")
+async def og_image(code: str, locale: str = Depends(locale_dep), db: AsyncSession = Depends(get_db)):
+    """OpenGraph image (1200×630: photo + Karu badge) for WhatsApp/Instagram link previews."""
+    from fastapi.responses import RedirectResponse
+
+    from app.modules.karu_ids.service import share_image
+
+    listing = await _public_listing(db, code)
+    if listing.status != "published" or listing.hidden_by_staff:
+        raise AppError(404, "product_not_found")
+    res = await share_image(db, listing, "og", locale)
+    return RedirectResponse(res["image_url"], status_code=302, headers={"Cache-Control": "public, max-age=3600"})
+
+
 @router.get("/catalog/products/{code}/similar")
 async def similar(code: str, locale: str = Depends(locale_dep), user=Depends(optional_user), db: AsyncSession = Depends(get_db)):
     listing = await _public_listing(db, code)

@@ -480,3 +480,32 @@ async def _buyer_cities(db: AsyncSession, artisan_id: uuid.UUID) -> int:
     rows = (await db.execute(select(Order.shipping_address).join(OrderItem, OrderItem.order_id == Order.id).where(
         OrderItem.artisan_id == artisan_id, Order.status.in_(["paid", "partially_shipped", "completed"])))).scalars().all()
     return len({(r or {}).get("city", "").strip().lower() for r in rows if (r or {}).get("city")})
+
+
+_PIN_CACHE: dict[str, dict] = {}
+
+
+@router.get("/geo/pincode/{pin}")
+async def pincode(pin: str, user: User = Depends(current_user)):
+    """PIN → district/state for onboarding (India Post public directory), cached in-process."""
+    import httpx
+
+    if not re.fullmatch(r"\d{6}", pin):
+        raise bad_request("invalid_pin")
+    if pin in _PIN_CACHE:
+        return _PIN_CACHE[pin]
+    out: dict = {"pin": pin, "found": False}
+    try:
+        async with httpx.AsyncClient(timeout=6) as c:
+            r = await c.get(f"https://api.postalpincode.in/pincode/{pin}")
+        data = r.json()[0] if r.status_code == 200 else {}
+        offices = data.get("PostOffice") or []
+        if offices:
+            o = offices[0]
+            out = {"pin": pin, "found": True, "district": o.get("District"), "state": o.get("State"),
+                   "places": sorted({x.get("Name") for x in offices if x.get("Name")})[:20]}
+    except Exception:  # noqa: BLE001 - the artisan can always type the place instead
+        pass
+    _PIN_CACHE[pin] = out
+    return out
+
