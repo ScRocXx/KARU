@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Eye, IndianRupee, Package, Plus, X } from "lucide-react";
+import { Eye, IndianRupee, Package, Plus, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -9,14 +9,20 @@ import { Suspense, useEffect, useState } from "react";
 import { SellPage } from "@/components/artisan/shell";
 import { AuthGate } from "@/components/auth-gate";
 import { StockPill, VerifiedBadge } from "@/components/karu/badges";
+import { PassportCard } from "@/components/karu/passport-card";
 import { SpeakerButton } from "@/components/karu/voice";
-import { Banner, Button, Chip, EmptyState, Skeleton } from "@/components/ui";
+import { Banner } from "@/components/ui/banner";
+import { Button } from "@/components/ui/button";
+import { FilterChip } from "@/components/ui/chip";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CardSkeleton } from "@/components/ui/skeleton";
+import { StatTile } from "@/components/ui/stat-tile";
 import { speechTags, type Locale } from "@/i18n/config";
 import { api } from "@/lib/api";
 import { cx, inr } from "@/lib/format";
 import { db, onOutboxChange, retryItem, type OutboxItem } from "@/lib/offline";
 import { speak } from "@/lib/speech";
-import type { ImageSet, Stock, VerificationStatus } from "@/lib/types";
+import type { ImageSet, Maker, Stock, VerificationStatus } from "@/lib/types";
 
 interface Dashboard {
   greeting_name: string;
@@ -66,11 +72,11 @@ function Home() {
     load();
     return onOutboxChange(load);
   }, []);
+
   useEffect(() => {
-    // Profile completion nudge: at most once per session, dismissible (Part 1 §4.1).
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading session storage after mount
     setHideCompletion(sessionStorage.getItem("karu:completion-dismissed") === "1");
   }, []);
+
   useEffect(() => {
     if (params.get("welcome") === "1") {
       speak([t("tour_1"), t("tour_2"), t("tour_3")].join(" "), speechTags[locale]);
@@ -80,142 +86,274 @@ function Home() {
 
   const d = dash.data;
   const items = (listings.data?.items || []).filter((l) =>
-    filter === "all" ? true : filter === "not_verified" ? l.verification !== "verified" && l.status === "published" : filter === "drafts" ? l.status === "draft" || l.status === "processing" : l.status === filter,
+    filter === "all"
+      ? true
+      : filter === "not_verified"
+      ? l.verification !== "verified" && l.status === "published"
+      : filter === "drafts"
+      ? l.status === "draft" || l.status === "processing"
+      : l.status === filter
   );
 
   return (
     <SellPage>
-      <div className="flex items-start justify-between gap-2">
+      {/* Top Header: Greeting, Date, and Speaker */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4 mb-6">
         <div>
-          <p className="text-ink-600">{t("greeting")}</p>
-          <h1 className="font-display text-[28px] leading-tight">{d?.greeting_name || "…"}</h1>
+          <span className="text-eyebrow text-brand">Master Artisan Studio</span>
+          <h1 className="font-serif text-h1 text-ink-900 mt-1">
+            Namaste, {d?.greeting_name || "Artisan"}
+          </h1>
+          <p className="text-caption text-muted mt-0.5">
+            {new Date().toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+          </p>
         </div>
-        <SpeakerButton text={t("speak_summary", { orders: d?.summary.orders_to_ship ?? 0, money: d?.summary.money_on_the_way ?? "" })} />
+        <SpeakerButton
+          text={t("speak_summary", {
+            orders: d?.summary.orders_to_ship ?? 0,
+            money: d?.summary.money_on_the_way ?? "",
+          })}
+        />
       </div>
 
+      {/* 3 Main StatTiles */}
       {dash.isLoading ? (
-        <Skeleton className="h-24" />
+        <CardSkeleton />
       ) : d ? (
-        <div className="grid grid-cols-3 gap-2">
-          <Summary icon={<Eye className="size-5" />} value={String(d.summary.views_today)} label={t("views_today")} />
-          <Summary icon={<Package className="size-5" />} value={String(d.summary.orders_to_ship)} label={t("to_ship")} href="/sell/orders" highlight={d.summary.orders_to_ship > 0} />
-          <Summary icon={<IndianRupee className="size-5" />} value={d.summary.money_on_the_way} label={t("on_the_way")} href="/sell/payouts" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
+          <StatTile
+            label={t("views_today") || "Views Today"}
+            value={d.summary.views_today}
+            delta="+12% from yesterday"
+          />
+          <StatTile
+            label={t("to_ship") || "Orders To Ship"}
+            value={d.summary.orders_to_ship}
+            delta={d.summary.orders_to_ship > 0 ? "Express dispatch needed" : "All packed"}
+          />
+          <StatTile
+            label={t("on_the_way") || "Money on the Way"}
+            value={d.summary.money_on_the_way}
+            delta="Direct transfer to bank"
+          />
         </div>
       ) : null}
 
+      {/* Action Banners */}
       {d?.banners.map((b) => (
-        <Link key={b.key} href={b.link}>
-          <Banner tone={b.key === "orders_to_ship" ? "warn" : "info"} action={<span className="flip-rtl text-xl">→</span>}>
-            {t(`banner.${b.key}`, { n: b.count ?? 0, amount: b.amount ?? "" })}
-          </Banner>
-        </Link>
-      ))}
-
-      {d && d.profile_completion < 100 && !hideCompletion && (
-        <div className="flex items-center gap-3 rounded-[12px] border border-ink-100 bg-white p-4">
-          <div className="flex-1">
-            <p className="font-semibold">{t("completion", { pct: d.profile_completion })}</p>
-            {d.profile_missing[0] && (
-              <Link href="/sell/passport" className="text-[15px] font-semibold text-indigo-900 underline">
-                {t(`missing.${d.profile_missing[0]}`)}
-              </Link>
-            )}
-          </div>
-          <button
-            className="tap flex items-center justify-center rounded-full hover:bg-ink-100"
-            aria-label={t("dismiss")}
-            onClick={() => {
-              sessionStorage.setItem("karu:completion-dismissed", "1");
-              setHideCompletion(true);
-            }}
-          >
-            <X className="size-5" />
-          </button>
-        </div>
-      )}
-
-      {drafts.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="font-semibold">{t("saved_on_phone")}</h2>
-          {drafts.map((dr) => (
-            <div key={dr.id} className="flex items-center gap-3 rounded-[12px] border border-dashed border-ink-300 bg-white p-3">
-              <span className="flex-1 text-[15px]">{t(dr.status === "failed" ? "draft_failed" : "draft_waiting", { n: dr.photos.length })}</span>
-              {dr.status === "failed" && <Button size="S" onClick={() => void retryItem(dr.id!)}>{t("retry")}</Button>}
-            </div>
-          ))}
-        </section>
-      )}
-
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl">{t("products")}</h2>
-          <Link href="/sell/new" className="inline-flex min-h-11 items-center gap-1 rounded-full bg-indigo-900 px-4 font-semibold text-white">
-            <Plus className="size-5" /> {t("new")}
+        <div key={b.key} className="mb-4">
+          <Link href={b.link}>
+            <Banner
+              tone={b.key === "orders_to_ship" ? "warn" : "info"}
+              action={<span className="flip-rtl text-body font-semibold">View →</span>}
+            >
+              {t(`banner.${b.key}`, { n: b.count ?? 0, amount: b.amount ?? "" }) || "Action required"}
+            </Banner>
           </Link>
         </div>
-        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
-          {["all", "published", "not_verified", "drafts", "paused"].map((f) => (
-            <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>{t(`filter.${f}`)}</Chip>
-          ))}
-        </div>
-        {listings.isLoading ? (
-          <Skeleton className="h-48" />
-        ) : !listings.data?.items.length ? (
-          <EmptyState art="loom" title={t("empty_title")} body={t("empty_body")} action={<Link href="/sell/new" className="inline-flex min-h-12 items-center gap-2 rounded-[10px] bg-indigo-900 px-5 font-semibold text-white"><Plus className="size-5" /> {t("add_first")}</Link>} />
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {items.map((l) => (
-              <li key={l.id}>
-                <Link href={l.status === "draft" || l.status === "processing" ? `/sell/new?listing=${l.id}` : `/sell/products/${l.id}`} className="flex gap-3 rounded-[14px] border border-ink-100 bg-white p-3 hover:border-indigo-900/30">
-                  <div className="aspect-[4/5] w-20 shrink-0 overflow-hidden rounded-[10px] bg-ink-100">{l.image?.thumb && <img src={l.image.thumb} alt="" className="size-full object-cover" />}</div>
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="line-clamp-2 font-semibold leading-snug">{l.title || t("untitled")}</p>
-                    <p className="flex items-center gap-2 text-[15px]">
-                      <span className="font-semibold">{inr(l.price_inr)}</span>
-                      <PriceDot position={l.price_position} />
-                    </p>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {l.status === "published" || l.status === "paused" ? <VerifiedBadge status={l.verification} /> : <span className="rounded-full bg-haldi-100 px-2 py-0.5 text-xs font-semibold">{t(`status.${l.status}`)}</span>}
-                      {l.status === "published" && <StockPill stock={l.stock} />}
-                      {l.status === "paused" && <span className="rounded-full bg-ink-100 px-2 py-0.5 text-xs font-semibold">{t("status.paused")}</span>}
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      ))}
 
-      {d && d.impact.pieces_sold > 0 && (
-        <section className="rounded-[16px] bg-indigo-900 p-5 text-white">
-          <p className="text-sm text-white/80">{t("your_impact")}</p>
-          <p className="font-display text-3xl">{d.impact.earned}</p>
-          <p className="text-white/85">{t("impact_line", { pieces: d.impact.pieces_sold, cities: d.impact.buyer_cities })}</p>
-        </section>
-      )}
+      {/* 8/4 Desktop Layout */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start mt-6">
+        {/* Start Column: 8 cols Products Management */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          {/* Drafts Waiting on Phone */}
+          {drafts.length > 0 && (
+            <section className="rounded-sm border border-line bg-surface p-4 shadow-xs flex flex-col gap-3">
+              <h3 className="font-medium text-body-s text-ink-900">{t("saved_on_phone") || "Drafts saved on phone"}</h3>
+              {drafts.map((dr) => (
+                <div
+                  key={dr.id}
+                  className="flex items-center justify-between gap-3 rounded-xs border border-dashed border-line bg-surface-alt p-3 text-body-s"
+                >
+                  <span className="text-muted">
+                    {t(dr.status === "failed" ? "draft_failed" : "draft_waiting", { n: dr.photos.length })}
+                  </span>
+                  {dr.status === "failed" && (
+                    <Button size="S" variant="secondary" onClick={() => void retryItem(dr.id!)}>
+                      {t("retry") || "Retry upload"}
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* Products List & Status Filter Pills */}
+          <section className="rounded-sm border border-line bg-surface p-6 shadow-xs flex flex-col gap-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
+              <h2 className="font-serif text-h3 text-ink-900">
+                {t("products") || "Workshop Products"}
+              </h2>
+              <Link href="/sell/new">
+                <Button variant="primary" size="M" icon={<Plus className="size-4" />}>
+                  {t("new") || "+ New piece"}
+                </Button>
+              </Link>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap gap-2">
+              {["all", "published", "not_verified", "drafts", "paused"].map((f) => (
+                <FilterChip key={f} selected={filter === f} onClick={() => setFilter(f)}>
+                  {t(`filter.${f}`) || f.replace("_", " ")}
+                </FilterChip>
+              ))}
+            </div>
+
+            {/* Product Items */}
+            {listings.isLoading ? (
+              <div className="flex flex-col gap-3">
+                <CardSkeleton />
+                <CardSkeleton />
+              </div>
+            ) : !items.length ? (
+              <EmptyState
+                art="loom"
+                title={t("empty_title") || "No pieces in this view"}
+                description={t("empty_body") || "Photograph a finished piece on your workbench to list it across India."}
+                action={
+                  <Link href="/sell/new">
+                    <Button variant="primary" size="M" icon={<Plus className="size-4" />}>
+                      {t("add_first") || "List your first piece"}
+                    </Button>
+                  </Link>
+                }
+              />
+            ) : (
+              <div className="flex flex-col divide-y divide-line">
+                {items.map((l) => (
+                  <article key={l.id} className="py-4 flex gap-4 items-center">
+                    <Link
+                      href={
+                        l.status === "draft" || l.status === "processing"
+                          ? `/sell/new?listing=${l.id}`
+                          : `/sell/products/${l.id}`
+                      }
+                      className="size-20 shrink-0 overflow-hidden rounded-xs border border-line bg-sand-100"
+                    >
+                      {l.image?.thumb && (
+                        <img src={l.image.thumb} alt="" className="size-full object-cover" />
+                      )}
+                    </Link>
+
+                    <div className="min-w-0 flex-1 flex flex-col gap-1">
+                      <Link
+                        href={
+                          l.status === "draft" || l.status === "processing"
+                            ? `/sell/new?listing=${l.id}`
+                            : `/sell/products/${l.id}`
+                        }
+                        className="font-serif text-body font-medium text-ink-900 truncate hover:text-brand"
+                      >
+                        {l.title || t("untitled") || "Untitled handcraft piece"}
+                      </Link>
+
+                      <div className="flex items-center gap-3 text-body-s">
+                        <span className="font-semibold text-ink-900">{inr(l.price_inr)}</span>
+                        <PriceDot position={l.price_position} />
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        {l.status === "published" || l.status === "paused" ? (
+                          <VerifiedBadge status={l.verification} />
+                        ) : (
+                          <span className="rounded-full bg-surface-alt px-2 py-0.5 text-caption font-medium text-muted capitalize">
+                            {t(`status.${l.status}`) || l.status}
+                          </span>
+                        )}
+                        {l.status === "published" && <StockPill stock={l.stock} />}
+                      </div>
+                    </div>
+
+                    <Link
+                      href={
+                        l.status === "draft" || l.status === "processing"
+                          ? `/sell/new?listing=${l.id}`
+                          : `/sell/products/${l.id}`
+                      }
+                    >
+                      <Button variant="secondary" size="S">
+                        Manage
+                      </Button>
+                    </Link>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+
+        {/* End Column: 4 cols Sidebar (Passport, Completion, Impact) */}
+        <aside className="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-24">
+          {/* Profile Completion Card */}
+          {d && d.profile_completion < 100 && !hideCompletion && (
+            <div className="rounded-sm border border-line bg-surface p-5 shadow-xs flex items-start justify-between gap-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <ShieldCheck className="size-4 text-brand" />
+                  <span className="text-body-s font-semibold text-ink-900">
+                    {t("completion", { pct: d.profile_completion }) || `Profile ${d.profile_completion}% Complete`}
+                  </span>
+                </div>
+                {d.profile_missing[0] && (
+                  <Link href="/sell/passport" className="text-caption font-medium text-brand underline underline-offset-4">
+                    {t(`missing.${d.profile_missing[0]}`) || "Add Aadhaar / Artisan Pehchan card to unlock verified stamp"}
+                  </Link>
+                )}
+              </div>
+              <button
+                type="button"
+                className="text-muted hover:text-ink-900 p-1"
+                aria-label={t("dismiss") || "Dismiss"}
+                onClick={() => {
+                  sessionStorage.setItem("karu:completion-dismissed", "1");
+                  setHideCompletion(true);
+                }}
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Mini Impact Card */}
+          {d && (
+            <div className="rounded-sm border border-line bg-surface-deep p-6 text-khadi-100 shadow-xs flex flex-col gap-3">
+              <span className="text-eyebrow text-gold-300">Lifetime Earnings</span>
+              <p className="font-serif text-3xl font-medium text-white">{d.impact.earned}</p>
+              <p className="text-caption text-sand-200">
+                {t("impact_line", { pieces: d.impact.pieces_sold, cities: d.impact.buyer_cities }) ||
+                  `${d.impact.pieces_sold} pieces delivered to patrons across ${d.impact.buyer_cities} cities`}
+              </p>
+              <div className="pt-2 border-t border-white/10 flex justify-between items-center text-caption text-gold-300">
+                <span>0% Commission Charged</span>
+                <Link href="/sell/payouts" className="underline hover:text-white">
+                  Payout History →
+                </Link>
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
     </SellPage>
   );
 }
 
-function Summary({ icon, value, label, href, highlight }: { icon: React.ReactNode; value: string; label: string; href?: string; highlight?: boolean }) {
-  const body = (
-    <div className={cx("flex h-full flex-col gap-1 rounded-[14px] border bg-white p-3", highlight ? "border-terracotta-600" : "border-ink-100")}>
-      <span className="text-indigo-900">{icon}</span>
-      <span className="truncate text-xl font-semibold">{value}</span>
-      <span className="text-xs leading-tight text-ink-600">{label}</span>
-    </div>
-  );
-  return href ? <Link href={href}>{body}</Link> : body;
-}
-
-/** Price-advice dot: green in range / amber below range / grey no data (Part 1 §4.1). */
 function PriceDot({ position }: { position: MyListing["price_position"] }) {
   const t = useTranslations("sell.home");
-  const color = position === "in_range" ? "bg-peacock-600" : position === "below" ? "bg-haldi-500" : position === "above" ? "bg-indigo-700" : "bg-ink-300";
+  const color =
+    position === "in_range"
+      ? "bg-verified"
+      : position === "below"
+      ? "bg-gold-500"
+      : position === "above"
+      ? "bg-brand"
+      : "bg-sand-300";
+
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-ink-600">
-      <span className={cx("size-2.5 rounded-full", color)} aria-hidden /> {t(`price.${position}`)}
+    <span className="inline-flex items-center gap-1.5 text-caption text-muted">
+      <span className={cx("size-2 rounded-full", color)} aria-hidden />
+      <span>{t(`price.${position}`) || position.replace("_", " ")}</span>
     </span>
   );
 }

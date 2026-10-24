@@ -43,7 +43,7 @@ export function RunDetailSheet({ runId, onClose }: { runId: string | null; onClo
             <div className="rounded-[10px] bg-khadi-50 p-3"><p className="text-xs text-ink-600">Verdict</p><p className="text-xl font-semibold">{data.verdict || data.status}</p></div>
           </div>
           <p>Version {data.version} · {data.triggered_by} · {date(data.created_at)} · L2 mode {data.l2_mode}</p>
-          {data.hard_fail && <p className="rounded-[10px] bg-[#fbeceb] p-3 font-semibold text-danger-600">Hard fail: {data.hard_fail_reason}</p>}
+          {data.hard_fail && <p className="rounded-xs bg-danger-50 p-3 font-semibold text-danger">Hard fail: {data.hard_fail_reason}</p>}
           {data.deferred.length > 0 && <p className="rounded-[10px] bg-haldi-100 p-3">Deferred by budget breaker: {data.deferred.join(", ")} (originality penalty 0, re-queued)</p>}
           {data.error && <p className="text-danger-600">{data.error}</p>}
           {data.layers.map((l) => (

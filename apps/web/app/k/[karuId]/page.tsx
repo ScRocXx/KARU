@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { ProofChecks, Woven } from "@/components/karu/badges";
+import { ProofChecks } from "@/components/karu/badges";
+import { Woven } from "@/components/karu/ornaments";
 import { LangLinks, OwnedByYou, ReportButton, ScanBeacon, TapToPlayVideo, VoiceClip } from "@/components/proof/islands";
 import { inr } from "@/lib/format";
 import { serverApiOrNull } from "@/lib/server-api";
@@ -32,15 +33,15 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
   const firstName = maker?.name.split(" ")[0] || "";
 
   return (
-    <div className="min-h-dvh bg-[#FAF7F2] text-ink-950 pb-16">
+    <div className="min-h-dvh bg-surface-alt text-ink-900 pb-16">
       <ScanBeacon type="karu_id" code={d.code} />
 
-      {/* 1. High-Editorial Provenance Certificate Header */}
-      <header className={verified ? "bg-[#1E251E] text-white" : "bg-ink-950 text-white"}>
+      {/* 1. Provenance Certificate Header */}
+      <header className="bg-surface-deep text-khadi-100">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 py-4 border-b border-white/10">
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="font-serif text-2xl font-semibold tracking-wider text-white">karu</span>
-            <span className="hidden sm:inline text-[10px] font-mono tracking-widest uppercase text-sand-300/80 border-s border-white/20 ps-2.5">
+            <span className="font-serif text-2xl font-medium tracking-wider text-khadi-100">karu</span>
+            <span className="hidden sm:inline text-eyebrow text-gold-300 border-s border-white/20 ps-2.5">
               Certificate of Provenance
             </span>
           </Link>
@@ -50,20 +51,20 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <p className="font-mono text-xs tracking-[0.25em] uppercase text-sand-300/80">
+              <p className="font-mono text-xs tracking-[0.2em] uppercase text-sand-300">
                 Tamper-Evident ID · {d.code}
               </p>
               <div className="mt-2 flex items-center gap-2.5">
                 {verified ? (
-                  <span className="inline-flex items-center gap-2 rounded-full bg-peacock-700/80 border border-peacock-400/40 px-4 py-1.5 text-base sm:text-lg font-medium text-white shadow-xs">
-                    <BadgeCheck className="size-5 text-peacock-300" /> {t("verified")}
+                  <span className="inline-flex items-center gap-2 rounded-full bg-peacock-700/90 border border-peacock-400/50 px-4 py-1.5 text-base sm:text-lg font-medium text-white shadow-xs">
+                    <BadgeCheck className="size-5 text-gold-400" /> {t("verified")}
                   </span>
                 ) : d.verdict === "revoked" ? (
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-base sm:text-lg font-medium">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-danger-800 px-4 py-1.5 text-base sm:text-lg font-medium text-white">
                     <ShieldOff className="size-5" /> {t("revoked")}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-2 rounded-full bg-unverified px-4 py-1.5 text-base sm:text-lg font-medium">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-sand-700 px-4 py-1.5 text-base sm:text-lg font-medium text-white">
                     <CircleDashed className="size-5" /> {d.verdict === "checking" ? t("checking") : t("not_verified")}
                   </span>
                 )}
@@ -71,10 +72,10 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
             </div>
 
             <div className="sm:text-right">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-gold-400">
+              <span className="text-eyebrow text-gold-300">
                 100% Physical Origin Checked
               </span>
-              <p className="font-mono text-xs text-sand-300/70 mt-0.5">
+              <p className="font-mono text-xs text-sand-300/80 mt-0.5">
                 Tamper-proof registry record on the Karu public ledger
               </p>
             </div>
@@ -92,7 +93,7 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
       {/* 2. Responsive 2-Column Certificate Layout */}
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
         {d.sold && !d.owned_by_viewer && (
-          <div id="kid-sold-notice" className="mb-6 rounded-[16px] border border-gold-400/60 bg-gold-50 p-4 text-sm font-medium text-gold-950">
+          <div id="kid-sold-notice" className="mb-6 rounded-xs border border-gold-400/80 bg-gold-50 p-4 text-body-s font-medium text-gold-950">
             {t("sold_notice", { date: d.sold_on || "" })}
           </div>
         )}
@@ -102,7 +103,7 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
           {/* Left Column: Physical Piece & Video Evidence */}
           <div className="flex flex-col gap-6">
             {/* Piece Presentation Card */}
-            <section className="overflow-hidden rounded-[20px] border border-sand-200/90 bg-white shadow-xs">
+            <section className="overflow-hidden rounded-sm border border-line bg-surface shadow-xs">
               {d.piece.image?.card && (
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-sand-100">
                   <img
@@ -111,16 +112,16 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
                     className="size-full object-cover"
                     fetchPriority="high"
                   />
-                  <div className="absolute end-3 bottom-3 rounded-full border border-sand-200 bg-white/90 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-800 backdrop-blur-md">
+                  <div className="absolute end-3 bottom-3 rounded-xs border border-line bg-surface/90 px-3 py-1 font-mono text-caption uppercase tracking-wider text-ink-900 backdrop-blur-md">
                     ID #{d.code}
                   </div>
                 </div>
               )}
               <div className="p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-terracotta-700">
+                <p className="text-eyebrow text-brand">
                   {[d.piece.craft, d.piece.region].filter(Boolean).join(" · ")}
                 </p>
-                <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-medium leading-tight text-ink-950" lang={d.piece.title_lang}>
+                <h1 className="mt-1 font-serif text-h2 text-ink-900" lang={d.piece.title_lang}>
                   {d.piece.title}
                 </h1>
               </div>
@@ -128,12 +129,12 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
 
             {/* Unedited Making Video (Verified only) */}
             {verified && d.proof.making_video && (
-              <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
+              <section className="rounded-sm border border-line bg-surface p-6 shadow-xs">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-serif text-xl font-medium text-ink-950">
+                  <h2 className="font-serif text-h3 text-ink-900">
                     {t("watch_making")}
                   </h2>
-                  <span className="rounded-full bg-peacock-50 border border-peacock-200/80 px-2.5 py-0.5 text-[10px] font-semibold text-peacock-700 uppercase tracking-wider">
+                  <span className="rounded-full bg-verified-soft border border-peacock-200 px-2.5 py-0.5 text-caption font-semibold text-verified uppercase tracking-wider">
                     Unedited Video Proof
                   </span>
                 </div>
@@ -150,14 +151,14 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
               {d.piece.available ? (
                 <Link
                   href={`/p/${d.piece.code}`}
-                  className="flex min-h-12 items-center justify-center rounded-full bg-terracotta-800 px-6 font-medium text-white transition-all hover:bg-terracotta-900 active:scale-98 shadow-sm"
+                  className="flex min-h-12 items-center justify-center rounded-xs bg-brand px-6 text-eyebrow text-on-dark transition-colors hover:bg-brand-hover shadow-xs"
                 >
                   {t("buy", { price: inr(d.piece.price_inr) })}
                 </Link>
               ) : (
                 <Link
                   href={`/p/${d.piece.code}`}
-                  className="flex min-h-12 items-center justify-center rounded-full bg-terracotta-800 px-6 font-medium text-white transition-all hover:bg-terracotta-900 active:scale-98 shadow-sm"
+                  className="flex min-h-12 items-center justify-center rounded-xs bg-brand px-6 text-eyebrow text-on-dark transition-colors hover:bg-brand-hover shadow-xs"
                 >
                   {t("request_again")}
                 </Link>
@@ -165,7 +166,7 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
               {maker && (
                 <Link
                   href={`/m/${maker.handle}`}
-                  className="flex min-h-12 items-center justify-center rounded-full border border-ink-800 bg-white px-6 font-medium text-ink-900 transition-colors hover:bg-ink-950 hover:text-white"
+                  className="flex min-h-12 items-center justify-center rounded-xs border border-ink-900 bg-surface px-6 text-eyebrow text-ink-900 transition-colors hover:bg-surface-alt"
                 >
                   {t("more_from", { name: firstName })}
                 </Link>
@@ -176,109 +177,87 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
           {/* Right Column: Master Artisan & Verification Chain */}
           <div className="flex flex-col gap-6">
             {/* The Maker */}
-            <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
+            <section className="rounded-sm border border-line bg-surface p-6 shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-700">
+                <h2 className="text-eyebrow text-brand">
                   {t("the_maker")}
                 </h2>
-                <span className="font-mono text-[11px] text-ink-500">Master Lineage</span>
+                <span className="font-mono text-caption text-muted">Master Lineage</span>
               </div>
 
               {maker ? (
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-4">
                     {maker.photo_url ? (
-                      <img
-                        src={maker.photo_url}
-                        alt=""
-                        className="size-16 rounded-full object-cover ring-2 ring-sand-200 shadow-2xs"
-                        loading="lazy"
-                      />
+                      <div className="size-16 overflow-hidden rounded-t-full border border-gold-500/40 bg-sand-200">
+                        <img
+                          src={maker.photo_url}
+                          alt=""
+                          className="size-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
                     ) : null}
                     <div>
-                      <Link href={`/m/${maker.handle}`} className="font-serif text-xl font-medium text-ink-950 hover:text-terracotta-800 transition-colors">
+                      <Link href={`/m/${maker.handle}`} className="font-serif text-h3 text-ink-900 hover:text-brand transition-colors">
                         {maker.name}
                       </Link>
-                      <p className="text-sm text-ink-600">{maker.place}</p>
-                      <p className="mt-1 text-xs font-semibold">
-                        {maker.passport.state === "verified" ? (
-                          <span className="text-peacock-700">✓ {t("passport_verified")}</span>
-                        ) : (
-                          <span className="text-ink-600">{t("passport_unverified")}</span>
-                        )}
-                        {maker.years_of_practice ? (
-                          <span className="text-ink-500 font-normal"> · {t("years", { n: maker.years_of_practice })}</span>
-                        ) : null}
-                      </p>
+                      <p className="text-body-s text-muted">{maker.place}</p>
                     </div>
                   </div>
 
                   {maker.voice_url && (
-                    <VoiceClip url={maker.voice_url} label={t("listen", { name: firstName })} />
+                    <VoiceClip
+                      url={maker.voice_url}
+                      label={t("listen_maker", { name: firstName })}
+                    />
                   )}
 
                   {maker.story && (
-                    <blockquote className="rounded-[14px] bg-[#FAF7F2] p-4 font-serif text-[15px] italic leading-relaxed text-ink-800" lang={maker.story_lang}>
-                      “{maker.story}”
+                    <blockquote className="border-s-2 border-brand ps-3 font-serif italic text-body-s text-ink-900" lang={maker.story_lang}>
+                      "{maker.story}"
                     </blockquote>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-ink-600">{t("maker_under_review")}</p>
+                <p className="text-body-s text-muted">{t("maker_under_review")}</p>
               )}
             </section>
 
-            {/* The Physical Proof Checks */}
-            {verified && (
-              <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
-                <div className="flex items-center gap-2 mb-4">
-                  <ShieldCheck className="size-5 text-terracotta-800" />
-                  <h2 className="font-serif text-xl font-medium text-ink-950">
-                    {t("the_proof")}
-                  </h2>
-                </div>
-                <ProofChecks checks={d.proof.checks} photosOriginal={d.proof.photos_original} registry={d.proof.registry} />
-              </section>
-            )}
-
-            {d.verdict === "revoked" && (
-              <p className="rounded-[16px] bg-white p-6 text-sm text-ink-600 border border-sand-200">
-                {t("revoked_body", { date: d.proof.revoked_on || "" })}
-              </p>
-            )}
-
-            {/* Unit's Journey */}
-            <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
-              <h2 className="font-serif text-xl font-medium text-ink-950 mb-4">
-                {t("journey")}
+            {/* Proof of Origin */}
+            <section className="rounded-sm border border-line bg-surface p-6 shadow-xs">
+              <h2 className="font-serif text-h3 text-ink-900 mb-4">
+                Provenance Checklist
               </h2>
-              <ol className="relative ms-3 border-s-2 border-sand-200/90">
-                {d.journey.map((j, i) => (
-                  <li key={i} className="mb-4 ms-5 last:mb-0">
-                    <span className="absolute -start-[9px] mt-1.5 size-4 rounded-full border-2 border-white bg-terracotta-800" />
-                    <p className="font-serif text-[15px] font-semibold text-ink-950">
-                      {t(`event.${j.event}`, { city: j.city || "" })}
-                    </p>
-                    <p className="text-xs text-ink-500 font-mono mt-0.5">{j.date}</p>
-                  </li>
-                ))}
-              </ol>
+              <ProofChecks checks={d.proof.checks} />
             </section>
 
-            {/* Market Context */}
-            {d.market_context && (
-              <div className="rounded-[16px] border border-peacock-200/70 bg-peacock-50/60 p-4 text-xs sm:text-sm text-peacock-800 font-serif">
-                {t("market", { low: d.market_context.low, high: d.market_context.high })}
+            {/* Public Ledger Record */}
+            <section className="rounded-sm border border-line bg-surface p-6 shadow-xs text-body-s">
+              <h3 className="font-serif text-h4 text-ink-900 mb-3">Registry Metadata</h3>
+              <dl className="grid grid-cols-2 gap-3 text-caption">
+                <div>
+                  <dt className="text-muted uppercase tracking-wider">Karu ID</dt>
+                  <dd className="font-mono font-semibold text-brand text-body-s mt-0.5">{d.code}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted uppercase tracking-wider">Craft Family</dt>
+                  <dd className="font-medium text-ink-900 mt-0.5">{d.piece.craft || "Handloom"}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted uppercase tracking-wider">Origin Cluster</dt>
+                  <dd className="font-medium text-ink-900 mt-0.5">{d.piece.region}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted uppercase tracking-wider">Verification Date</dt>
+                  <dd className="font-medium text-ink-900 mt-0.5">{d.verified_label || "Certified"}</dd>
+                </div>
+              </dl>
+              <div className="mt-4 pt-4 border-t border-line flex items-center justify-between">
+                <ReportButton code={d.code} labels={{ link: t("report_fake"), sent: t("report_sent"), prompt: t("report_prompt") }} />
+                <span className="text-[11px] font-mono text-muted">Immutable Ledger Entry</span>
               </div>
-            )}
-
-            {/* Verification Footer & Report Button */}
-            <footer className="flex flex-col items-center gap-3 pt-4 text-center">
-              <ReportButton code={d.code} labels={{ link: t("report"), sent: t("report_sent"), prompt: t("report_prompt") }} />
-              <Link href="/verification-explained" className="text-xs font-semibold text-terracotta-800 hover:underline inline-flex items-center gap-1">
-                {t("how_it_works")} <ArrowRight className="size-3" />
-              </Link>
-            </footer>
+            </section>
           </div>
         </div>
       </main>

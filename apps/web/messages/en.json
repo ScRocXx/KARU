@@ -118,7 +118,17 @@
     "login": "Log in",
     "suggest_product": "Piece",
     "suggest_craft": "Craft",
-    "suggest_category": "Category"
+    "suggest_category": "Category",
+    "shop": "Shop",
+    "regions": "Regions",
+    "makers": "Makers",
+    "track_order": "Track order",
+    "view_all": "View all",
+    "announce": {
+      "1": "Every piece carries a Karu ID",
+      "2": "Free shipping over ₹999",
+      "3": "Paid directly to the maker"
+    }
   },
   "footer": {
     "tagline": "Indian handmade, proven. Every maker has a Karu Passport; every piece has a Karu ID you can scan.",
@@ -145,9 +155,18 @@
     "cta_sell": "I am a maker",
     "made_by": "By {name} · {place}",
     "how": {
-      "passport": { "title": "A passport for every maker", "body": "Real people, real places. Every artisan on Karu has one Karu Passport." },
-      "karu_id": { "title": "A Karu ID for every piece", "body": "Each physical piece gets its own ID, checked by photos, records and a making video." },
-      "scan": { "title": "Scan to see the proof", "body": "The QR on the tag opens the piece's story and proof — no app needed." }
+      "passport": {
+        "title": "A passport for every maker",
+        "body": "Real people, real places. Every artisan on Karu has one Karu Passport."
+      },
+      "karu_id": {
+        "title": "A Karu ID for every piece",
+        "body": "Each physical piece gets its own ID, checked by photos, records and a making video."
+      },
+      "scan": {
+        "title": "Scan to see the proof",
+        "body": "The QR on the tag opens the piece's story and proof — no app needed."
+      }
     },
     "categories": "Shop by category",
     "see_all": "See all",
@@ -158,6 +177,17 @@
     "meet_makers": "Meet the makers",
     "meet_makers_sub": "The people and places behind the pieces",
     "recently_viewed": "Recently viewed",
+    "new_collection": "New collection",
+    "rooted_heritage": "Rooted in heritage",
+    "rooted_sub": "Centuries of generational mastery preserved without synthetic shortcut.",
+    "shop_region": "Shop by region",
+    "shop_region_sub": "Direct from India's most celebrated heritage craft clusters.",
+    "explore_cluster": "Explore cluster",
+    "patron_voices": "Words from our patrons",
+    "patron_sub": "Cherished by patrons who value living craft and proven origins.",
+    "verified_purchase": "Verified purchase",
+    "karu_edit": "The Karu Edit",
+    "explore_edit": "Explore edit",
     "impact": {
       "artisans": "makers on Karu",
       "pieces_verified": "pieces Karu Verified",
@@ -202,7 +232,9 @@
     "search_all": "Search handmade",
     "all_categories": "All categories",
     "crafts_clusters": "Crafts & clusters",
-    "gi_tag": "GI-tagged"
+    "gi_tag": "GI-tagged",
+    "empty_title": "No handmade pieces found",
+    "empty_desc": "Try removing some filters or search for another craft."
   },
   "craft": {
     "gi_title": "A Geographical Indication (GI) craft",
@@ -368,7 +400,10 @@
     "m_netbanking": "Netbanking",
     "m_wallet": "Wallet",
     "recommended": "Recommended",
-    "pay_test": "Pay {amount} (test)"
+    "pay_test": "Pay {amount} (test)",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free"
   },
   "address": {
     "name": "Full name",
@@ -599,56 +634,134 @@
       "title": "About Karu",
       "lead": "Karu is an Indian handmade-goods marketplace where every maker has a Karu Passport and every piece has a Karu ID that proves it is genuinely handmade.",
       "sections": [
-        { "h": "The maker disappears", "p": "Most listings say “Handmade – ₹1,800” with no proof of who made it, where, or whether the piece in the photo is the piece you receive. Power-loom copies are sold as handloom, and the people who keep crafts alive are invisible." },
-        { "h": "One photo and one voice note", "p": "Makers shouldn't need to be photographers or copywriters. On Karu, a maker takes one photo and speaks for a minute in their own language. Karu writes the listing in their language, English and Hindi, cleans up the photo without inventing anything, and shows a fair price range from the live market." },
-        { "h": "Proof, not percentages", "p": "Every piece goes through three checks: the photos, the maker's record, and a video of it being made. A piece is either Karu Verified or not verified yet. Buyers can scan the QR on the tag to see the proof." },
-        { "h": "Free for makers", "p": "Makers pay nothing and keep 100% of the price. Payments are held safely until delivery and the return window close, then paid to the maker's bank or UPI." },
-        { "h": "Our promise", "p": "We do not generate the product. We help the real product speak for itself." }
+        {
+          "h": "The maker disappears",
+          "p": "Most listings say “Handmade – ₹1,800” with no proof of who made it, where, or whether the piece in the photo is the piece you receive. Power-loom copies are sold as handloom, and the people who keep crafts alive are invisible."
+        },
+        {
+          "h": "One photo and one voice note",
+          "p": "Makers shouldn't need to be photographers or copywriters. On Karu, a maker takes one photo and speaks for a minute in their own language. Karu writes the listing in their language, English and Hindi, cleans up the photo without inventing anything, and shows a fair price range from the live market."
+        },
+        {
+          "h": "Proof, not percentages",
+          "p": "Every piece goes through three checks: the photos, the maker's record, and a video of it being made. A piece is either Karu Verified or not verified yet. Buyers can scan the QR on the tag to see the proof."
+        },
+        {
+          "h": "Free for makers",
+          "p": "Makers pay nothing and keep 100% of the price. Payments are held safely until delivery and the return window close, then paid to the maker's bank or UPI."
+        },
+        {
+          "h": "Our promise",
+          "p": "We do not generate the product. We help the real product speak for itself."
+        }
       ]
     },
     "verification_explained": {
       "title": "How Karu verification works",
       "lead": "Karu Verified means three independent checks agree that this piece was made by hand by this maker.",
       "sections": [
-        { "h": "1. The photos", "p": "We look for the marks of hand work — uneven slubs in a weave, brush strokes, wheel marks, tool marks — and search the web to make sure the photos belong to this maker and haven't appeared elsewhere first." },
-        { "h": "2. The maker's record", "p": "Verified identity (Aadhaar through DigiLocker, Pehchan artisan card, GI registration), past verified pieces, reviews and returns. New makers start with a neutral record — they can be verified on strong photos and a making video alone." },
-        { "h": "3. The making video", "p": "The maker films this piece or batch being made: hands at work, the loom, wheel or tools, ending with the finished piece. We check the process, that it is the same piece as in the photos, and that the video isn't reused." },
-        { "h": "No video, no badge", "p": "Without a making video a piece cannot be Karu Verified. It can still be sold, and buyers see “Not verified yet”." },
-        { "h": "Why no percentages?", "p": "A number like “87% authentic” sounds precise but isn't. We show a clear verdict and the three checks in plain words. If later evidence shows a problem, the badge is withdrawn and anyone scanning a sold piece sees that." },
-        { "h": "Every piece has its own Karu ID", "p": "Each physical piece gets a Karu ID (like KRU-8F29A1QZ) and a QR tag. Scanning it shows the piece's journey — made, listed, sold. If a sold piece's QR is copied onto a fake, the page shows the original photo and that it was already sold." }
+        {
+          "h": "1. The photos",
+          "p": "We look for the marks of hand work — uneven slubs in a weave, brush strokes, wheel marks, tool marks — and search the web to make sure the photos belong to this maker and haven't appeared elsewhere first."
+        },
+        {
+          "h": "2. The maker's record",
+          "p": "Verified identity (Aadhaar through DigiLocker, Pehchan artisan card, GI registration), past verified pieces, reviews and returns. New makers start with a neutral record — they can be verified on strong photos and a making video alone."
+        },
+        {
+          "h": "3. The making video",
+          "p": "The maker films this piece or batch being made: hands at work, the loom, wheel or tools, ending with the finished piece. We check the process, that it is the same piece as in the photos, and that the video isn't reused."
+        },
+        {
+          "h": "No video, no badge",
+          "p": "Without a making video a piece cannot be Karu Verified. It can still be sold, and buyers see “Not verified yet”."
+        },
+        {
+          "h": "Why no percentages?",
+          "p": "A number like “87% authentic” sounds precise but isn't. We show a clear verdict and the three checks in plain words. If later evidence shows a problem, the badge is withdrawn and anyone scanning a sold piece sees that."
+        },
+        {
+          "h": "Every piece has its own Karu ID",
+          "p": "Each physical piece gets a Karu ID (like KRU-8F29A1QZ) and a QR tag. Scanning it shows the piece's journey — made, listed, sold. If a sold piece's QR is copied onto a fake, the page shows the original photo and that it was already sold."
+        }
       ]
     },
     "help": {
       "title": "Help",
       "lead": "Answers to common questions from buyers and makers.",
       "sections": [
-        { "h": "Where is my order?", "p": "Open Account → Orders. You'll see when the maker packed and shipped your piece, with courier and tracking if they added them. Tap “I received it” when it arrives." },
-        { "h": "Returns", "p": "If the maker accepts returns, you can request one within 7 days of delivery from your order page. Refunds go back to your original payment method once the maker receives the piece." },
-        { "h": "Scanning a Karu ID", "p": "Point your phone camera at the QR on the tag. The Karu ID page opens in your browser — no app needed." },
-        { "h": "Selling on Karu", "p": "Tap “Sell on Karu”, choose your language and log in with your phone. Add your first piece with one photo and a voice note. It's free, and you keep 100% of the price." },
-        { "h": "Contact us", "p": "Use “Report a problem” on any piece, or write to help@karu.ai." }
+        {
+          "h": "Where is my order?",
+          "p": "Open Account → Orders. You'll see when the maker packed and shipped your piece, with courier and tracking if they added them. Tap “I received it” when it arrives."
+        },
+        {
+          "h": "Returns",
+          "p": "If the maker accepts returns, you can request one within 7 days of delivery from your order page. Refunds go back to your original payment method once the maker receives the piece."
+        },
+        {
+          "h": "Scanning a Karu ID",
+          "p": "Point your phone camera at the QR on the tag. The Karu ID page opens in your browser — no app needed."
+        },
+        {
+          "h": "Selling on Karu",
+          "p": "Tap “Sell on Karu”, choose your language and log in with your phone. Add your first piece with one photo and a voice note. It's free, and you keep 100% of the price."
+        },
+        {
+          "h": "Contact us",
+          "p": "Use “Report a problem” on any piece, or write to help@karu.ai."
+        }
       ]
     },
     "terms": {
       "title": "Terms of use (summary)",
       "lead": "This plain-language summary will be replaced by the full terms after legal review.",
       "sections": [
-        { "h": "Karu Passport and Karu IDs", "p": "Karu grants each maker one Karu Passport and creates a Karu ID for every unit listed. Passports and IDs belong to Karu, which may suspend or revoke them for fraud or repeated misrepresentation." },
-        { "h": "Listings", "p": "Makers must list only work they made themselves and must not use other people's photos or videos. Karu may edit photos only to clean them up (crop, background, light); it never creates product images." },
-        { "h": "Payments", "p": "Buyers pay Karu through Razorpay. Karu passes 100% of the item price to the maker after delivery and, where returns are accepted, after the 7-day return window." },
-        { "h": "Prohibited items", "p": "Wildlife products, ivory, and other items banned by Indian law may not be listed. Karu removes such listings." },
-        { "h": "Children", "p": "Photos or videos showing children working are not allowed and will be removed." }
+        {
+          "h": "Karu Passport and Karu IDs",
+          "p": "Karu grants each maker one Karu Passport and creates a Karu ID for every unit listed. Passports and IDs belong to Karu, which may suspend or revoke them for fraud or repeated misrepresentation."
+        },
+        {
+          "h": "Listings",
+          "p": "Makers must list only work they made themselves and must not use other people's photos or videos. Karu may edit photos only to clean them up (crop, background, light); it never creates product images."
+        },
+        {
+          "h": "Payments",
+          "p": "Buyers pay Karu through Razorpay. Karu passes 100% of the item price to the maker after delivery and, where returns are accepted, after the 7-day return window."
+        },
+        {
+          "h": "Prohibited items",
+          "p": "Wildlife products, ivory, and other items banned by Indian law may not be listed. Karu removes such listings."
+        },
+        {
+          "h": "Children",
+          "p": "Photos or videos showing children working are not allowed and will be removed."
+        }
       ]
     },
     "privacy": {
       "title": "Privacy (summary)",
       "lead": "Karu follows India's Digital Personal Data Protection Act, 2023. This summary will be replaced by the full policy after legal review.",
       "sections": [
-        { "h": "What we collect", "p": "Phone or email, your name, and — for makers — your craft, place, photos, voice notes and making videos. Addresses are used only to deliver orders." },
-        { "h": "What is public", "p": "For makers: your public name, photo, craft, village or town and district, story, and (if you allow) your voice clip and making videos. Your exact address and phone number are never shown." },
-        { "h": "Aadhaar", "p": "Aadhaar is verified through DigiLocker by a licensed provider. Karu stores only that it was verified and the last 4 digits — never the full number or document." },
-        { "h": "Your choices", "p": "You can hide your voice clip, change notification settings, download your data, or delete your account at any time from Settings. Personal data is erased 30 days after deletion." },
-        { "h": "Where data lives", "p": "Data is stored in India and encrypted. We don't sell personal data." }
+        {
+          "h": "What we collect",
+          "p": "Phone or email, your name, and — for makers — your craft, place, photos, voice notes and making videos. Addresses are used only to deliver orders."
+        },
+        {
+          "h": "What is public",
+          "p": "For makers: your public name, photo, craft, village or town and district, story, and (if you allow) your voice clip and making videos. Your exact address and phone number are never shown."
+        },
+        {
+          "h": "Aadhaar",
+          "p": "Aadhaar is verified through DigiLocker by a licensed provider. Karu stores only that it was verified and the last 4 digits — never the full number or document."
+        },
+        {
+          "h": "Your choices",
+          "p": "You can hide your voice clip, change notification settings, download your data, or delete your account at any time from Settings. Personal data is erased 30 days after deletion."
+        },
+        {
+          "h": "Where data lives",
+          "p": "Data is stored in India and encrypted. We don't sell personal data."
+        }
       ]
     }
   },
@@ -1194,12 +1307,30 @@
     },
     "help": {
       "title": "Help",
-      "list": { "title": "Add a product", "body": "Tap the big plus. Take a photo in daylight, then tell Karu what it is, what it's made of, how long it took and the price." },
-      "verify": { "title": "Get Karu Verified", "body": "Record a short video of your hands making the piece, with the loom, wheel or tools in view. End by showing the finished piece." },
-      "price": { "title": "Price advice", "body": "Karu shows what shops charge for similar pieces. You always decide your price." },
-      "ship": { "title": "Ship an order", "body": "Pack the piece with its Karu ID tag, then open Orders and tap Mark as shipped." },
-      "payout": { "title": "Get paid", "body": "Add your bank account in Payments. Money comes after the buyer receives the piece and the return window ends." },
-      "share": { "title": "Share on WhatsApp", "body": "Open a product, tap Share, choose WhatsApp status or Instagram post, and send." },
+      "list": {
+        "title": "Add a product",
+        "body": "Tap the big plus. Take a photo in daylight, then tell Karu what it is, what it's made of, how long it took and the price."
+      },
+      "verify": {
+        "title": "Get Karu Verified",
+        "body": "Record a short video of your hands making the piece, with the loom, wheel or tools in view. End by showing the finished piece."
+      },
+      "price": {
+        "title": "Price advice",
+        "body": "Karu shows what shops charge for similar pieces. You always decide your price."
+      },
+      "ship": {
+        "title": "Ship an order",
+        "body": "Pack the piece with its Karu ID tag, then open Orders and tap Mark as shipped."
+      },
+      "payout": {
+        "title": "Get paid",
+        "body": "Add your bank account in Payments. Money comes after the buyer receives the piece and the return window ends."
+      },
+      "share": {
+        "title": "Share on WhatsApp",
+        "body": "Open a product, tap Share, choose WhatsApp status or Instagram post, and send."
+      },
       "call": "Call Karu help",
       "contact_soon": "A Karu helpline number will appear here during the pilot."
     },
