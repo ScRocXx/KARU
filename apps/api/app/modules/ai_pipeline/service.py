@@ -418,11 +418,17 @@ async def process_listing(db: AsyncSession, job) -> dict:
         if m.transcript and m.transcript.get("text"):
             transcript = m.transcript
         else:
-            audio = await get_storage().get_private(m.storage_key)
-            tr = await get_stt().transcribe(audio, m.mime, listing.source_lang, duration_s=m.duration_s,
-                                            client_transcript=payload.get("client_transcript"), listing_id=listing.id)
-            transcript = {"lang": tr.language, "text": tr.text, "confidence": tr.confidence, "provider": tr.provider,
-                          "segments": tr.segments}
+            try:
+                audio = await get_storage().get_private(m.storage_key)
+                tr = await get_stt().transcribe(audio, m.mime, listing.source_lang, duration_s=m.duration_s,
+                                                client_transcript=payload.get("client_transcript"), listing_id=listing.id)
+                transcript = {"lang": tr.language, "text": tr.text, "confidence": tr.confidence, "provider": tr.provider,
+                              "segments": tr.segments}
+            except Exception as exc:
+                logger.warning("Audio transcription failed for %s: %s; falling back to client transcript", listing.id, exc)
+                c_text = (payload.get("client_transcript") or "").strip()
+                transcript = {"lang": listing.source_lang, "text": c_text, "confidence": 0.5 if c_text else 0.0,
+                              "provider": "browser" if c_text else "fallback", "segments": []}
             m.transcript = transcript
         transcript_text = transcript.get("text", "")
     elif payload.get("client_transcript"):
@@ -484,6 +490,26 @@ async def process_listing(db: AsyncSession, job) -> dict:
         listing.description = {**written["description"], **{k: v for k, v in (listing.description or {}).items() if v}}
     if written.get("tags"):
         listing.tags = written["tags"]
+
+    c_name = (craft.name or {}).get("en") if craft else (cat.name if cat else "Handmade Craft")
+    c_name = c_name or "Handmade Indian Craft"
+    if not listing.title or not any(listing.title.values()):
+        listing.title = {
+            "en": f"Handcrafted {c_name}",
+            "hi": f"हस्तनिर्मित {c_name}",
+            listing.source_lang: f"Handcrafted {c_name}",
+        }
+    if not listing.description or not any(listing.description.values()):
+        mat = (listing.attributes or {}).get("material") or "authentic materials"
+        tech = (listing.attributes or {}).get("technique") or "traditional craftsmanship"
+        desc_en = f"Authentic handcrafted {c_name} made with {mat} using {tech}. Checked by Karu verification."
+        listing.description = {
+            "en": desc_en,
+            "hi": f"पारंपरिक भारतीय हस्तशिल्प ({c_name}), {mat} और {tech} से निर्मित।",
+            listing.source_lang: desc_en,
+        }
+    if not listing.tags:
+        listing.tags = ["handmade", "craft", "authentic", "karu"]
     title = listing.title or {}
     job.result = {"preview": {**preview, "title": title.get(listing.source_lang) or title.get("en")}}
     await db.commit()

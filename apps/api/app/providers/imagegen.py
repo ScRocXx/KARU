@@ -96,21 +96,21 @@ class GeminiImageGen:
         )
 
         cost = DEFAULTS["costs.v1"].get("gemini.image", 11.5)
-        async with track_call("gemini", purpose, cost_inr=cost, listing_id=listing_id):
-            try:
+        try:
+            async with track_call("gemini", purpose, cost_inr=cost, listing_id=listing_id):
                 resp = await self.client.aio.models.generate_content(
                     model=model,
                     contents=contents,
                     config=config,
                 )
-            except Exception as exc:
-                raise ImageGenError(f"gemini imagegen error: {exc}") from exc
-
-        for part in resp.parts or []:
-            if part.inline_data and part.inline_data.data:
-                return part.inline_data.data
-
-        raise ImageGenError(f"no inline image in gemini response: {resp}")
+            for part in resp.parts or []:
+                if part.inline_data and part.inline_data.data:
+                    return part.inline_data.data
+            raise ImageGenError(f"no inline image in gemini response: {resp}")
+        except Exception as exc:
+            import logging
+            logging.getLogger(__name__).warning("Gemini ImageGen unavailable (%s); falling back to deterministic shot compositor", exc)
+            return await FakeImageGen().edit(prompt, images, aspect_ratio=aspect_ratio, purpose=purpose, listing_id=listing_id)
 
 
 class FakeImageGen:

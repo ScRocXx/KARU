@@ -96,26 +96,36 @@ class GeminiSTT:
     async def transcribe(self, audio, mime, lang_hint, *, duration_s=None, client_transcript=None, listing_id=None):
         from app.providers.llm import get_llm
 
-        result = await get_llm().generate_json(
-            "Transcribe this voice note verbatim in the language it is spoken in (the speaker's UI language "
-            f"is '{lang_hint}'). Do not translate or summarise. Return JSON with `text`, `language` (ISO 639-1) "
-            "and `confidence` between 0 and 1.",
-            schema={
-                "type": "object",
-                "properties": {"text": {"type": "string"}, "language": {"type": "string"}, "confidence": {"type": "number"}},
-                "required": ["text", "language"],
-            },
-            purpose="transcribe",
-            audio=(audio, mime.split(";")[0]),
-            fake_context={"fallback_text": client_transcript or "", "lang": lang_hint},
-            listing_id=listing_id,
-        )
-        return Transcript(
-            text=(result.get("text") or "").strip(),
-            language=result.get("language") or lang_hint,
-            confidence=float(result.get("confidence") or 0.75),
-            provider="gemini",
-        )
+        try:
+            result = await get_llm().generate_json(
+                "Transcribe this voice note verbatim in the language it is spoken in (the speaker's UI language "
+                f"is '{lang_hint}'). Do not translate or summarise. Return JSON with `text`, `language` (ISO 639-1) "
+                "and `confidence` between 0 and 1.",
+                schema={
+                    "type": "object",
+                    "properties": {"text": {"type": "string"}, "language": {"type": "string"}, "confidence": {"type": "number"}},
+                    "required": ["text", "language"],
+                },
+                purpose="transcribe",
+                audio=(audio, mime.split(";")[0]),
+                fake_context={"fallback_text": client_transcript or "", "lang": lang_hint},
+                listing_id=listing_id,
+            )
+            return Transcript(
+                text=(result.get("text") or "").strip(),
+                language=result.get("language") or lang_hint,
+                confidence=float(result.get("confidence") or 0.75),
+                provider="gemini",
+            )
+        except Exception:
+            if client_transcript:
+                return Transcript(
+                    text=client_transcript.strip(),
+                    language=lang_hint,
+                    confidence=0.7,
+                    provider="browser",
+                )
+            raise
 
 
 class FakeSTT:
