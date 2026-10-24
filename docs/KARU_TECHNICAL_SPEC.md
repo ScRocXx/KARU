@@ -362,7 +362,7 @@ sequenceDiagram
   W->>STT: transcribe(voice, lang hint)
   W->>G: extract(transcript, photos, category schemas) → JSON
   W->>G: write title/description in source lang + en + hi
-  W->>W: enhance photos (crop, bg clean, levels) — non-generative
+  W->>W: enhance photos (crop, bg clean, levels) + generate 5 AI catalogue shots (Gemini)
   W->>TF: get or refresh benchmark(fingerprint)
   W->>API: save ai_extraction, advice, draft fields
   API-->>P: SSE: done → A08 review
@@ -394,8 +394,8 @@ sequenceDiagram
 - **Regenerate** endpoints re-run only the requested field with a different temperature/seed; rate-limited (10/listing/day [DEFAULT]).
 - Fallback: if extraction fails twice, return an empty form with mic buttons (F2 edge case).
 
-### 6.3 Image enhancement (non-generative)
-Pillow + `rembg`: auto-orient, crop to subject, optional background clean to a soft khadi tone, auto-levels/white balance, sharpen lightly; output 4:5 and 1:1 variants (WebP/AVIF + JPEG fallback) at 400/800/1600 px. Originals are always kept privately and used for verification. **No generative fill or synthesis.**
+### 6.3 Image enhancement & AI catalogue shots
+Pillow + `rembg`: auto-orient, crop to subject, optional background clean to a soft khadi tone, auto-levels/white balance, sharpen lightly; output 4:5 and 1:1 variants (WebP/AVIF + JPEG fallback) at 400/800/1600 px. In addition, Gemini (`gemini-3-pro-image`) generates 5 marketplace-style catalogue shots per category group using all real photos as references to keep the product identical. Originals are always kept privately and used for verification and the Karu ID proof page; AI shots go in the gallery, and the artisan can remove any on review.
 
 ### 6.4 Translation for buyers
 Descriptions stored in `source_lang` + `en` + `hi` at publish time; other locales translated on first view and cached (Gemini or IndicTrans2). UI shows "Translated from {lang} · Show original".

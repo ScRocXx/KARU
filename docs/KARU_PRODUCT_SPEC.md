@@ -35,7 +35,7 @@ Version 1.0 · 2026-10-24 · Team Northern Blades (Vedant, Alshifa – UI/UX, Sa
 4. **A real marketplace.** Buyers browse, search, buy (UPI promoted, cards and international supported), review, follow makers and request "make this again".
 5. **Share anywhere.** Artisans copy links or share images to WhatsApp and Instagram with a Karu QR attached, so any buyer anywhere can scan and see the proof.
 
-**Our line, kept from the deck:** *We do not generate the product. We help the real product speak for itself.* AI-suggested images MUST be derived from the artisan's own photos (cleanup, background, lighting). Karu MUST NOT generate fictional product images.
+**Our line, kept from the deck:** *We do not generate the product. We help the real product speak for itself.* AI-suggested images MUST be derived from the artisan's own photos (cleanup, lighting, and 5 marketplace-style catalogue shots that keep the product identical). Original photos are always kept for verification and the Karu ID proof page; AI shots go in the gallery, and the artisan can remove any of them on review. Karu MUST NOT generate fictional product images.
 
 **Business model:**
 - Artisans: 100% free, 0% commission. [PILOT]
@@ -537,7 +537,7 @@ WCAG 2.2 AA. Screen-reader labels in the active language. Never rely on colour a
 
 ## 10. Trust, safety and policy rules
 
-- Karu MUST NOT generate fictional product photos. AI image suggestions are edits of the artisan's own photos (crop, background clean, light, colour balance) and are labelled "Enhanced" in staff view. The original photo is always kept and used for verification.
+- Karu MUST NOT generate fictional product photos. AI image suggestions are derived from the artisan's own photos: cleanups and 5 marketplace-style catalogue shots that keep the product identical. The 5 shots go live by default and the artisan can remove any of them on review. Originals are always kept for verification and the Karu ID proof page.
 - Buyers can **report** any listing or Karu ID. Repeated confirmed fakes → passport suspension.
 - Maker voice clip is public only with consent; artisan can hide it anytime.
 - Exact address and phone of artisans and buyers are never shown publicly. Sold-unit journey shows city only.

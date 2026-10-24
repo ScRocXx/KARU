@@ -13,19 +13,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.catalog.models import Category, Craft
 
-TEXTILE_ATTRS = {
-    "material": {"type": "string"}, "technique": {"type": "string"}, "dye": {"type": "string"},
-    "colour": {"type": "array", "items": {"type": "string"}},
-    "dimensions": {"type": "object", "properties": {"length_m": {"type": "number"}, "width_m": {"type": "number"}}},
-    "time_to_make_days": {"type": "integer"}, "care": {"type": "string"}, "weight_g": {"type": "integer"},
-}
-OBJECT_ATTRS = {
-    "material": {"type": "string"}, "technique": {"type": "string"}, "finish": {"type": "string"},
-    "colour": {"type": "array", "items": {"type": "string"}},
-    "dimensions": {"type": "object", "properties": {"height_cm": {"type": "number"}, "width_cm": {"type": "number"},
-                                                     "depth_cm": {"type": "number"}}},
-    "time_to_make_days": {"type": "integer"}, "care": {"type": "string"}, "weight_g": {"type": "integer"},
-}
+# Category.attribute_schema: an ordered list (JSONB doesn't keep dict key order) of field specs.
+# `key` is a dotted path into listing.attributes; tier: core = always shown, absence is a real gap;
+# badge = feeds verification, shown but never warned about; optional = behind "add more details".
+# Labels live in next-intl (sell.review.attr.<last path segment>), not here.
+def _f(key: str, type_: str, tier: str) -> dict:
+    return {"key": key, "type": type_, "tier": tier}
+
+
+TEXTILE_ATTRS = {"fields": [
+    _f("material", "string", "core"), _f("dimensions.length_m", "number", "core"), _f("technique", "string", "badge"),
+    _f("dye", "string", "optional"), _f("colour", "array", "optional"), _f("dimensions.width_m", "number", "optional"),
+    _f("time_to_make_days", "integer", "optional"), _f("care", "string", "optional"), _f("weight_g", "integer", "optional"),
+]}
+OBJECT_ATTRS = {"fields": [
+    _f("material", "string", "core"), _f("dimensions.height_cm", "number", "core"), _f("technique", "string", "badge"),
+    _f("finish", "string", "optional"), _f("colour", "array", "optional"), _f("dimensions.width_cm", "number", "optional"),
+    _f("dimensions.depth_cm", "number", "optional"), _f("time_to_make_days", "integer", "optional"),
+    _f("care", "string", "optional"), _f("weight_g", "integer", "optional"),
+]}
 
 CATEGORIES = [
     ("sarees", {"en": "Sarees", "hi": "साड़ियाँ", "pa": "ਸਾੜੀਆਂ", "mr": "साड्या", "gu": "સાડીઓ", "ur": "ساڑیاں", "ta": "புடவைகள்", "ml": "സാരികൾ"}, "shirt", TEXTILE_ATTRS),
@@ -127,10 +133,12 @@ CRAFTS = [
 
 
 async def ensure_reference_data(db: AsyncSession) -> None:
-    existing = {c.slug for c in (await db.execute(select(Category))).scalars().all()}
+    existing = {c.slug: c for c in (await db.execute(select(Category))).scalars().all()}
     for i, (slug, name, icon, schema) in enumerate(CATEGORIES):
         if slug not in existing:
             db.add(Category(slug=slug, name=name, icon=icon, sort=i, attribute_schema=schema))
+        elif existing[slug].attribute_schema != schema:
+            existing[slug].attribute_schema = schema  # field specs are code-owned; keep existing DBs in step
     existing_crafts = {c.slug for c in (await db.execute(select(Craft))).scalars().all()}
     for c in CRAFTS:
         if c["slug"] not in existing_crafts:

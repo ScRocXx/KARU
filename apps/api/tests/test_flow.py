@@ -38,8 +38,24 @@ async def test_full_marketplace_flow(make_client):
     assert li["attributes"]["material"] == "cotton"
     assert li["attributes"]["dye"] == "natural indigo"
     assert li["attributes"]["time_to_make_days"] == 3
+    assert li["missing_fields"] == []  # computed from the saree specs, not the LLM: no dye/technique warnings
     assert {"hi", "en"} <= set(li["title"]) and li["description"]["hi"]
-    assert all(g["enhanced"] for g in li["gallery"])  # non-generative enhanced copies
+    # 5 AI catalogue shots and real photos
+    ai_shots = [g for g in li["gallery"] if g.get("ai")]
+    assert len(ai_shots) == 5
+    real_photos = [g for g in li["gallery"] if not g.get("ai")]
+    assert len(real_photos) == 2
+    assert all(g["enhanced"] for g in real_photos)
+    assert li["gallery"][0]["ai"] is True
+    assert li["gallery"][0]["is_primary"] is True
+
+    # DELETE one shot leaves 4
+    del_target = ai_shots[-1]["id"]
+    del_res = await artisan.delete(f"/api/v1/listings/{lid}/shots/{del_target}")
+    assert del_res.status_code == 200, del_res.text
+    li = (await artisan.get(f"/api/v1/listings/{lid}")).json()
+    ai_shots_after = [g for g in li["gallery"] if g.get("ai")]
+    assert len(ai_shots_after) == 4
 
     advice = (await artisan.get(f"/api/v1/listings/{lid}/price-advice")).json()
     assert advice["status"] in ("fresh", "insufficient")
@@ -80,6 +96,8 @@ async def test_full_marketplace_flow(make_client):
     anon = await make_client()
     prod = (await anon.get(f"/api/v1/catalog/products/{code}")).json()
     assert prod["verification"]["status"] == "verified"
+    assert prod["gallery"][0]["ai"] is True
+    assert any(not g.get("ai") for g in prod["gallery"])
     assert {c["key"] for c in prod["verification"]["checks"]} == {"handmade_look", "maker_record", "making_video"}
     assert prod["verification"]["checks"][1]["state"] == "new_maker"
     assert "l1" not in str(prod["verification"]).lower()
@@ -165,6 +183,8 @@ async def test_last_unit_race_and_listing_without_voice(make_client):
     assert r.status_code == 400 and r.json()["error"]["code"] == "listing_incomplete"
     await seller.patch(f"/api/v1/listings/{lid}", json={"price_inr": 2500, "category_slug": "paintings",
                                                         "title": {"en": "Madhubani fish painting"}})
+    li = (await seller.get(f"/api/v1/listings/{lid}")).json()
+    assert li["missing_fields"] == ["material", "dimensions.height_cm"]  # recomputed for the new category
     r = await seller.post(f"/api/v1/listings/{lid}/publish", json={"quantity": 1, "returnable": False})
     assert r.status_code == 200, r.text
     await jobs.drain()

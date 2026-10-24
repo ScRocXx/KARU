@@ -17,6 +17,7 @@ from app.core.deps import current_artisan
 from app.core.errors import AppError
 from app.core.i18n import pick_lang
 from app.core.jobs import handler, set_progress
+from app.modules.catalog import attributes
 from app.modules.catalog.models import Category, Listing
 from app.modules.catalog.service import gallery
 from app.modules.syndication.models import SyndicationJob
@@ -43,7 +44,7 @@ async def syndicate(db: AsyncSession, job) -> dict:
     data = {
         "title": pick_lang(listing.title, "en")[0], "description": pick_lang(listing.description, "en")[0],
         "price_inr": float(listing.price_inr or 0), "category": category.slug if category else "other",
-        "attributes": {k: v for k, v in (listing.attributes or {}).items() if not k.startswith("_")},
+        "attributes": attributes.for_category(category.attribute_schema if category else None, listing.attributes),
         "image_url": pics[0]["jpg"] if pics else None, "karu_link": f"{get_settings().public_base_url}/p/{listing.short_code}",
     }
     progress = [10]

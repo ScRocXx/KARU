@@ -25,12 +25,20 @@ export function usePublicConfig() {
 }
 
 /** Job progress over SSE with a 3 s polling fallback (Part 2 §9.5). */
-export function useJob(jobId: string | null | undefined, onDone?: (job: Job) => void) {
+export function useJob(
+  jobId: string | null | undefined,
+  onDone?: (job: Job) => void,
+  onProgress?: (job: Job) => void
+) {
   const [job, setJob] = useState<Job | null>(null);
   const doneRef = useRef(onDone);
+  const progressRef = useRef(onProgress);
   useEffect(() => {
     doneRef.current = onDone;
   }, [onDone]);
+  useEffect(() => {
+    progressRef.current = onProgress;
+  }, [onProgress]);
 
   useEffect(() => {
     if (!jobId) return;
@@ -39,6 +47,7 @@ export function useJob(jobId: string | null | undefined, onDone?: (job: Job) => 
     let timer: ReturnType<typeof setTimeout> | null = null;
     const finish = (j: Job) => {
       setJob(j);
+      progressRef.current?.(j);
       if (j.status === "completed" || j.status === "failed") {
         closed = true;
         es?.close();

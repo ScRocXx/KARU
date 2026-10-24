@@ -110,8 +110,9 @@ def dispatch(job_id: uuid.UUID, delay_s: int = 0, queue: str = "default") -> Non
         return
     loop = asyncio.get_event_loop()
     task = loop.create_task(_run_later(job_id, delay_s))
-    _inflight.add(task)
-    task.add_done_callback(_inflight.discard)
+    if not delay_s:
+        _inflight.add(task)
+        task.add_done_callback(_inflight.discard)
 
 
 async def _run_later(job_id: uuid.UUID, delay_s: int) -> None:

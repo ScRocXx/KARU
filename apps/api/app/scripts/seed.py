@@ -219,7 +219,7 @@ def unique_photos(count_needed: int) -> list[tuple[str, bytes]]:
                 seed += 1
                 data = draw_product(style, seed)
                 ph = phash(Image.open(io.BytesIO(data)))
-                if all(hamming(ph, o[2]) > 14 for o in out):
+                if all(hamming(ph, o[2]) > 8 for o in out):
                     out.append((f"{i}", data, ph))
                     break
     return [(k, d) for k, d, _ in out]

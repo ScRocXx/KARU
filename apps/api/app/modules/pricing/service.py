@@ -44,7 +44,8 @@ EXTRACT_SCHEMA = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "url": {"type": "string"},
+                    "url": {"type": "string", "description": "The exact full URL of the page from the URL line above"},
+                    "page_index": {"type": "integer", "description": "1-based index of the page in this batch"},
                     "title": {"type": "string"},
                     "price_inr": {"type": "number"},
                     "currency": {"type": "string"},
@@ -142,8 +143,9 @@ async def _extract_prices(pages, *, listing_id, d: dict) -> list[dict]:
             continue
         prompt = (
             "You extract product prices from web pages for an Indian handmade marketplace. For each page, return the "
-            "main product's price in INR (convert only if the page states INR; skip other currencies), its title, "
-            "and classify it: 'handmade' if the seller is an artisan, boutique, co-op or GI-tagged source with explicit, "
+            "exact full URL from the page's 'URL:' line above (do NOT shorten or truncate to just the domain), "
+            "the 1-based page_index (1 to N), the main product's price in INR (convert only if the page states INR; skip other currencies), "
+            "its title, and classify it: 'handmade' if the seller is an artisan, boutique, co-op or GI-tagged source with explicit, "
             "specific handmade/handloom claims; 'replica' if it is a mass-market listing, power-loom, printed, "
             "machine-made or synthetic copy; otherwise 'unknown'. Ignore pages without a single clear product price. "
             f"Product we are benchmarking: {json.dumps(d, ensure_ascii=False)}.\n\n"
@@ -152,7 +154,38 @@ async def _extract_prices(pages, *, listing_id, d: dict) -> list[dict]:
         try:
             res = await llm.generate_json(prompt, schema=EXTRACT_SCHEMA, purpose="price_extract", listing_id=listing_id,
                                           fake_context={"page": {"text": batch[0].text, "title": batch[0].title}})
-            items.extend(res.get("items") or [])
+            extracted = res.get("items") or []
+            for it in extracted:
+                matched_page = None
+                p_idx = it.get("page_index")
+                if isinstance(p_idx, int) and 1 <= p_idx <= len(batch):
+                    matched_page = batch[p_idx - 1]
+                if not matched_page:
+                    raw_url = (it.get("url") or "").strip()
+                    for p in batch:
+                        if raw_url == p.url:
+                            matched_page = p
+                            break
+                    if not matched_page and raw_url:
+                        for p in batch:
+                            if raw_url in p.url or p.url in raw_url:
+                                matched_page = p
+                                break
+                    if not matched_page and raw_url:
+                        for p in batch:
+                            p_dom = domain_of(p.url)
+                            raw_dom = domain_of(raw_url)
+                            if p_dom and raw_dom and (p_dom == raw_dom or p_dom in raw_dom or raw_dom in p_dom):
+                                matched_page = p
+                                break
+                    if not matched_page and len(batch) == 1:
+                        matched_page = batch[0]
+                if matched_page:
+                    it["url"] = matched_page.url
+                elif it.get("url"):
+                    u = it["url"].strip()
+                    it["url"] = u if u.startswith(("http://", "https://")) else f"https://{u}"
+                items.append(it)
         except Exception:  # noqa: BLE001 - a bad batch should not sink the benchmark
             continue
     return items
@@ -201,7 +234,9 @@ async def refresh_benchmark(db: AsyncSession, d: dict, *, listing_id: uuid.UUID 
             continue
         if price <= 0 or (it.get("currency") and it.get("currency") not in ("INR", "₹", "Rs")):
             continue
-        url = it.get("url") or ""
+        url = (it.get("url") or "").strip()
+        if url and not url.startswith(("http://", "https://")):
+            url = f"https://{url}"
         klass = it.get("klass") or "unknown"
         if domain_of(url) in MASS_MARKETPLACES and klass == "unknown":
             klass = "replica"
@@ -320,7 +355,11 @@ async def advice_view(db: AsyncSession, listing: Listing, locale: str) -> dict:
         rows = (await db.execute(select(PriceSource).where(PriceSource.benchmark_id == bm.id, PriceSource.used.is_(True),
                                                            PriceSource.klass == advice.basis)
                                  .order_by(desc(PriceSource.confidence)).limit(5))).scalars().all()
-        sources = [{"site": s.domain, "title": s.title, "price_inr": float(s.price_inr), "url": s.url} for s in rows]
+        for s in rows:
+            u = (s.url or "").strip()
+            if u and not u.startswith(("http://", "https://")):
+                u = f"https://{u}"
+            sources.append({"site": s.domain, "title": s.title, "price_inr": float(s.price_inr), "url": u or s.domain})
     return {
         "status": bm.status if bm else "insufficient",
         "basis": advice.basis,

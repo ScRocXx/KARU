@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=(".env", "apps/api/.env"), env_file_encoding="utf-8", extra="ignore")
 
     env: Literal["local", "test", "staging", "prod"] = "local"
     app_name: str = "Karu API"
@@ -52,10 +52,15 @@ class Settings(BaseSettings):
     # AI / external providers
     openai_api_key: str = ""
     openai_stt_model: str = "whisper-1"
-    stt_provider: Literal["auto", "whisper", "gemini", "fake"] = "auto"
+    stt_provider: Literal["auto", "whisper", "gemini", "vertex", "fake"] = "auto"
     gemini_api_key: str = ""
-    gemini_model_extract: str = "gemini-3.8-flash"
-    gemini_model_vision: str = "gemini-3.8-flash"
+    gemini_model_extract: str = "gemini-2.5-flash"
+    gemini_model_vision: str = "gemini-2.5-flash"
+    gemini_model_image: str = "gemini-3-pro-image"
+    vertex_project: str = ""
+    vertex_location: str = "us-central1"
+    vertex_image_location: str = "global"
+    imagegen_backend: str = "auto"
     tinyfish_api_key: str = ""
     razorpay_key_id: str = ""
     razorpay_key_secret: str = ""

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import re
 from typing import Any, Protocol
 
@@ -56,7 +57,10 @@ def _to_gemini_schema(schema: Any) -> Any:
         for k, v in schema.items():
             if k in ("additionalProperties", "$schema", "title", "default"):
                 continue
-            out[k] = _to_gemini_schema(v)
+            if k == "properties" and isinstance(v, dict):
+                out["properties"] = {prop_name: _to_gemini_schema(prop_val) for prop_name, prop_val in v.items()}
+            else:
+                out[k] = _to_gemini_schema(v)
         return out
     if isinstance(schema, list):
         return [_to_gemini_schema(v) for v in schema]
@@ -268,11 +272,83 @@ class FakeLLM:
 _llm: LLM | None = None
 
 
+class VertexLLM:
+    name = "vertex"
+
+    def __init__(self, project: str, location: str = "us-central1", credentials=None):
+        from google import genai
+
+        self.project = project
+        self.location = location
+        self.client = genai.Client(vertexai=True, project=project, location=location, credentials=credentials)
+
+    async def generate_json(self, prompt: str, *, schema: dict, purpose: str,
+                            images: list[tuple[bytes, str]] | None = None,
+                            video: tuple[bytes, str] | None = None,
+                            audio: tuple[bytes, str] | None = None,
+                            temperature: float = 0.2, model: str | None = None,
+                            fake_context: dict | None = None, listing_id=None, run_id=None) -> dict:
+        from google.genai import types
+
+        s = get_settings()
+        model = model or (s.gemini_model_vision if (images or video) else s.gemini_model_extract)
+
+        contents: list[Any] = [prompt]
+        total = 0
+        for data, mime in images or []:
+            total += len(data)
+            contents.append(types.Part.from_bytes(data=data, mime_type=mime.split(";")[0]))
+        for media in (video, audio):
+            if media:
+                data, mime = media
+                total += len(data)
+                contents.append(types.Part.from_bytes(data=data, mime_type=mime.split(";")[0]))
+
+        if total > MAX_INLINE_BYTES:
+            raise LLMError("inline payload too large; send a smaller proxy")
+
+        config = types.GenerateContentConfig(
+            temperature=temperature,
+            response_mime_type="application/json",
+            response_schema=_to_gemini_schema(schema),
+        )
+
+        from app.core.appconfig import DEFAULTS
+
+        cost = DEFAULTS["costs.v1"]["gemini.video" if video else "gemini.call"]
+        async with track_call("gemini", purpose, cost_inr=cost, listing_id=listing_id, run_id=run_id):
+            try:
+                resp = await self.client.aio.models.generate_content(
+                    model=model,
+                    contents=contents,
+                    config=config,
+                )
+            except Exception as exc:
+                raise LLMError(f"vertex gemini error: {exc}") from exc
+
+        try:
+            text = resp.text or ""
+            result = json.loads(text)
+        except (KeyError, IndexError, json.JSONDecodeError) as exc:
+            raise LLMError(f"unparseable vertex gemini response: {resp.text}") from exc
+        if isinstance(result, dict):
+            result.setdefault("_model", model)
+        return result
+
+
 def get_llm() -> LLM:
     global _llm
     if _llm is None:
-        key = get_settings().gemini_api_key
-        _llm = GeminiLLM(key) if key else FakeLLM()
+        s = get_settings()
+        if s.env == "test":
+            return FakeLLM()
+        project = s.vertex_project or os.environ.get("VERTEX_PROJECT") or os.environ.get("GOOGLE_CLOUD_PROJECT")
+        if project:
+            _llm = VertexLLM(project=project, location=s.vertex_location)
+        elif s.gemini_api_key:
+            _llm = GeminiLLM(s.gemini_api_key)
+        else:
+            _llm = FakeLLM()
     return _llm
 
 

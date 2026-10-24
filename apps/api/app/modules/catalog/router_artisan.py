@@ -12,12 +12,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.appconfig import flag, get_config
 from app.core.db import get_db, utcnow
 from app.core.deps import current_artisan, current_user, locale_dep
-from app.core.errors import AppError, bad_request
+from app.core.errors import AppError, bad_request, not_found
 from app.core.i18n import LOCALES, pick_lang, t
 from app.core.jobs import enqueue
 from app.core.revalidate import revalidate_listing
 from app.modules.ai_pipeline import service as _ai  # noqa: F401  (registers job handlers)
 from app.modules.artisans.models import ArtisanProfile
+from app.modules.catalog import attributes
 from app.modules.catalog.models import AiExtraction, Category, Craft, Listing, ListingMedia
 from app.modules.catalog.service import (
     CORE_ATTRIBUTES,
@@ -118,6 +119,17 @@ async def artisan_view(db: AsyncSession, listing: Listing, locale: str) -> dict:
                             .order_by(desc(AiExtraction.created_at)).limit(1))).scalar_one_or_none()
     job = (await db.execute(select(Job).where(Job.ref_id == str(listing.id), Job.type == "ai.process_listing")
                             .order_by(desc(Job.created_at)).limit(1))).scalar_one_or_none()
+    shots_job = (await db.execute(select(Job).where(Job.ref_id == str(listing.id), Job.type == "ai.generate_shots")
+                                  .order_by(desc(Job.created_at)).limit(1))).scalar_one_or_none()
+    if shots_job is None and listing.status == "draft":
+        all_lm = await listing_media(db, listing.id)
+        has_real_photos = any(lm.role == "photo" for lm, _ in all_lm)
+        has_ai_shots = any((lm.role or "").startswith("ai_") for lm, _ in all_lm)
+        if has_real_photos and not has_ai_shots:
+            profile = await db.get(ArtisanProfile, listing.artisan_id)
+            shots_job = await enqueue(db, "ai.generate_shots", ref_type="listing", ref_id=str(listing.id),
+                                      owner_user_id=profile.user_id if profile else None)
+            await db.commit()
     vids = await listing_media(db, listing.id, ("making_video",))
     sold = (await db.execute(select(func.count(), func.coalesce(func.sum(OrderItem.unit_price), 0)).where(
         OrderItem.listing_id == listing.id, OrderItem.fulfilment_status.in_(["to_pack", "shipped", "delivered"])))).one()
@@ -139,6 +151,7 @@ async def artisan_view(db: AsyncSession, listing: Listing, locale: str) -> dict:
         "transcript_provider": (ext.transcript or {}).get("provider") if ext and ext.transcript else None,
         "extraction_status": ext.status if ext else None,
         "processing": {"job_id": str(job.id), "status": job.status, "progress": job.progress, "step": job.step} if job else None,
+        "shots_job_id": str(shots_job.id) if shots_job else None,
         "gallery": await gallery(db, listing),
         "making_video": {"id": str(vmedia.id), "duration_s": vmedia.duration_s,
                          "poster": get_storage().public_url(vmedia.variants["poster.jpg"]) if (vmedia.variants or {}).get("poster.jpg") else None}
@@ -161,6 +174,44 @@ async def _regen_left(db: AsyncSession, listing: Listing) -> int:
 async def get_listing(listing_id: str, locale: str = Depends(locale_dep), artisan: ArtisanProfile = Depends(current_artisan),
                       db: AsyncSession = Depends(get_db)):
     return await artisan_view(db, await _owned(db, listing_id, artisan), locale)
+
+
+@router.delete("/listings/{listing_id}/shots/{media_id}")
+async def delete_shot(listing_id: str, media_id: str, artisan: ArtisanProfile = Depends(current_artisan),
+                      db: AsyncSession = Depends(get_db)):
+    listing = await _owned(db, listing_id, artisan)
+    try:
+        mid = uuid.UUID(media_id)
+    except ValueError:
+        raise bad_request("invalid_media_id")
+    lm = (await db.execute(
+        select(ListingMedia).where(
+            ListingMedia.listing_id == listing.id,
+            ListingMedia.media_id == mid,
+            ListingMedia.active.is_(True),
+        )
+    )).scalar_one_or_none()
+    if not lm or not (lm.role or "").startswith("ai_"):
+        raise not_found("shot_not_found")
+    lm.active = False
+    await db.commit()
+    return {"ok": True, "media_id": media_id}
+
+
+@router.post("/listings/{listing_id}/generate-shots")
+async def trigger_generate_shots(listing_id: str, artisan: ArtisanProfile = Depends(current_artisan),
+                                 db: AsyncSession = Depends(get_db)):
+    listing = await _owned(db, listing_id, artisan)
+    all_lm = list((await db.execute(
+        select(ListingMedia).where(ListingMedia.listing_id == listing.id, ListingMedia.active.is_(True))
+    )).scalars())
+    for lm in all_lm:
+        if (lm.role or "").startswith("ai_"):
+            lm.active = False
+    job = await enqueue(db, "ai.generate_shots", ref_type="listing", ref_id=str(listing.id),
+                        owner_user_id=artisan.user_id)
+    await db.commit()
+    return {"job_id": str(job.id)}
 
 
 class ListingPatch(BaseModel):
@@ -189,7 +240,7 @@ async def patch_listing(listing_id: str, body: ListingPatch, locale: str = Depen
         changed.append("description")
     core_changed = False
     if body.attributes is not None:
-        clean = {k: v for k, v in body.attributes.items() if not k.startswith("_")}
+        clean = attributes.normalize(body.attributes)  # whitelist + shape; the client sends what it has
         old = listing.attributes or {}
         core_changed = any(str(old.get(k) or "").lower() != str(clean.get(k) or "").lower() for k in CORE_ATTRIBUTES)
         listing.attributes = clean
@@ -245,6 +296,11 @@ async def patch_listing(listing_id: str, body: ListingPatch, locale: str = Depen
             changed.append("photos")
     if not changed:
         return await artisan_view(db, listing, locale)
+    if {"attributes", "category", "price"} & set(changed):
+        cat = await db.get(Category, listing.category_id) if listing.category_id else None
+        listing.missing_fields = attributes.missing_fields(cat.attribute_schema if cat else None, listing.attributes,
+                                                           price=listing.price_inr, has_category=cat is not None)
+        listing.notes_for_artisan = attributes.notes_for_artisan(price=listing.price_inr, keep=listing.notes_for_artisan)
     await refresh_search(db, listing)
     if listing.status in ("published", "paused"):
         listing.version += 1
@@ -257,6 +313,13 @@ async def patch_listing(listing_id: str, body: ListingPatch, locale: str = Depen
         prim = await listing_media(db, listing.id, ("photo",))
         if prim:
             listing.image_embedding = prim[0][1].embedding
+        all_lm = list((await db.execute(
+            select(ListingMedia).where(ListingMedia.listing_id == listing.id, ListingMedia.active.is_(True))
+        )).scalars())
+        for lm in all_lm:
+            if (lm.role or "").startswith("ai_"):
+                lm.active = False
+        await enqueue(db, "ai.generate_shots", ref_type="listing", ref_id=str(listing.id), owner_user_id=user.id)
     if listing.status in ("published", "paused") and (photos_changed or core_changed):
         await start_run(db, listing, "edit")
     if "price" in changed or core_changed or "category" in changed:

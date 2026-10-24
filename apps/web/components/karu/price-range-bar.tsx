@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cx, inr } from "@/lib/format";
 import type { PriceAdvice } from "@/lib/types";
@@ -55,15 +56,28 @@ export function PriceRangeBar({ advice, price, compact }: { advice: PriceAdvice;
             <details className="text-sm">
               <summary className="cursor-pointer font-semibold text-indigo-900">{t("sources", { n: advice.sources.length })}</summary>
               <ul className="mt-2 divide-y divide-ink-100 rounded-[10px] border border-ink-100 bg-white">
-                {advice.sources.map((s) => (
-                  <li key={s.url} className="flex items-center justify-between gap-3 px-3 py-2">
-                    <span className="min-w-0">
-                      <span className="block truncate font-medium text-ink-900">{s.site}</span>
-                      <span className="block truncate text-xs text-ink-600">{s.title}</span>
-                    </span>
-                    <span className="shrink-0 font-semibold">{inr(s.price_inr)}</span>
-                  </li>
-                ))}
+                {advice.sources.map((s, idx) => {
+                  const fullUrl = s.url || s.site;
+                  const href = fullUrl.startsWith("http://") || fullUrl.startsWith("https://") ? fullUrl : `https://${fullUrl}`;
+                  return (
+                    <li key={s.url || idx} className="flex items-center justify-between gap-3 px-3 py-2">
+                      <div className="min-w-0 flex-1">
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex max-w-full items-center gap-1.5 font-medium text-indigo-900 hover:underline"
+                          title={fullUrl}
+                        >
+                          <span className="truncate">{fullUrl}</span>
+                          <ExternalLink className="size-3.5 shrink-0 text-indigo-700 group-hover:text-indigo-900" />
+                        </a>
+                        {s.title && <span className="block truncate text-xs text-ink-600">{s.title}</span>}
+                      </div>
+                      <span className="shrink-0 font-semibold">{inr(s.price_inr)}</span>
+                    </li>
+                  );
+                })}
               </ul>
               {advice.provider === "fake" && <p className="mt-2 text-xs text-ink-600">{t("demo_sources")}</p>}
             </details>

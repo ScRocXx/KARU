@@ -82,17 +82,57 @@ def media_urls(m: Media) -> dict:
 
 
 async def gallery(db: AsyncSession, listing: Listing) -> list[dict]:
-    """Public gallery: enhanced photos where available (labelled), originals otherwise."""
-    rows = await listing_media(db, listing.id, ("photo", "enhanced_photo"))
+    """Public gallery: ai_hero first, then enhanced/original photos, then other AI shots."""
+    rows = await listing_media(db, listing.id)
     enhanced_by_source = {lm.source_media_id: (lm, m) for lm, m in rows if lm.role == "enhanced_photo"}
-    out = []
+
+    ai_hero_row = next(((lm, m) for lm, m in rows if lm.role == "ai_hero"), None)
+    ai_hero_present = ai_hero_row is not None
+
+    real_photos = []
     for lm, m in rows:
         if lm.role != "photo":
             continue
         enh = enhanced_by_source.get(m.id)
         chosen = enh[1] if enh else m
-        out.append({**media_urls(chosen), "is_primary": lm.is_primary, "enhanced": bool(enh), "original_id": str(m.id)})
-    out.sort(key=lambda x: (not x["is_primary"]))
+        is_prim = lm.is_primary if not ai_hero_present else False
+        real_photos.append({
+            **media_urls(chosen),
+            "is_primary": is_prim,
+            "enhanced": bool(enh),
+            "original_id": str(m.id),
+            "ai": False,
+            "role": "photo",
+            "position": lm.position,
+        })
+    real_photos.sort(key=lambda x: (not x["is_primary"], x.get("position", 0)))
+    for r in real_photos:
+        r.pop("position", None)
+
+    other_ai_rows = [(lm, m) for lm, m in rows if (lm.role or "").startswith("ai_") and lm.role != "ai_hero"]
+    other_ai_rows.sort(key=lambda r: r[0].position)
+    other_ai = [{
+        **media_urls(m),
+        "is_primary": False,
+        "enhanced": False,
+        "original_id": str(lm.source_media_id or m.id),
+        "ai": True,
+        "role": lm.role,
+    } for lm, m in other_ai_rows]
+
+    out = []
+    if ai_hero_row:
+        lm, m = ai_hero_row
+        out.append({
+            **media_urls(m),
+            "is_primary": True,
+            "enhanced": False,
+            "original_id": str(lm.source_media_id or m.id),
+            "ai": True,
+            "role": lm.role,
+        })
+    out.extend(real_photos)
+    out.extend(other_ai)
     return out
 
 
@@ -102,20 +142,27 @@ async def primary_images(db: AsyncSession, listing_ids: list[uuid.UUID]) -> dict
     rows = (await db.execute(
         select(ListingMedia, Media).join(Media, Media.id == ListingMedia.media_id)
         .where(ListingMedia.listing_id.in_(listing_ids), ListingMedia.active.is_(True),
-               ListingMedia.role.in_(("photo", "enhanced_photo")))
+               ListingMedia.role.in_(("photo", "enhanced_photo", "ai_hero")))
         .order_by(ListingMedia.position)
     )).all()
+    ai_heroes: dict[uuid.UUID, Media] = {}
     originals: dict[uuid.UUID, tuple[ListingMedia, Media]] = {}
     enhanced: dict[tuple[uuid.UUID, uuid.UUID | None], Media] = {}
     for lm, m in rows:
-        if lm.role == "enhanced_photo":
+        if lm.role == "ai_hero":
+            ai_heroes[lm.listing_id] = m
+        elif lm.role == "enhanced_photo":
             enhanced[(lm.listing_id, lm.source_media_id)] = m
         elif lm.listing_id not in originals or lm.is_primary:
             originals[lm.listing_id] = (lm, m)
     out = {}
-    for lid, (_, m) in originals.items():
-        chosen = enhanced.get((lid, m.id), m)
-        out[lid] = media_urls(chosen)
+    for lid in listing_ids:
+        if lid in ai_heroes:
+            out[lid] = media_urls(ai_heroes[lid])
+        elif lid in originals:
+            _, m = originals[lid]
+            chosen = enhanced.get((lid, m.id), m)
+            out[lid] = media_urls(chosen)
     return out
 
 

@@ -20,7 +20,7 @@ os.environ.update({
     "PUBLIC_BASE_URL": "https://karu.test",
     "API_BASE_URL": "http://test",
     # Force fake providers even if a developer .env holds real keys.
-    "OPENAI_API_KEY": "", "GEMINI_API_KEY": "", "TINYFISH_API_KEY": "", "RAZORPAY_KEY_ID": "",
+    "OPENAI_API_KEY": "", "GEMINI_API_KEY": "", "VERTEX_PROJECT": "", "TINYFISH_API_KEY": "", "RAZORPAY_KEY_ID": "",
     "RAZORPAY_KEY_SECRET": "", "RAZORPAY_WEBHOOK_SECRET": "", "SMS_PROVIDER_KEY": "", "WHATSAPP_TOKEN": "",
     "EMAIL_API_KEY": "", "GOOGLE_CLIENT_ID": "", "WEB_REVALIDATE_SECRET": "", "REDIS_URL": "", "STORAGE_BACKEND": "local",
 })

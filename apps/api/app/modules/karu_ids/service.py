@@ -12,6 +12,7 @@ from app.core.i18n import format_date, format_inr, pick_lang, t
 from app.core.storage import get_storage
 from app.modules.artisans.models import ArtisanProfile, Passport
 from app.modules.artisans.service import place_of, public_maker
+from app.modules.catalog import attributes
 from app.modules.catalog.models import Craft, Listing
 from app.modules.catalog.service import gallery, listing_media, primary_images, proof_projection
 from app.modules.karu_ids.models import KaruId, KaruIdEvent
@@ -180,7 +181,8 @@ async def product_public(db: AsyncSession, listing: Listing, locale: str, viewer
     if viewer_id:
         wished = (await db.execute(select(Wishlist.id).where(Wishlist.user_id == viewer_id,
                                                              Wishlist.listing_id == listing.id))).first() is not None
-    attrs = {k: v for k, v in (listing.attributes or {}).items() if not k.startswith("_")}
+    # Values left over from a category switch stay editable for the artisan but aren't shown to buyers.
+    attrs = attributes.for_category(category.attribute_schema if category else None, listing.attributes)
     return {
         "id": str(listing.id),
         "code": listing.short_code,

@@ -12,6 +12,7 @@ export interface ImageSet {
   jpg: string | null;
   width?: number | null;
   height?: number | null;
+  ai?: boolean;
 }
 
 export interface Stock {

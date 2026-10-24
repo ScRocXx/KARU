@@ -2,8 +2,10 @@
 embeddings, NON-generative enhancement, 4:5 / 1:1 variants, QR share images and the
 printable tag sheet (Part 2 §6.3, §9.1, §9.3).
 
-Policy (Part 1 §10): Karu never synthesises product imagery. `enhance` only orients,
-crops, levels, white-balances and lightly sharpens the artisan's own photo.
+Policy (Part 1 §10): `enhance` only orients, crops, levels, white-balances and lightly
+sharpens the artisan's own photo. Originals are kept privately for verification and the
+Karu ID proof page; generative catalogue shots (Gemini) are handled via `imagegen` and
+go in the gallery where the artisan can remove any of them.
 """
 
 from __future__ import annotations

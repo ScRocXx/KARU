@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -139,8 +140,14 @@ def get_stt() -> SpeechToText:
         s = get_settings()
         choice = s.stt_provider
         if choice == "auto":
-            choice = "whisper" if s.openai_api_key else ("gemini" if s.gemini_api_key else "fake")
-        _stt = {"whisper": lambda: WhisperSTT(s.openai_api_key), "gemini": GeminiSTT, "fake": FakeSTT}[choice]()
+            project = s.vertex_project or os.environ.get("VERTEX_PROJECT") or os.environ.get("GOOGLE_CLOUD_PROJECT")
+            if project or s.gemini_api_key:
+                choice = "gemini"
+            elif s.openai_api_key:
+                choice = "whisper"
+            else:
+                choice = "fake"
+        _stt = {"whisper": lambda: WhisperSTT(s.openai_api_key), "gemini": GeminiSTT, "vertex": GeminiSTT, "fake": FakeSTT}[choice]()
     return _stt
 
 

@@ -49,6 +49,7 @@ DEFAULTS: dict[str, Any] = {
         "tinyfish.agent": 8.0,
         "gemini.call": 0.25,
         "gemini.video": 1.5,
+        "gemini.image": 11.5,
         "stt.minute": 0.5,
     },
     "passport.v1": {"min_reviews": 5, "min_avg_rating": 4.0},

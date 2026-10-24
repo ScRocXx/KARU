@@ -79,9 +79,9 @@ function SnapSpeak() {
       {currentStep === "photos" && <PhotoStep photos={photos} setPhotos={setPhotos} max={config?.limits.photos_max ?? 6} onNext={() => setStep("voice")} />}
       {currentStep === "voice" && <VoiceStep maxSeconds={config?.limits.voice_note_max_s ?? 120} onDone={(r) => void submit(r)} onSkip={() => void submit(null)} />}
       {currentStep === "uploading" && <Uploading onHome={() => router.push("/sell")} />}
-      {currentStep === "processing" && activeJob && <Processing jobId={activeJob} onDone={() => { void listing.refetch(); setStep("review"); }} />}
+      {currentStep === "processing" && activeJob && <Processing jobId={activeJob} onDone={async () => { await listing.refetch(); setStep("review"); }} />}
       {currentStep === "processing" && !activeJob && <Skeleton className="h-64" />}
-      {currentStep === "review" && (listing.data ? <ReviewStep listing={listing.data} onNext={() => setStep("final")} /> : <Skeleton className="h-96" />)}
+      {currentStep === "review" && (listing.data ? <ReviewStep key={`${listing.data.id}-${JSON.stringify(listing.data.attributes)}-${listing.data.category_slug}`} listing={listing.data} onNext={() => setStep("final")} /> : <Skeleton className="h-96" />)}
       {currentStep === "final" && listing.data && <FinalStep listing={listing.data} onPublished={(r) => { setPublished(r); setStep("published"); }} />}
       {currentStep === "published" && listing.data && published && <Published listing={listing.data} result={published} />}
       {currentStep === "review" && listing.data && listing.data.status !== "draft" && listing.data.status !== "processing" && (

@@ -80,6 +80,10 @@ class WebIntel(Protocol):
 
 
 def domain_of(url: str) -> str:
+    if not url:
+        return ""
+    if "://" not in url:
+        url = "https://" + url
     host = urlparse(url).netloc.lower()
     return host[4:] if host.startswith("www.") else host
 

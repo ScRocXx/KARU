@@ -53,6 +53,13 @@ def test_transliteration_matches_hinglish_and_devanagari():
 
 
 def test_pricing_math():
+    from app.providers.webintel import domain_of
+
+    assert domain_of("https://www.indiamart.com/proddetail/item-123.html") == "indiamart.com"
+    assert domain_of("www.indiamart.com") == "indiamart.com"
+    assert domain_of("indiamart.com") == "indiamart.com"
+    assert domain_of("https://flipkart.com/item") == "flipkart.com"
+
     vals = [1000, 1100, 1200, 1300, 1400, 9000]
     kept = remove_outliers(vals)
     assert 9000 not in kept
@@ -61,3 +68,21 @@ def test_pricing_math():
     assert round_to(2830, 50) == Decimal(2850)
     assert size_bucket({"dimensions": {"length_m": 5.5}}) == "len4-6"
     assert size_bucket({}) == "na"
+
+
+def test_attributes_follow_category_specs():
+    from app.modules.catalog import attributes
+    from app.modules.catalog.reference import OBJECT_ATTRS, TEXTILE_ATTRS
+
+    # Legacy flat keys and string numbers are nested and typed; unknown keys and empties are dropped.
+    raw = {"material": " clay ", "length_m": "5.5", "dimensions": {"height_cm": ""}, "colour": "red, blue",
+           "junk": "x", "time_to_make_days": "3"}
+    norm = attributes.normalize(raw)
+    assert norm == {"material": "clay", "dimensions": {"length_m": 5.5}, "colour": ["red", "blue"], "time_to_make_days": 3}
+    # Missing = core fields of *this* category only: a pot is never asked for dye.
+    pot = attributes.missing_fields(OBJECT_ATTRS, {"material": "clay"}, price=None, has_category=True)
+    assert pot == ["dimensions.height_cm", "price_inr"]
+    assert attributes.missing_fields(TEXTILE_ATTRS, norm, price=1800, has_category=True) == []
+    # Buyers see only the category's fields; the leftover saree length is hidden on a pot.
+    assert attributes.for_category(OBJECT_ATTRS, norm) == {"material": "clay", "colour": ["red", "blue"], "time_to_make_days": 3}
+    assert attributes.notes_for_artisan(price=None, keep=["manual_form", "dimensions"]) == ["manual_form", "price"]

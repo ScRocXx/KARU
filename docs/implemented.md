@@ -127,9 +127,10 @@ offline (Part 2 §1).
    notes ("We couldn't hear a price…").
 3. **Write** the listing in the source language, English and Hindi, keeping the artisan's
    own phrasing where possible.
-4. **Enhance photos without generation:** straighten, crop to 4:5 and 1:1, and correct
-   exposure and white balance. Then encode WebP/JPEG variants at 400, 800 and 1600 px,
-   never larger than the original. Karu never creates or alters what is in a photo.
+4. **Enhance photos & catalogue shots:** straighten, crop to 4:5 and 1:1, correct exposure
+   and white balance, and generate 5 marketplace-style catalogue shots via Gemini using all
+   original photos as references to keep the piece identical. Originals are kept for verification
+   and the proof page, AI shots go in the gallery, and the artisan can remove any of them.
 5. **Price advice** from the pricing module.
 
 Progress is reported step by step over SSE ("Listening… Understanding… Writing…"). Each
