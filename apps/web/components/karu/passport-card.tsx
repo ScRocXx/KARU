@@ -1,15 +1,29 @@
 "use client";
 
-import { BadgeCheck, Download } from "lucide-react";
+import { BadgeCheck, Download, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Woven } from "@/components/karu/ornaments";
+import { Button } from "@/components/ui/button";
 import { date } from "@/lib/format";
 import type { Maker } from "@/lib/types";
-import { MakerAvatar } from "./maker-card";
 
-/** PassportCard: luxury-label style, woven border, exports as an image (Part 1 §9.6). */
-export function PassportCard({ maker, locale, exportable }: { maker: Maker; locale: string; exportable?: boolean }) {
+/** PassportCard: luxury-label style, zari woven border, arch frame, canvas export (Part 1 §9.6 / B07). */
+export function PassportCard({
+  maker,
+  locale,
+  exportable,
+  compact = false,
+  tone = "olive",
+}: {
+  maker: Maker;
+  locale: string;
+  exportable?: boolean;
+  compact?: boolean;
+  tone?: "olive" | "terracotta";
+}) {
   const t = useTranslations("passport");
   const verified = maker.passport.state === "verified";
+  const bgClass = tone === "olive" ? "bg-surface-deep text-khadi-100" : "bg-terracotta-900 text-khadi-100";
 
   const download = async () => {
     const W = 1080;
@@ -18,20 +32,20 @@ export function PassportCard({ maker, locale, exportable }: { maker: Maker; loca
     c.width = W;
     c.height = H;
     const ctx = c.getContext("2d")!;
-    ctx.fillStyle = "#1F2A6B";
+    ctx.fillStyle = tone === "olive" ? "#1E251E" : "#5A2210";
     ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = "#FBF8F2";
+    ctx.fillStyle = "#FAF7F2";
     ctx.fillRect(24, 24, W - 48, H - 48);
     for (let x = 24; x < W - 24; x += 14) {
-      ctx.fillStyle = (x / 14) % 2 ? "#E3A72F" : "#1F2A6B";
+      ctx.fillStyle = (x / 14) % 2 ? "#D4A338" : "#8C3B1E";
       ctx.fillRect(x, 24, 8, 6);
       ctx.fillRect(x, H - 30, 8, 6);
     }
-    ctx.fillStyle = "#1F2A6B";
+    ctx.fillStyle = "#8C3B1E";
     ctx.font = "600 44px Georgia, serif";
     ctx.fillText("karu", 64, 100);
     ctx.font = "600 22px sans-serif";
-    ctx.fillStyle = "#5C554D";
+    ctx.fillStyle = "#7A736B";
     ctx.fillText(t("title").toUpperCase(), 64, 140);
     if (maker.photo_url) {
       const img = new Image();
@@ -54,13 +68,13 @@ export function PassportCard({ maker, locale, exportable }: { maker: Maker; loca
     ctx.font = "600 52px Georgia, serif";
     ctx.fillText(maker.name, 330, 290);
     ctx.font = "26px sans-serif";
-    ctx.fillStyle = "#5C554D";
+    ctx.fillStyle = "#7A736B";
     ctx.fillText(maker.place, 330, 336);
     ctx.fillText(t("member_since", { date: date(maker.passport.member_since, locale) }), 330, 380);
     ctx.font = "600 30px monospace";
-    ctx.fillStyle = "#1F2A6B";
+    ctx.fillStyle = "#8C3B1E";
     ctx.fillText(maker.passport.code || "", 330, 440);
-    ctx.fillStyle = verified ? "#11756B" : "#7A736B";
+    ctx.fillStyle = verified ? "#0E6E60" : "#7A736B";
     ctx.beginPath();
     ctx.roundRect(330, 480, verified ? 330 : 360, 56, 28);
     ctx.fill();
@@ -74,57 +88,78 @@ export function PassportCard({ maker, locale, exportable }: { maker: Maker; loca
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[20px] bg-indigo-900 p-1.5 text-ink-900 shadow-[var(--shadow-soft)]">
-      <div className="woven-border rounded-[16px] bg-khadi-50 p-5">
-        <div className="flex items-start justify-between">
+    <div className={`relative overflow-hidden rounded-sm p-1 shadow-lift ${bgClass}`}>
+      <div className="rounded-xs border border-gold-500/40 bg-surface p-5 text-ink-900">
+        <div className="flex items-start justify-between gap-3 border-b border-line pb-3">
           <div>
-            <p className="font-display text-2xl font-semibold text-indigo-900">karu</p>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-600">{t("title")}</p>
+            <span className="font-serif text-xl font-medium tracking-wide text-brand">karu</span>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">{t("title")}</p>
           </div>
           {verified ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-peacock-600 px-3 py-1 text-sm font-semibold text-white">
-              <BadgeCheck className="size-4" /> {t("state.verified")}
+            <span className="inline-flex items-center gap-1 rounded-full bg-verified-soft px-2.5 py-1 text-xs font-semibold text-verified">
+              <BadgeCheck className="size-3.5 text-gold-600" /> {t("state.verified")}
             </span>
           ) : maker.passport.state === "suspended" ? (
-            <span className="rounded-full bg-danger-600 px-3 py-1 text-sm font-semibold text-white">{t("state.suspended")}</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-danger-100 px-2.5 py-1 text-xs font-semibold text-danger">
+              <ShieldAlert className="size-3.5" /> {t("state.suspended")}
+            </span>
           ) : (
-            <span className="rounded-full bg-unverified px-3 py-1 text-sm font-semibold text-white">{t("state.unverified")}</span>
+            <span className="rounded-full bg-sand-200 px-2.5 py-1 text-xs font-medium text-subtle">
+              {t("state.unverified")}
+            </span>
           )}
         </div>
-        <div className="mt-5 flex items-center gap-4">
-          <MakerAvatar maker={maker} size={84} />
-          <div className="min-w-0">
-            <p className="font-display truncate text-2xl">{maker.name}</p>
-            <p className="truncate text-sm text-ink-600">{maker.place}</p>
-            {maker.crafts.length > 0 && <p className="truncate text-sm text-ink-600">{maker.crafts.join(" · ")}</p>}
+
+        <div className="mt-4 flex items-center gap-4">
+          <div className="relative shrink-0">
+            {maker.photo_url ? (
+              <div className="h-20 w-16 overflow-hidden rounded-t-full border border-gold-500/50 bg-sand-200 shadow-xs">
+                <img src={maker.photo_url} alt={maker.name} className="h-full w-full object-cover" />
+              </div>
+            ) : (
+              <div className="flex h-20 w-16 items-center justify-center rounded-t-full border border-gold-500/50 bg-sand-200 text-lg font-serif font-medium text-brand">
+                {maker.name.slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="font-serif text-lg font-medium tracking-tight text-ink-900 truncate">{maker.name}</h4>
+            <p className="text-xs text-muted truncate">{maker.place}</p>
+            {maker.crafts.length > 0 && <p className="text-xs text-brand truncate mt-0.5">{maker.crafts.join(" · ")}</p>}
           </div>
         </div>
-        <div className="mt-5 grid grid-cols-2 gap-3 border-t border-dashed border-ink-300 pt-4 text-sm">
+
+        <div className={`mt-4 grid grid-cols-2 gap-3 border-t border-dashed border-line pt-3 ${compact ? "text-xs" : "text-sm"}`}>
           <div>
-            <p className="text-xs uppercase tracking-wider text-ink-600">{t("id")}</p>
-            <p className="font-mono text-base font-semibold text-indigo-900">{maker.passport.code}</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted">{t("id")}</p>
+            <p className="font-mono font-semibold text-brand text-xs mt-0.5">{maker.passport.code || "—"}</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-ink-600">{t("since")}</p>
-            <p className="font-semibold">{date(maker.passport.member_since, locale)}</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted">{t("since")}</p>
+            <p className="font-medium text-ink-900 text-xs mt-0.5">{date(maker.passport.member_since, locale)}</p>
           </div>
           {maker.stats && (
             <>
               <div>
-                <p className="text-xs uppercase tracking-wider text-ink-600">{t("verified_pieces")}</p>
-                <p className="font-semibold">{maker.stats.verified_products}</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted">{t("verified_pieces")}</p>
+                <p className="font-semibold text-ink-900 text-xs mt-0.5">{maker.stats.verified_products}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-ink-600">{t("rating")}</p>
-                <p className="font-semibold">{maker.stats.rating ? `${maker.stats.rating} ★ (${maker.stats.reviews})` : "—"}</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted">{t("rating")}</p>
+                <p className="font-semibold text-ink-900 text-xs mt-0.5">
+                  {maker.stats.rating ? `${maker.stats.rating} ★ (${maker.stats.reviews})` : "—"}
+                </p>
               </div>
             </>
           )}
         </div>
+
         {exportable && (
-          <button onClick={download} className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-full border border-indigo-900 px-4 text-sm font-semibold text-indigo-900 hover:bg-indigo-50">
-            <Download className="size-4" /> {t("save_image")}
-          </button>
+          <div className="mt-4 pt-2 border-t border-line">
+            <Button variant="secondary" size="S" block onClick={download} icon={<Download className="size-3.5" />}>
+              {t("save_image")}
+            </Button>
+          </div>
         )}
       </div>
     </div>
