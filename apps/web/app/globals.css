@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Karu design tokens (Part 1 §9.2). Light mode only for now; aliases make a dark theme a token swap. */
+@theme {
+  --color-indigo-900: #1f2a6b;
+  --color-indigo-700: #2f3e94;
+  --color-indigo-50: #eef0fa;
+  --color-haldi-500: #e3a72f;
+  --color-haldi-100: #fbefd4;
+  --color-terracotta-600: #b9532e;
+  --color-peacock-600: #11756b;
+  --color-peacock-50: #e6f4f2;
+  --color-ink-900: #1e1a16;
+  --color-ink-600: #5c554d;
+  --color-ink-300: #bdb5aa;
+  --color-ink-100: #ece6dc;
+  --color-khadi-50: #fbf8f2;
+  --color-white: #ffffff;
+  --color-danger-600: #c0362c;
+  --color-unverified: #7a736b;
+
+  --font-display: var(--font-fraunces), var(--font-noto-serif-devanagari), var(--font-nastaliq), Georgia, serif;
+  --font-sans: var(--font-noto-sans), var(--font-noto-sans-devanagari), var(--font-noto-sans-gurmukhi),
+    var(--font-noto-sans-gujarati), var(--font-noto-sans-tamil), var(--font-noto-sans-malayalam), var(--font-naskh),
+    system-ui, sans-serif;
+
+  --radius-input: 8px;
+  --radius-card: 12px;
+  --radius-sheet: 20px;
+  --shadow-soft: 0 1px 2px rgba(30, 26, 22, 0.06), 0 4px 12px rgba(30, 26, 22, 0.06);
+
+  --animate-settle: settle 250ms ease-out;
+  --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
+  @keyframes settle {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(31, 42, 107, 0.45); }
+    100% { box-shadow: 0 0 0 18px rgba(31, 42, 107, 0); }
+  }
+}
+
+:root {
+  --color-bg: var(--color-khadi-50);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-ink-900);
+  --lh-body: 1.5;
+}
+
+/* Indic scripts need +10–15% line height so matras don't clip (Part 1 §9.3). */
+:root:lang(hi), :root:lang(pa), :root:lang(mr), :root:lang(gu), :root:lang(ta), :root:lang(ml) { --lh-body: 1.68; }
+:root:lang(ur) { --lh-body: 1.8; }
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+:root:lang(ur) .font-display { font-family: var(--font-nastaliq), var(--font-naskh), serif; line-height: 2; }
+
+/* The woven motif: a single over-under stitch line (separators, passport border, Karu ID band). */
+.woven {
+  height: 6px;
+  background-image:
+    linear-gradient(90deg, var(--color-haldi-500) 0 8px, transparent 8px 14px),
+    linear-gradient(90deg, transparent 0 7px, var(--color-indigo-900) 7px 13px, transparent 13px 14px);
+  background-size: 14px 3px, 14px 3px;
+  background-position: 0 0, 0 3px;
+  background-repeat: repeat-x;
+  opacity: 0.9;
+}
+.woven-border { border: 2px solid transparent; border-image: repeating-linear-gradient(45deg, var(--color-haldi-500) 0 6px, var(--color-indigo-900) 6px 12px) 6; }
+
+.tap { min-height: 48px; min-width: 48px; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+.safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 72px); }
+
+/* RTL: icons that imply direction flip automatically. */
+[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+:focus-visible { outline: 3px solid var(--color-haldi-500); outline-offset: 2px; border-radius: 6px; }
