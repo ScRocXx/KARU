@@ -259,6 +259,32 @@ async def karu_id(code: str, locale: str = Depends(locale_dep), user=Depends(opt
     return data
 
 
+@router.get("/makers")
+async def list_makers(
+    craft: str | None = None,
+    state: str | None = None,
+    cursor: int = Query(0, ge=0),
+    limit: int = Query(24, ge=1, le=60),
+    locale: str = Depends(locale_dep),
+    db: AsyncSession = Depends(get_db),
+):
+    """List public makers with optional craft and state filtering (section 10.2)."""
+    query = select(ArtisanProfile).where(ArtisanProfile.handle.is_not(None))
+    if state:
+        query = query.where(func.lower(ArtisanProfile.state) == state.lower())
+    total = (await db.execute(select(func.count()).select_from(query.subquery()))).scalar_one()
+    profiles = (await db.execute(query.order_by(ArtisanProfile.created_at.desc()).offset(cursor).limit(limit))).scalars().all()
+    out = []
+    for p in profiles:
+        m_data = await public_maker(db, p, locale)
+        if craft:
+            if not any(craft.lower() in c.lower() for c in m_data.get("crafts", [])):
+                continue
+        out.append(m_data)
+    nxt = cursor + limit if cursor + limit < total else None
+    return {"items": out, "total": total, "next_cursor": nxt}
+
+
 @router.get("/makers/{handle}")
 async def maker(handle: str, locale: str = Depends(locale_dep), user=Depends(optional_user), db: AsyncSession = Depends(get_db)):
     from app.modules.reviews.models import Follow

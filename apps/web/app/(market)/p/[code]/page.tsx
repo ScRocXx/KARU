@@ -3,15 +3,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ProofChecks, StockPill, VerifiedBadge, Woven } from "@/components/karu/badges";
+import { GiTag, KaruIdChip, StockPill, VerifiedBadge, Woven } from "@/components/karu/badges";
 import { ListenButton, MakerCard } from "@/components/karu/maker-card";
 import { ProductRail } from "@/components/karu/product-card";
+import { ProvenancePanel } from "@/components/karu/provenance-panel";
+import { Container, Section } from "@/components/layout";
 import { BuyBox } from "@/components/market/buy-box";
 import { ProductGallery } from "@/components/market/product-gallery";
 import { ProductReviews } from "@/components/market/product-reviews";
 import { ReportLink } from "@/components/market/report-link";
 import { StoryToggle } from "@/components/market/story-toggle";
 import { ViewTracker } from "@/components/market/view-tracker";
+import { Accordion } from "@/components/ui/accordion";
+import { Avatar } from "@/components/ui/avatar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { RatingSummary } from "@/components/ui/stars";
 import { inr } from "@/lib/format";
 import { serverApi, serverApiOrNull } from "@/lib/server-api";
 import type { Card, Product } from "@/lib/types";
@@ -62,141 +68,108 @@ export default async function ProductPage({ params }: { params: Promise<{ code: 
     ...(p.reviews.count ? { aggregateRating: { "@type": "AggregateRating", ratingValue: p.reviews.avg, reviewCount: p.reviews.count } } : {}),
   };
 
+  const breadcrumbs = [
+    { label: t("home"), href: "/" },
+    ...(p.category ? [{ label: p.category.name, href: `/c/${p.category.slug}` }] : []),
+    ...(p.craft ? [{ label: p.craft.name, href: `/craft/${p.craft.slug}` }] : []),
+    { label: p.title.text },
+  ];
+
   return (
-    <article className="pt-2 pb-12">
+    <article className="pt-4 pb-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <ViewTracker card={card} />
 
-      {/* Editorial Breadcrumbs */}
-      <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs tracking-wider uppercase text-ink-500" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-terracotta-800 transition-colors">{t("home")}</Link>
-        {p.category && (
-          <>
-            <ChevronRight className="size-3 text-ink-400" aria-hidden />
-            <Link href={`/c/${p.category.slug}`} className="hover:text-terracotta-800 transition-colors">{p.category.name}</Link>
-          </>
-        )}
-        {p.craft && (
-          <>
-            <ChevronRight className="size-3 text-ink-400" aria-hidden />
-            <Link href={`/craft/${p.craft.slug}`} className="hover:text-terracotta-800 transition-colors">{p.craft.name}</Link>
-          </>
-        )}
-      </nav>
-
-      {/* Main Luxury 2-Column Split */}
-      <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14 items-start">
-        {/* Left Column: Gallery & Proof Seal */}
-        <div className="flex flex-col gap-6">
-          <ProductGallery
-            images={p.gallery}
-            title={p.title.text}
-            video={v.status === "verified" ? v.making_video : null}
-            videoLabel={t("making_video")}
-          />
-
-          {/* Karu ID Provenance Hallmark Card */}
-          <section className="rounded-[20px] border border-sand-200/90 bg-white p-5 sm:p-6 shadow-xs" aria-labelledby="proof-h">
-            <div className="flex items-center justify-between border-b border-sand-200/80 pb-4 mb-4">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="size-5 text-terracotta-800" />
-                <h2 id="proof-h" className="font-serif text-lg font-medium text-ink-950">
-                  {t("proof_title")}
-                </h2>
-              </div>
-              <span className="font-mono text-xs font-semibold text-peacock-700 bg-peacock-50 border border-peacock-200/60 rounded-full px-2.5 py-0.5">
-                Karu ID #{p.code}
-              </span>
-            </div>
-
-            {v.status === "verified" || v.status === "checking" ? (
-              <ProofChecks checks={v.checks} photosOriginal={v.photos_original} registry={v.registry} />
-            ) : v.status === "revoked" ? (
-              <p className="text-sm text-ink-600">{t("revoked", { date: v.revoked_on || "" })}</p>
-            ) : (
-              <p className="text-sm text-ink-600">{t("not_verified_body")}</p>
-            )}
-
-            <div className="mt-4 pt-3 border-t border-sand-200/60 flex items-center justify-between text-xs">
-              <Link href="/verification-explained" className="inline-flex items-center gap-1 font-semibold text-terracotta-800 hover:text-terracotta-900 transition-colors">
-                <Info className="size-3.5" /> {t("what_verified_means")}
-              </Link>
-              <Link href={`/k/${p.code}`} className="font-mono text-ink-500 hover:text-ink-800 flex items-center gap-1">
-                View Certificate <ArrowRight className="size-3" />
-              </Link>
-            </div>
-          </section>
+      <Container size="page">
+        {/* Breadcrumbs */}
+        <div className="mb-6">
+          <Breadcrumbs items={breadcrumbs} />
         </div>
 
-        {/* Right Column: Title, Maker, Price, BuyBox, Story, Specs */}
-        <div className="flex flex-col gap-6">
-          {/* Eyebrow & Badges */}
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <VerifiedBadge status={v.status} size="lg" />
-              {p.craft?.gi_tag && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-gold-100 border border-gold-300 px-3 py-1 text-xs font-medium text-gold-900">
-                  <Sparkles className="size-3 text-gold-600" />
-                  {t("gi_craft", { craft: p.craft.name })}
+        {/* 12-Column Desktop Layout (7 cols Gallery / 5 cols Sticky Buy Panel) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* 7-col Gallery */}
+          <div className="lg:col-span-7">
+            <ProductGallery
+              images={p.gallery}
+              title={p.title.text}
+              video={v.status === "verified" ? v.making_video : null}
+              videoLabel={t("making_video")}
+            />
+          </div>
+
+          {/* 5-col Sticky Info Panel */}
+          <div className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-24">
+            <div className="flex flex-col gap-3">
+              {/* Eyebrow: craft, region, GI tag */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-eyebrow text-brand">
+                  {[p.craft?.name, p.maker.place].filter(Boolean).join(" · ")}
                 </span>
+                {p.craft?.gi_tag && <GiTag craft={p.craft.name} />}
+              </div>
+
+              {/* Title */}
+              <h1 className="text-h1 font-serif text-text" lang={p.title.lang}>
+                {p.title.text}
+              </h1>
+
+              {/* Maker Attribution Line */}
+              <div className="flex items-center gap-2.5 pt-1">
+                <Avatar src={p.maker.photo_url} name={p.maker.name} size={32} verified={p.maker.passport.state === "verified"} />
+                <div className="flex items-center gap-1.5 text-body-s">
+                  <span className="text-muted">{t("by")}</span>
+                  <Link href={`/m/${p.maker.handle}`} className="font-semibold text-text hover:text-brand transition-colors">
+                    {p.maker.name}
+                  </Link>
+                  {p.maker.place && <span className="text-muted">· {p.maker.place}</span>}
+                </div>
+              </div>
+
+              {/* Rating Summary */}
+              {p.reviews.count > 0 && (
+                <div className="pt-1">
+                  <RatingSummary rating={p.reviews.avg || 5} count={p.reviews.count} />
+                </div>
               )}
+
+              {/* Pricing Section */}
+              <div className="mt-2 flex flex-wrap items-baseline gap-4 border-y border-line py-3.5">
+                <p className="text-price font-serif text-text font-medium text-3xl sm:text-4xl">
+                  {inr(p.price_inr)}
+                </p>
+                <StockPill stock={p.stock} />
+              </div>
+
+              {/* Karu ID Badge line */}
+              <div className="flex items-center gap-3 pt-1">
+                <VerifiedBadge status={v.status} size="lg" />
+                <KaruIdChip code={p.code} />
+              </div>
             </div>
 
-            {/* Product Title */}
-            <h1 className="font-serif text-3xl font-medium tracking-tight text-ink-950 sm:text-4xl lg:text-[40px] leading-[1.18]" lang={p.title.lang}>
-              {p.title.text}
-            </h1>
-
-            {/* Maker Attribution */}
-            <p className="text-sm text-ink-600">
-              {t("by")}{" "}
-              <Link href={`/m/${p.maker.handle}`} className="font-serif font-semibold text-terracotta-800 hover:underline">
-                {p.maker.name}
-              </Link>
-              {p.maker.place ? ` · ${p.maker.place}` : ""}
-            </p>
-
-            {/* Pricing Section */}
-            <div className="mt-2 flex flex-wrap items-baseline gap-4 border-y border-sand-200/80 py-3.5">
-              <p className="font-serif text-3xl sm:text-4xl font-medium text-ink-950">
-                {inr(p.price_inr)}
-              </p>
-              <StockPill stock={p.stock} />
-            </div>
-            <p className="text-xs text-ink-500 font-serif italic">
-              {t("price_note")} · 100% direct artisan payout with zero commission.
-            </p>
-          </div>
-
-          {/* Buy Box */}
-          {p.maker_suspended ? (
-            <p className="rounded-[16px] bg-sand-100 p-4 text-ink-900">{t("maker_under_review")}</p>
-          ) : (
+            {/* Buy Box */}
             <BuyBox product={{ id: p.id, code: p.code, title: p.title.text, price_inr: p.price_inr, stock: p.stock }} />
-          )}
 
-          {/* Trust Guarantees */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-[16px] border border-sand-200/80 bg-[#FAF7F2] p-4 text-xs text-ink-700">
-            <div className="flex items-center gap-2.5">
-              <RotateCcw className="size-4 shrink-0 text-terracotta-800" />
-              <span>{p.returnable ? t("returnable", { days: p.return_window_days }) : t("not_returnable")}</span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <Truck className="size-4 shrink-0 text-terracotta-800" />
-              <span>{t("delivery")}</span>
+            {/* Trust Assurances */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-xs border border-line bg-surface-alt p-4 text-caption text-text">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="size-4 text-brand shrink-0" />
+                <span>{p.returnable ? t("returnable", { days: p.return_window_days }) : t("not_returnable")}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Truck className="size-4 text-brand shrink-0" />
+                <span>{t("delivery")}</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Maker Voice & Story */}
-          <section className="rounded-[20px] border border-sand-200/90 bg-white p-5 sm:p-6 shadow-xs" aria-labelledby="story-h">
-            <div className="flex items-center justify-between mb-3">
-              <h2 id="story-h" className="font-serif text-xl font-medium text-ink-950">
-                {t("story")}
-              </h2>
-              {p.maker.voice_url && (
-                <ListenButton url={p.maker.voice_url} name={p.maker.name} />
-              )}
-            </div>
+        {/* Full-Width Accordion Detail Section */}
+        <div className="mt-16 max-w-4xl">
+          <h2 className="text-h2 font-serif text-text mb-6">Piece Story & Specifications</h2>
+
+          <Accordion title={t("story")} defaultOpen iconStyle="plus">
             <StoryToggle
               localized={p.description}
               labels={{
@@ -205,53 +178,67 @@ export default async function ProductPage({ params }: { params: Promise<{ code: 
                 show_translation: t("show_translation"),
               }}
             />
-          </section>
+            {p.maker.voice_url && (
+              <div className="mt-4">
+                <ListenButton url={p.maker.voice_url} name={p.maker.name} />
+              </div>
+            )}
+          </Accordion>
 
-          {/* Maker Card */}
-          <MakerCard maker={p.maker} />
-
-          {/* Craft Attributes & Specifications */}
           {attrs.length > 0 && (
-            <section className="rounded-[20px] border border-sand-200/90 bg-white p-5 sm:p-6 shadow-xs" aria-labelledby="attr-h">
-              <h2 id="attr-h" className="font-serif text-xl font-medium text-ink-950 mb-3">
-                {t("details")}
-              </h2>
-              <dl className="divide-y divide-sand-200/70 text-sm">
+            <Accordion title={t("details")} defaultOpen iconStyle="plus">
+              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 py-2">
                 {attrs.map((k) => (
-                  <div key={k} className="flex justify-between gap-4 py-2.5">
-                    <dt className="text-ink-500 font-medium">{t(`attr.${k}`)}</dt>
-                    <dd className="text-end font-semibold text-ink-900">{formatAttr(k, p.attributes[k], t)}</dd>
+                  <div key={k} className="flex justify-between border-b border-line pb-2">
+                    <dt className="text-muted font-medium">{t(`attr.${k}`)}</dt>
+                    <dd className="font-semibold text-text text-end">{formatAttr(k, p.attributes[k], t)}</dd>
                   </div>
                 ))}
               </dl>
-            </section>
+            </Accordion>
           )}
 
-          <div className="pt-2">
-            <ReportLink targetType="listing" targetId={p.id} />
-          </div>
+          <Accordion title="Proof of Handmade & Karu ID Verification" iconStyle="plus">
+            <ProvenancePanel
+              code={p.code}
+              verification={v.status}
+              checks={v.checks}
+              photosOriginal={v.photos_original}
+              registry={v.registry}
+              makingVideo={v.status === "verified" ? v.making_video : null}
+            />
+          </Accordion>
+
+          <Accordion title="Shipping, Dispatch & Returns" iconStyle="plus">
+            <p className="text-body-s text-muted leading-relaxed">
+              Every order is hand-packaged directly in the artisan&apos;s cluster and shipped with tamper-evident Karu ID seals.
+              {p.returnable ? ` Returns are accepted within ${p.return_window_days} days of delivery if seals remain intact.` : " Due to the custom handmade nature of this piece, returns are not accepted unless damaged in transit."}
+            </p>
+          </Accordion>
         </div>
-      </div>
 
-      <Woven className="my-14" />
-      <ProductReviews code={p.code} summary={p.reviews} />
+        {/* Meet the Maker Feature Band */}
+        <div className="mt-16">
+          <MakerCard maker={p.maker} variant="feature" />
+        </div>
 
-      {/* Similar Handcrafted Pieces */}
-      {similar.items.length > 0 && (
-        <section className="mt-14">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-terracotta-700">
-                Craft Heritage
-              </p>
-              <h2 className="font-serif text-2xl sm:text-3xl font-medium text-ink-950">
-                {t("similar")}
-              </h2>
-            </div>
+        {/* Customer Reviews */}
+        <div className="mt-16">
+          <ProductReviews code={p.code} summary={p.reviews} />
+        </div>
+
+        {/* Similar Handcrafted Pieces Rail */}
+        {similar.items.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-h2 font-serif text-text mb-6">{t("similar")}</h2>
+            <ProductRail cards={similar.items} />
           </div>
-          <ProductRail cards={similar.items} />
-        </section>
-      )}
+        )}
+
+        <div className="mt-10 border-t border-line pt-6">
+          <ReportLink targetType="listing" targetId={p.id} />
+        </div>
+      </Container>
     </article>
   );
 }
