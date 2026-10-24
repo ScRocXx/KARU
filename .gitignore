@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+apps/api/var/
+apps/api/var_prof*
+*.stats
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+apps/web/.env.local
+*.tsbuildinfo
+next-env.d.ts
+
+# Env & secrets
+.env
+!.env.example
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
