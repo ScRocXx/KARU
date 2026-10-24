@@ -1,4 +1,4 @@
-import { BadgeCheck, CircleDashed, ShieldOff } from "lucide-react";
+import { ArrowRight, BadgeCheck, CircleDashed, ShieldCheck, ShieldOff } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -32,127 +32,255 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
   const firstName = maker?.name.split(" ")[0] || "";
 
   return (
-    <div className="min-h-dvh bg-khadi-50">
+    <div className="min-h-dvh bg-[#FAF7F2] text-ink-950 pb-16">
       <ScanBeacon type="karu_id" code={d.code} />
-      {/* 1. Header band */}
-      <header className={verified ? "bg-indigo-900 text-white" : "bg-ink-900 text-white"}>
-        <div className="mx-auto flex max-w-xl items-center justify-between px-4 py-3">
-          <Link href="/" className="font-display text-xl font-semibold">karu</Link>
+
+      {/* 1. High-Editorial Provenance Certificate Header */}
+      <header className={verified ? "bg-[#1E251E] text-white" : "bg-ink-950 text-white"}>
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 py-4 border-b border-white/10">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="font-serif text-2xl font-semibold tracking-wider text-white">karu</span>
+            <span className="hidden sm:inline text-[10px] font-mono tracking-widest uppercase text-sand-300/80 border-s border-white/20 ps-2.5">
+              Certificate of Provenance
+            </span>
+          </Link>
           <LangLinks current={locale} />
         </div>
-        <div className="mx-auto max-w-xl px-4 pb-5">
-          <p className="font-mono text-sm tracking-widest text-white/80">{d.code}</p>
-          <div className="mt-2 flex items-center gap-2">
-            {verified ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-peacock-600 px-4 py-2 text-lg font-semibold">
-                <BadgeCheck className="size-6" /> {t("verified")}
+
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-mono text-xs tracking-[0.25em] uppercase text-sand-300/80">
+                Tamper-Evident ID · {d.code}
+              </p>
+              <div className="mt-2 flex items-center gap-2.5">
+                {verified ? (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-peacock-700/80 border border-peacock-400/40 px-4 py-1.5 text-base sm:text-lg font-medium text-white shadow-xs">
+                    <BadgeCheck className="size-5 text-peacock-300" /> {t("verified")}
+                  </span>
+                ) : d.verdict === "revoked" ? (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-base sm:text-lg font-medium">
+                    <ShieldOff className="size-5" /> {t("revoked")}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-unverified px-4 py-1.5 text-base sm:text-lg font-medium">
+                    <CircleDashed className="size-5" /> {d.verdict === "checking" ? t("checking") : t("not_verified")}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="sm:text-right">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-gold-400">
+                100% Physical Origin Checked
               </span>
-            ) : d.verdict === "revoked" ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-2 text-lg font-semibold">
-                <ShieldOff className="size-6" /> {t("revoked")}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-unverified px-4 py-2 text-lg font-semibold">
-                <CircleDashed className="size-6" /> {d.verdict === "checking" ? t("checking") : t("not_verified")}
-              </span>
-            )}
+              <p className="font-mono text-xs text-sand-300/70 mt-0.5">
+                Tamper-proof registry record on the Karu public ledger
+              </p>
+            </div>
           </div>
-          {verified && maker && <p className="mt-3 text-[17px] text-white/90">{t("verified_line", { craft: d.piece.craft || t("handmade"), name: firstName, place: d.piece.region })}</p>}
+
+          {verified && maker && (
+            <p className="mt-4 font-serif text-lg sm:text-xl text-sand-100 max-w-3xl leading-relaxed">
+              {t("verified_line", { craft: d.piece.craft || t("handmade"), name: firstName, place: d.piece.region })}
+            </p>
+          )}
         </div>
         <Woven />
       </header>
 
-      <main className="mx-auto flex max-w-xl flex-col gap-6 px-4 py-6">
-        {d.sold && !d.owned_by_viewer && <p id="kid-sold-notice" className="rounded-[12px] border border-haldi-500/50 bg-haldi-100 p-3 text-[15px] font-medium">{t("sold_notice", { date: d.sold_on || "" })}</p>}
+      {/* 2. Responsive 2-Column Certificate Layout */}
+      <main className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
+        {d.sold && !d.owned_by_viewer && (
+          <div id="kid-sold-notice" className="mb-6 rounded-[16px] border border-gold-400/60 bg-gold-50 p-4 text-sm font-medium text-gold-950">
+            {t("sold_notice", { date: d.sold_on || "" })}
+          </div>
+        )}
         <OwnedByYou code={d.code} label={t("owned_by_you")} />
 
-        {/* 2. The piece */}
-        <section className="overflow-hidden rounded-[16px] bg-white">
-          {d.piece.image?.card && <img src={d.piece.image.card} alt={d.piece.title} className="aspect-[4/5] w-full object-cover" fetchPriority="high" />}
-          <div className="p-4">
-            <h1 className="font-display text-2xl" lang={d.piece.title_lang}>{d.piece.title}</h1>
-            <p className="text-ink-600">{[d.piece.craft, d.piece.region].filter(Boolean).join(" · ")}</p>
-          </div>
-        </section>
-
-        {/* 3. The maker */}
-        <section className="rounded-[16px] bg-white p-4">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-600">{t("the_maker")}</h2>
-          {maker ? (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                {maker.photo_url ? <img src={maker.photo_url} alt="" className="size-16 rounded-full object-cover" loading="lazy" /> : null}
-                <div>
-                  <Link href={`/m/${maker.handle}`} className="font-display text-xl hover:underline">{maker.name}</Link>
-                  <p className="text-sm text-ink-600">{maker.place}</p>
-                  <p className="text-sm font-semibold">
-                    {maker.passport.state === "verified" ? <span className="text-peacock-600">✓ {t("passport_verified")}</span> : <span className="text-ink-600">{t("passport_unverified")}</span>}
-                    {maker.years_of_practice ? <span className="text-ink-600"> · {t("years", { n: maker.years_of_practice })}</span> : null}
-                  </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          {/* Left Column: Physical Piece & Video Evidence */}
+          <div className="flex flex-col gap-6">
+            {/* Piece Presentation Card */}
+            <section className="overflow-hidden rounded-[20px] border border-sand-200/90 bg-white shadow-xs">
+              {d.piece.image?.card && (
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-sand-100">
+                  <img
+                    src={d.piece.image.card}
+                    alt={d.piece.title}
+                    className="size-full object-cover"
+                    fetchPriority="high"
+                  />
+                  <div className="absolute end-3 bottom-3 rounded-full border border-sand-200 bg-white/90 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-800 backdrop-blur-md">
+                    ID #{d.code}
+                  </div>
                 </div>
+              )}
+              <div className="p-6">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-terracotta-700">
+                  {[d.piece.craft, d.piece.region].filter(Boolean).join(" · ")}
+                </p>
+                <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-medium leading-tight text-ink-950" lang={d.piece.title_lang}>
+                  {d.piece.title}
+                </h1>
               </div>
-              {maker.voice_url && <VoiceClip url={maker.voice_url} label={t("listen", { name: firstName })} />}
-              {maker.story && <p className="text-[16px] leading-relaxed" lang={maker.story_lang}>“{maker.story}”</p>}
-            </div>
-          ) : (
-            <p className="text-ink-600">{t("maker_under_review")}</p>
-          )}
-        </section>
+            </section>
 
-        {/* 4. The proof (verified only) */}
-        {verified && (
-          <section className="rounded-[16px] bg-white p-4">
-            <h2 className="font-display mb-3 text-xl">{t("the_proof")}</h2>
-            <ProofChecks checks={d.proof.checks} photosOriginal={d.proof.photos_original} registry={d.proof.registry} />
-            {d.proof.making_video && (
-              <div className="mt-4">
-                <TapToPlayVideo url={d.proof.making_video.url} poster={d.proof.making_video.poster} label={t("watch_making")} />
+            {/* Unedited Making Video (Verified only) */}
+            {verified && d.proof.making_video && (
+              <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-serif text-xl font-medium text-ink-950">
+                    {t("watch_making")}
+                  </h2>
+                  <span className="rounded-full bg-peacock-50 border border-peacock-200/80 px-2.5 py-0.5 text-[10px] font-semibold text-peacock-700 uppercase tracking-wider">
+                    Unedited Video Proof
+                  </span>
+                </div>
+                <TapToPlayVideo
+                  url={d.proof.making_video.url}
+                  poster={d.proof.making_video.poster}
+                  label={t("watch_making")}
+                />
+              </section>
+            )}
+
+            {/* Action Buttons */}
+            <section className="flex flex-col gap-3">
+              {d.piece.available ? (
+                <Link
+                  href={`/p/${d.piece.code}`}
+                  className="flex min-h-12 items-center justify-center rounded-full bg-terracotta-800 px-6 font-medium text-white transition-all hover:bg-terracotta-900 active:scale-98 shadow-sm"
+                >
+                  {t("buy", { price: inr(d.piece.price_inr) })}
+                </Link>
+              ) : (
+                <Link
+                  href={`/p/${d.piece.code}`}
+                  className="flex min-h-12 items-center justify-center rounded-full bg-terracotta-800 px-6 font-medium text-white transition-all hover:bg-terracotta-900 active:scale-98 shadow-sm"
+                >
+                  {t("request_again")}
+                </Link>
+              )}
+              {maker && (
+                <Link
+                  href={`/m/${maker.handle}`}
+                  className="flex min-h-12 items-center justify-center rounded-full border border-ink-800 bg-white px-6 font-medium text-ink-900 transition-colors hover:bg-ink-950 hover:text-white"
+                >
+                  {t("more_from", { name: firstName })}
+                </Link>
+              )}
+            </section>
+          </div>
+
+          {/* Right Column: Master Artisan & Verification Chain */}
+          <div className="flex flex-col gap-6">
+            {/* The Maker */}
+            <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta-700">
+                  {t("the_maker")}
+                </h2>
+                <span className="font-mono text-[11px] text-ink-500">Master Lineage</span>
+              </div>
+
+              {maker ? (
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-4">
+                    {maker.photo_url ? (
+                      <img
+                        src={maker.photo_url}
+                        alt=""
+                        className="size-16 rounded-full object-cover ring-2 ring-sand-200 shadow-2xs"
+                        loading="lazy"
+                      />
+                    ) : null}
+                    <div>
+                      <Link href={`/m/${maker.handle}`} className="font-serif text-xl font-medium text-ink-950 hover:text-terracotta-800 transition-colors">
+                        {maker.name}
+                      </Link>
+                      <p className="text-sm text-ink-600">{maker.place}</p>
+                      <p className="mt-1 text-xs font-semibold">
+                        {maker.passport.state === "verified" ? (
+                          <span className="text-peacock-700">✓ {t("passport_verified")}</span>
+                        ) : (
+                          <span className="text-ink-600">{t("passport_unverified")}</span>
+                        )}
+                        {maker.years_of_practice ? (
+                          <span className="text-ink-500 font-normal"> · {t("years", { n: maker.years_of_practice })}</span>
+                        ) : null}
+                      </p>
+                    </div>
+                  </div>
+
+                  {maker.voice_url && (
+                    <VoiceClip url={maker.voice_url} label={t("listen", { name: firstName })} />
+                  )}
+
+                  {maker.story && (
+                    <blockquote className="rounded-[14px] bg-[#FAF7F2] p-4 font-serif text-[15px] italic leading-relaxed text-ink-800" lang={maker.story_lang}>
+                      “{maker.story}”
+                    </blockquote>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-ink-600">{t("maker_under_review")}</p>
+              )}
+            </section>
+
+            {/* The Physical Proof Checks */}
+            {verified && (
+              <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
+                <div className="flex items-center gap-2 mb-4">
+                  <ShieldCheck className="size-5 text-terracotta-800" />
+                  <h2 className="font-serif text-xl font-medium text-ink-950">
+                    {t("the_proof")}
+                  </h2>
+                </div>
+                <ProofChecks checks={d.proof.checks} photosOriginal={d.proof.photos_original} registry={d.proof.registry} />
+              </section>
+            )}
+
+            {d.verdict === "revoked" && (
+              <p className="rounded-[16px] bg-white p-6 text-sm text-ink-600 border border-sand-200">
+                {t("revoked_body", { date: d.proof.revoked_on || "" })}
+              </p>
+            )}
+
+            {/* Unit's Journey */}
+            <section className="rounded-[20px] border border-sand-200/90 bg-white p-6 shadow-xs">
+              <h2 className="font-serif text-xl font-medium text-ink-950 mb-4">
+                {t("journey")}
+              </h2>
+              <ol className="relative ms-3 border-s-2 border-sand-200/90">
+                {d.journey.map((j, i) => (
+                  <li key={i} className="mb-4 ms-5 last:mb-0">
+                    <span className="absolute -start-[9px] mt-1.5 size-4 rounded-full border-2 border-white bg-terracotta-800" />
+                    <p className="font-serif text-[15px] font-semibold text-ink-950">
+                      {t(`event.${j.event}`, { city: j.city || "" })}
+                    </p>
+                    <p className="text-xs text-ink-500 font-mono mt-0.5">{j.date}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            {/* Market Context */}
+            {d.market_context && (
+              <div className="rounded-[16px] border border-peacock-200/70 bg-peacock-50/60 p-4 text-xs sm:text-sm text-peacock-800 font-serif">
+                {t("market", { low: d.market_context.low, high: d.market_context.high })}
               </div>
             )}
-          </section>
-        )}
-        {d.verdict === "revoked" && <p className="rounded-[12px] bg-white p-4 text-ink-600">{t("revoked_body", { date: d.proof.revoked_on || "" })}</p>}
 
-        {/* 5. This unit's journey */}
-        <section className="rounded-[16px] bg-white p-4">
-          <h2 className="font-display mb-3 text-xl">{t("journey")}</h2>
-          <ol className="relative ms-3 border-s-2 border-ink-100">
-            {d.journey.map((j, i) => (
-              <li key={i} className="mb-4 ms-5 last:mb-0">
-                <span className="absolute -start-[9px] mt-1.5 size-4 rounded-full border-2 border-white bg-indigo-900" />
-                <p className="font-semibold">{t(`event.${j.event}`, { city: j.city || "" })}</p>
-                <p className="text-sm text-ink-600">{j.date}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* 6. Market context (verified only) */}
-        {d.market_context && <p className="rounded-[12px] bg-peacock-50 p-4 text-[15px] text-peacock-600">{t("market", { low: d.market_context.low, high: d.market_context.high })}</p>}
-
-        {/* 7. Action */}
-        <section className="flex flex-col gap-2">
-          {d.piece.available ? (
-            <Link href={`/p/${d.piece.code}`} className="flex min-h-12 items-center justify-center rounded-[10px] bg-indigo-900 px-5 font-semibold text-white">
-              {t("buy", { price: inr(d.piece.price_inr) })}
-            </Link>
-          ) : (
-            <Link href={`/p/${d.piece.code}`} className="flex min-h-12 items-center justify-center rounded-[10px] bg-indigo-900 px-5 font-semibold text-white">
-              {t("request_again")}
-            </Link>
-          )}
-          {maker && (
-            <Link href={`/m/${maker.handle}`} className="flex min-h-12 items-center justify-center rounded-[10px] border-2 border-indigo-900 px-5 font-semibold text-indigo-900">
-              {t("more_from", { name: firstName })}
-            </Link>
-          )}
-        </section>
-
-        {/* 8. Report */}
-        <footer className="flex flex-col items-center gap-2 py-4 text-center">
-          <ReportButton code={d.code} labels={{ link: t("report"), sent: t("report_sent"), prompt: t("report_prompt") }} />
-          <Link href="/verification-explained" className="text-sm text-indigo-900 underline">{t("how_it_works")}</Link>
-        </footer>
+            {/* Verification Footer & Report Button */}
+            <footer className="flex flex-col items-center gap-3 pt-4 text-center">
+              <ReportButton code={d.code} labels={{ link: t("report"), sent: t("report_sent"), prompt: t("report_prompt") }} />
+              <Link href="/verification-explained" className="text-xs font-semibold text-terracotta-800 hover:underline inline-flex items-center gap-1">
+                {t("how_it_works")} <ArrowRight className="size-3" />
+              </Link>
+            </footer>
+          </div>
+        </div>
       </main>
     </div>
   );
