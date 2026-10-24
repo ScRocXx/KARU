@@ -229,9 +229,10 @@ async def refresh_benchmark(db: AsyncSession, d: dict, *, listing_id: uuid.UUID 
     bm.provider = web.name
     for klass in ("handmade", "replica"):
         s = stats[klass]
-        setattr(bm, f"{klass}_p25", Decimal(str(round(s[0], 2))) if s else None)
-        setattr(bm, f"{klass}_median", Decimal(str(round(s[1], 2))) if s else None)
-        setattr(bm, f"{klass}_p75", Decimal(str(round(s[2], 2))) if s else None)
+        # Market ranges are guidance, not quotes: whole ₹10 steps read better than ₹2,362.50.
+        setattr(bm, f"{klass}_p25", Decimal(int(round(s[0], -1))) if s else None)
+        setattr(bm, f"{klass}_median", Decimal(int(round(s[1], -1))) if s else None)
+        setattr(bm, f"{klass}_p75", Decimal(int(round(s[2], -1))) if s else None)
     bm.sample_size_handmade, bm.sample_size_replica = counts["handmade"], counts["replica"]
     bm.refreshed_at = now
     bm.expires_at = now + timedelta(hours=cfg["cache_hours"])

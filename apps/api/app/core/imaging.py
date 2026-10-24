@@ -242,17 +242,17 @@ def encode(img: Image.Image, fmt: str = "JPEG", quality_: int = 82) -> bytes:
 
 
 def variants(img: Image.Image, sizes: tuple[int, ...] = (400, 800, 1600)) -> dict[str, bytes]:
-    """4:5 and 1:1 crops at 400/800/1600 px wide, WebP + JPEG fallback. No EXIF is written."""
+    """4:5 and 1:1 crops keyed 400/800/1600 (capped at the photo width), WebP + JPEG. No EXIF is written."""
     out: dict[str, bytes] = {}
     for ratio_name, (rw, rh) in (("4x5", (4, 5)), ("1x1", (1, 1))):
         cropped = crop_to_ratio(img, rw, rh)
-        for width in sizes:
-            if cropped.width < width and width != sizes[0]:
-                continue
+        for width_target in sizes:
+            # Never upscale: a size larger than the photo is emitted at the photo's own width.
+            width = min(width_target, cropped.width)
             height = int(width * rh / rw)
             resized = cropped.resize((width, height), Image.Resampling.LANCZOS)
-            out[f"{width}_{ratio_name}.webp"] = encode(resized, "WEBP", 80)
-            out[f"{width}_{ratio_name}.jpg"] = encode(resized, "JPEG", 82)
+            out[f"{width_target}_{ratio_name}.webp"] = encode(resized, "WEBP", 80)
+            out[f"{width_target}_{ratio_name}.jpg"] = encode(resized, "JPEG", 82)
     return out
 
 

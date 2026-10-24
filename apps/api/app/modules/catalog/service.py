@@ -73,9 +73,9 @@ def media_urls(m: Media) -> dict:
     return {
         "id": str(m.id),
         "thumb": u("400_4x5.webp") or u("400_4x5.jpg"),
-        "card": u("800_4x5.webp") or u("800_4x5.jpg") or u("400_4x5.jpg"),
-        "large": u("1600_4x5.webp") or u("1600_4x5.jpg") or u("800_4x5.jpg"),
-        "square": u("800_1x1.webp") or u("800_1x1.jpg"),
+        "card": u("800_4x5.webp") or u("800_4x5.jpg") or u("400_4x5.webp") or u("400_4x5.jpg"),
+        "large": u("1600_4x5.webp") or u("1600_4x5.jpg") or u("800_4x5.webp") or u("800_4x5.jpg") or u("400_4x5.jpg"),
+        "square": u("800_1x1.webp") or u("800_1x1.jpg") or u("400_1x1.jpg"),
         "jpg": u("800_4x5.jpg") or u("400_4x5.jpg"),
         "width": m.width, "height": m.height,
     }
