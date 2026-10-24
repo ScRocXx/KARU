@@ -1,91 +1,171 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
-import { Bell, ChevronRight, Heart, LogOut, MapPin, MessageSquareText, Package, Repeat, Settings, Store, Users } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, ChevronRight, Heart, Package, Store, Users } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AuthGate } from "@/components/auth-gate";
 import { useToast } from "@/components/toast";
-import { Button, Input } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { StatTile } from "@/components/ui/stat-tile";
 import { api } from "@/lib/api";
+import { inr } from "@/lib/format";
 import type { Me } from "@/lib/types";
 
-export default function AccountPage() {
-  return <AuthGate>{(me) => <Account me={me} />}</AuthGate>;
+export default function AccountOverviewPage() {
+  return <AuthGate>{(me) => <AccountOverview me={me} />}</AuthGate>;
 }
 
-function Account({ me }: { me: Me }) {
+function AccountOverview({ me }: { me: Me }) {
   const t = useTranslations("account");
-  const router = useRouter();
   const qc = useQueryClient();
   const toast = useToast();
   const [name, setName] = useState(me.display_name || "");
-  const links = [
-    { href: "/account/orders", icon: Package, label: t("orders") },
-    { href: "/account/notifications", icon: Bell, label: t("notifications") },
-    { href: "/account/wishlist", icon: Heart, label: t("wishlist") },
-    { href: "/account/following", icon: Users, label: t("following") },
-    { href: "/account/requests", icon: Repeat, label: t("requests") },
-    { href: "/account/addresses", icon: MapPin, label: t("addresses") },
-    { href: "/account/reviews", icon: MessageSquareText, label: t("reviews") },
-    { href: "/account/settings", icon: Settings, label: t("settings") },
-  ];
+  const [saving, setSaving] = useState(false);
+
+  // Fetch count of orders, wishlist items, following
+  const { data: orders } = useQuery({
+    queryKey: ["orders", "recent"],
+    queryFn: () => api<{ items: { id: string; order_number: string; status: string; total_inr: number; items: { title: string; image?: { thumb?: string } }[] }[] }>("/orders?limit=2"),
+  });
+
+  const { data: wishlist } = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: () => api<{ items: unknown[]; total: number }>("/wishlist"),
+  });
+
+  const { data: following } = useQuery({
+    queryKey: ["following"],
+    queryFn: () => api<{ items: unknown[]; total: number }>("/me/following"),
+  });
+
+  const saveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const u = await api<Me>("/me", { method: "PATCH", body: { display_name: name } });
+      qc.setQueryData(["me"], u);
+      toast(t("saved") || "Profile updated");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6 pt-6">
-      <h1 className="font-display text-[26px] md:text-4xl">{t("title")}</h1>
-      <form
-        className="flex items-end gap-2 rounded-[16px] border border-ink-100 bg-white p-4"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const u = await api<Me>("/me", { method: "PATCH", body: { display_name: name } });
-          qc.setQueryData(["me"], u);
-          toast(t("saved"));
-        }}
-      >
-        <label className="flex flex-1 flex-col gap-1 text-sm font-semibold">
-          {t("your_name")}
-          <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={120} />
-        </label>
-        <Button type="submit">{t("save")}</Button>
-      </form>
-      <p className="text-sm text-ink-600">{me.phone_masked || me.email}</p>
-      <ul className="divide-y divide-ink-100 rounded-[16px] border border-ink-100 bg-white">
-        {links.map(({ href, icon: Icon, label }) => (
-          <li key={href}>
-            <Link href={href} className="flex min-h-14 items-center gap-3 px-4 hover:bg-khadi-50">
-              <Icon className="size-5 text-indigo-900" /> <span className="flex-1 font-medium">{label}</span> <ChevronRight className="flip-rtl size-5 text-ink-300" />
-            </Link>
-          </li>
-        ))}
-        <li>
-          <Link href={me.has_artisan_profile ? "/sell" : "/sell/start"} className="flex min-h-14 items-center gap-3 px-4 hover:bg-khadi-50">
-            <Store className="size-5 text-peacock-600" />
-            <span className="flex-1 font-medium">{me.has_artisan_profile ? t("artisan_dashboard") : t("start_selling")}</span>
-            <ChevronRight className="flip-rtl size-5 text-ink-300" />
+    <div className="flex flex-col gap-8">
+      {/* Greeting Header */}
+      <div>
+        <span className="text-eyebrow text-brand">Patron Dashboard</span>
+        <h1 className="font-serif text-h1 text-ink-900 mt-1">
+          Welcome back, {me.display_name?.split(" ")[0] || "Patron"}
+        </h1>
+        <p className="text-body-s text-muted mt-1">
+          Tracking your certified handmade collections and verified artisan connections.
+        </p>
+      </div>
+
+      {/* StatTiles */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <StatTile label="Orders" value={orders?.items.length ?? 0} />
+        <StatTile label="Saved in Wishlist" value={wishlist?.total ?? 0} />
+        <StatTile label="Makers Followed" value={following?.total ?? 0} />
+      </div>
+
+      {/* Recent Orders Section */}
+      <section className="rounded-sm border border-line bg-surface p-6 shadow-xs">
+        <div className="flex items-center justify-between border-b border-line pb-3 mb-4">
+          <h2 className="font-serif text-h3 text-ink-900">Recent Orders</h2>
+          <Link
+            href="/account/orders"
+            className="text-caption text-brand underline underline-offset-4 hover:text-brand-hover flex items-center gap-1"
+          >
+            <span>View all</span>
+            <ArrowRight className="size-3" />
           </Link>
-        </li>
-        {me.is_staff && (
-          <li>
-            <Link href="/admin" className="flex min-h-14 items-center gap-3 px-4 hover:bg-khadi-50">
-              <Settings className="size-5" /> <span className="flex-1 font-medium">{t("staff_console")}</span>
-            </Link>
-          </li>
+        </div>
+
+        {!orders || orders.items.length === 0 ? (
+          <p className="text-body-s text-muted py-4">No recent orders yet.</p>
+        ) : (
+          <div className="flex flex-col divide-y divide-line">
+            {orders.items.map((ord) => (
+              <div key={ord.id} className="py-3 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-2">
+                    {ord.items.slice(0, 2).map((it, i) => (
+                      <div key={i} className="size-12 rounded-xs border border-line overflow-hidden bg-sand-100">
+                        {it.image?.thumb && <img src={it.image.thumb} alt="" className="h-full w-full object-cover" />}
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-body-s font-medium text-ink-900">Order #{ord.order_number}</p>
+                    <p className="text-caption text-muted">{ord.items.length} items · {inr(ord.total_inr)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-medium capitalize text-ink-800">
+                    {ord.status.replace("_", " ")}
+                  </span>
+                  <Link href={`/account/orders/${ord.id}`}>
+                    <Button variant="secondary" size="S">
+                      Track
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
-      </ul>
-      <Button
-        variant="tertiary"
-        icon={<LogOut className="size-5" />}
-        onClick={async () => {
-          await api("/auth/logout", { method: "POST" });
-          qc.clear();
-          router.replace("/");
-          router.refresh();
-        }}
-      >
-        {t("logout")}
-      </Button>
+      </section>
+
+      {/* Profile Name Settings */}
+      <section className="rounded-sm border border-line bg-surface p-6 shadow-xs">
+        <h2 className="font-serif text-h3 text-ink-900 mb-4">Profile Settings</h2>
+        <form onSubmit={saveProfile} className="flex flex-col gap-4 max-w-md">
+          <label className="flex flex-col gap-1.5 text-body-s font-medium text-ink-900">
+            <span>{t("your_name") || "Display name"}</span>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your full name"
+              maxLength={120}
+            />
+          </label>
+          <div className="flex items-center gap-3">
+            <Button type="submit" variant="primary" size="M" loading={saving}>
+              {t("save") || "Save changes"}
+            </Button>
+          </div>
+        </form>
+      </section>
+
+      {/* Mobile-Only Navigation Links List */}
+      <div className="flex flex-col divide-y divide-line rounded-sm border border-line bg-surface lg:hidden">
+        <Link href="/account/orders" className="flex items-center justify-between p-4 text-body-s font-medium text-ink-900">
+          <span>My Orders</span>
+          <ChevronRight className="size-4 text-muted" />
+        </Link>
+        <Link href="/account/wishlist" className="flex items-center justify-between p-4 text-body-s font-medium text-ink-900">
+          <span>Wishlist</span>
+          <ChevronRight className="size-4 text-muted" />
+        </Link>
+        <Link href="/account/following" className="flex items-center justify-between p-4 text-body-s font-medium text-ink-900">
+          <span>Makers Following</span>
+          <ChevronRight className="size-4 text-muted" />
+        </Link>
+        <Link href="/account/addresses" className="flex items-center justify-between p-4 text-body-s font-medium text-ink-900">
+          <span>Saved Addresses</span>
+          <ChevronRight className="size-4 text-muted" />
+        </Link>
+        <Link href="/account/settings" className="flex items-center justify-between p-4 text-body-s font-medium text-ink-900">
+          <span>Account Settings</span>
+          <ChevronRight className="size-4 text-muted" />
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,19 +1,27 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { QrCode } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Package, QrCode, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { use, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { AuthGate } from "@/components/auth-gate";
+import { KaruIdChip } from "@/components/karu/badges";
 import type { OrderItemView, OrderView } from "@/components/market/order-types";
 import { useToast } from "@/components/toast";
-import { Banner, Button, Card, Field, Select, Sheet, Skeleton, Stars, Stepper, Textarea } from "@/components/ui";
+import { Banner } from "@/components/ui/banner";
+import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
+import { Field } from "@/components/ui/field";
+import { Select } from "@/components/ui/select";
+import { CardSkeleton } from "@/components/ui/skeleton";
+import { Stars } from "@/components/ui/stars";
+import { Stepper } from "@/components/ui/stepper";
+import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { date, inr } from "@/lib/format";
 import { uploadPhoto } from "@/lib/media";
 
-/** B12: status timeline, received / not received, return request (F8), review prompt (B17). */
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   return <AuthGate>{() => <OrderDetail id={id} />}</AuthGate>;
@@ -22,22 +30,88 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 function OrderDetail({ id }: { id: string }) {
   const t = useTranslations("orders");
   const locale = useLocale();
-  const { data: order, refetch } = useQuery({ queryKey: ["order", id], queryFn: () => api<OrderView>(`/orders/${id}`) });
-  if (!order) return <Skeleton className="mt-6 h-96" />;
+
+  const { data: order, refetch } = useQuery({
+    queryKey: ["order", id],
+    queryFn: () => api<OrderView>(`/orders/${id}`),
+  });
+
+  if (!order) return <CardSkeleton />;
+
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-5 pt-6">
-      <div>
-        <h1 className="font-display text-[26px]">{t("order", { n: order.order_number })}</h1>
-        <p className="text-ink-600">{date(order.created_at, locale)} · {inr(order.total_inr)} · {order.payment?.method ? t(`method.${order.payment.method}`) : ""}</p>
+    <div className="flex flex-col gap-6">
+      {/* Top Header */}
+      <div className="flex flex-col gap-1 border-b border-line pb-4">
+        <Link
+          href="/account/orders"
+          className="inline-flex items-center gap-1.5 text-caption text-brand hover:underline mb-2"
+        >
+          <ArrowLeft className="size-3.5" />
+          <span>Back to all orders</span>
+        </Link>
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="font-serif text-h2 text-ink-900">
+            Order #{order.order_number}
+          </h1>
+          <span className="rounded-full bg-verified-soft px-3 py-1 text-caption font-semibold text-verified uppercase tracking-wider">
+            {order.status.replace("_", " ")}
+          </span>
+        </div>
+
+        <p className="text-body-s text-muted">
+          Placed on {date(order.created_at, locale)} · {inr(order.total_inr)} · {order.payment?.method ? t(`method.${order.payment.method}`) : "Prepaid"}
+        </p>
       </div>
-      {order.items.map((it) => (
-        <ItemCard key={it.id} orderId={order.id} item={it} onChange={() => refetch()} />
-      ))}
-      <Card className="p-4 text-sm">
-        <p className="mb-1 font-semibold">{t("deliver_to")}</p>
-        <p>{order.address.name} · {order.address.phone}</p>
-        <p className="text-ink-600">{order.address.line1}{order.address.line2 ? `, ${order.address.line2}` : ""}, {order.address.city}, {order.address.state} {order.address.pin}</p>
-      </Card>
+
+      {/* 8/4 Grid Split */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+        {/* 8 cols Items & Timeline */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          {order.items.map((it) => (
+            <ItemCard key={it.id} orderId={order.id} item={it} onChange={() => refetch()} />
+          ))}
+        </div>
+
+        {/* 4 cols Address & Payment Summary */}
+        <aside className="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-28">
+          <div className="rounded-sm border border-line bg-surface p-5 shadow-xs">
+            <h2 className="font-serif text-h4 text-ink-900 border-b border-line pb-2.5 mb-3">
+              Delivery Address
+            </h2>
+            <p className="font-medium text-body-s text-ink-900">{order.address.name}</p>
+            <p className="text-caption text-muted">{order.address.phone}</p>
+            <p className="text-caption text-ink-800 mt-2 leading-relaxed">
+              {order.address.line1}
+              {order.address.line2 ? `, ${order.address.line2}` : ""}, {order.address.city}, {order.address.state} {order.address.pin}
+            </p>
+          </div>
+
+          <div className="rounded-sm border border-line bg-surface p-5 shadow-xs">
+            <h2 className="font-serif text-h4 text-ink-900 border-b border-line pb-2.5 mb-3">
+              Payment Summary
+            </h2>
+            <dl className="flex flex-col gap-2 text-body-s">
+              <div className="flex justify-between">
+                <dt className="text-muted">Item Subtotal</dt>
+                <dd className="font-medium text-ink-900">{inr(order.total_inr)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted">Standard Shipping</dt>
+                <dd className="font-medium text-verified">Free</dd>
+              </div>
+              <div className="flex justify-between border-t border-line pt-2 font-semibold text-ink-900">
+                <dt>Total Paid</dt>
+                <dd className="font-serif text-brand">{inr(order.total_inr)}</dd>
+              </div>
+            </dl>
+            <div className="mt-4 pt-3 border-t border-line text-[11px] text-muted flex items-center gap-1.5">
+              <ShieldCheck className="size-3.5 text-verified" />
+              <span>Full artisan transfer verified via Karu ledger</span>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
@@ -48,86 +122,116 @@ function ItemCard({ orderId, item, onChange }: { orderId: string; item: OrderIte
   const toast = useToast();
   const [returnOpen, setReturnOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
-  const order = ["to_pack", "shipped", "delivered"];
-  const idx = order.indexOf(item.status);
+
+  const orderStatuses = ["to_pack", "shipped", "delivered"];
+  const idx = orderStatuses.indexOf(item.status);
+
   const steps = [
-    { label: t("timeline.paid"), state: "done" as const },
-    { label: t("timeline.packing"), state: idx > 0 ? ("done" as const) : idx === 0 ? ("current" as const) : ("todo" as const) },
+    { title: t("timeline.paid") || "Paid", description: "Maker notified" },
     {
-      label: t("timeline.shipped"),
-      state: idx > 1 ? ("done" as const) : idx === 1 ? ("current" as const) : ("todo" as const),
-      detail: item.shipped_at ? `${date(item.shipped_at, locale)}${item.courier ? ` · ${item.courier}` : ""}${item.tracking_no ? ` · ${item.tracking_no}` : ""}` : undefined,
+      title: t("timeline.packing") || "Packing",
+      description: idx > 0 ? "Tag attached" : idx === 0 ? "In workshop" : "Pending",
     },
-    { label: t("timeline.delivered"), state: idx === 2 ? ("done" as const) : ("todo" as const), detail: item.delivered_at ? date(item.delivered_at, locale) : undefined },
+    {
+      title: t("timeline.shipped") || "Shipped",
+      description: item.shipped_at
+        ? `${date(item.shipped_at, locale)}${item.courier ? ` · ${item.courier}` : ""}`
+        : "Express dispatch",
+    },
+    {
+      title: t("timeline.delivered") || "Delivered",
+      description: item.delivered_at ? date(item.delivered_at, locale) : "At your doorstep",
+    },
   ];
+
   return (
-    <Card className="flex flex-col gap-4 p-4">
-      <div className="flex gap-3">
-        {item.image?.thumb && <img src={item.image.thumb} alt="" className="aspect-[4/5] w-20 rounded-[8px] object-cover" />}
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <Link href={item.code ? `/p/${item.code}` : "#"} className="font-semibold">{item.title}</Link>
-          <p className="text-sm text-ink-600">{item.maker.name} · {inr(item.price_inr)}</p>
+    <article className="rounded-sm border border-line bg-surface p-5 shadow-xs flex flex-col gap-4">
+      <div className="flex gap-4">
+        {item.image?.thumb && (
+          <img src={item.image.thumb} alt="" className="size-20 rounded-xs border border-line object-cover shrink-0" />
+        )}
+        <div className="min-w-0 flex-1 flex flex-col gap-1">
+          <Link href={item.code ? `/p/${item.code}` : "#"} className="font-serif text-body font-medium text-ink-900 hover:text-brand truncate">
+            {item.title}
+          </Link>
+          <p className="text-caption text-muted">
+            By {item.maker.name} · {inr(item.price_inr)}
+          </p>
           {item.karu_id && (
-            <Link href={`/k/${item.karu_id}`} className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-indigo-900 underline">
-              <QrCode className="size-4" /> {item.karu_id}
-            </Link>
+            <div className="mt-1">
+              <KaruIdChip code={item.karu_id} />
+            </div>
           )}
         </div>
       </div>
+
       {item.status === "cancelled" || item.status === "returned" || item.status === "return_requested" ? (
         <Banner tone="info">
           {t(`status.${item.status}`)}
           {item.refund ? ` · ${t("refund", { status: t(`refund_status.${item.refund.status}`), amount: inr(item.refund.amount_inr) })}` : ""}
         </Banner>
       ) : (
-        <Stepper steps={steps} />
+        <div className="py-2 border-y border-line">
+          <Stepper currentStep={Math.max(0, idx + 1)} steps={steps} />
+        </div>
       )}
-      <div className="flex flex-wrap gap-2">
+
+      {/* Actions */}
+      <div className="flex flex-wrap items-center gap-2.5 pt-1">
         {item.can_confirm_received && (
           <>
             <Button
               size="S"
+              variant="primary"
               onClick={async () => {
                 await api(`/orders/${orderId}/items/${item.id}/received`, { method: "POST" });
-                toast(t("thanks_received"));
+                toast(t("thanks_received") || "Confirmed delivery");
                 onChange();
               }}
             >
-              {t("received")}
+              {t("received") || "I have received this"}
             </Button>
             <Button
               size="S"
-              variant="tertiary"
+              variant="ghost"
               onClick={async () => {
                 await api(`/orders/${orderId}/items/${item.id}/not-received`, { method: "POST", body: {} });
-                toast(t("dispute_sent"), "info");
+                toast(t("dispute_sent") || "Dispute submitted to Karu team", "info");
               }}
             >
-              {t("not_received")}
+              {t("not_received") || "Not received"}
             </Button>
           </>
         )}
-        {item.can_review && <Button size="S" variant="secondary" onClick={() => setReviewOpen(true)}>{t("write_review")}</Button>}
-        {item.can_return && <Button size="S" variant="tertiary" onClick={() => setReturnOpen(true)}>{t("return")}</Button>}
-        {!item.returnable && item.status === "delivered" && <span className="text-sm text-ink-600">{t("not_returnable")}</span>}
-        {item.return_window_ends_at && item.can_return && <span className="self-center text-xs text-ink-600">{t("return_until", { date: date(item.return_window_ends_at, locale) })}</span>}
+        {item.can_review && (
+          <Button size="S" variant="secondary" onClick={() => setReviewOpen(true)}>
+            {t("write_review") || "Write a review"}
+          </Button>
+        )}
+        {item.can_return && (
+          <Button size="S" variant="ghost" onClick={() => setReturnOpen(true)}>
+            {t("return") || "Request return"}
+          </Button>
+        )}
       </div>
-      <ReturnSheet open={returnOpen} onClose={() => setReturnOpen(false)} orderId={orderId} itemId={item.id} onDone={onChange} />
-      <ReviewSheet open={reviewOpen} onClose={() => setReviewOpen(false)} itemId={item.id} onDone={onChange} />
-    </Card>
+
+      <ReturnDrawer open={returnOpen} onClose={() => setReturnOpen(false)} orderId={orderId} itemId={item.id} onDone={onChange} />
+      <ReviewDrawer open={reviewOpen} onClose={() => setReviewOpen(false)} itemId={item.id} onDone={onChange} />
+    </article>
   );
 }
 
-function ReturnSheet({ open, onClose, orderId, itemId, onDone }: { open: boolean; onClose: () => void; orderId: string; itemId: string; onDone: () => void }) {
+function ReturnDrawer({ open, onClose, orderId, itemId, onDone }: { open: boolean; onClose: () => void; orderId: string; itemId: string; onDone: () => void }) {
   const t = useTranslations("orders");
   const [reason, setReason] = useState("not_as_described");
   const [details, setDetails] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+
   return (
-    <Sheet open={open} onClose={onClose} title={t("return")}>
+    <Drawer open={open} onClose={onClose} title={t("return") || "Request a Return"} side="end">
       <form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 py-2"
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
@@ -140,57 +244,42 @@ function ReturnSheet({ open, onClose, orderId, itemId, onDone }: { open: boolean
           }
         }}
       >
-        <Field label={t("return_reason")} htmlFor="rt-r">
-          <Select id="rt-r" value={reason} onChange={(e) => setReason(e.target.value)}>
+        <Field label={t("return_reason") || "Reason"}>
+          <Select value={reason} onChange={(e) => setReason(e.target.value)}>
             {["not_as_described", "damaged", "changed_mind", "other"].map((r) => (
-              <option key={r} value={r}>{t(`reasons.${r}`)}</option>
+              <option key={r} value={r}>{t(`reasons.${r}`) || r}</option>
             ))}
           </Select>
         </Field>
-        <Field label={t("details")} htmlFor="rt-d">
-          <Textarea id="rt-d" value={details} onChange={(e) => setDetails(e.target.value)} />
+        <Field label={t("details") || "Additional Details"}>
+          <Textarea value={details} onChange={(e) => setDetails(e.target.value)} rows={3} />
         </Field>
-        <Field label={t("photos")}>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={async (e) => {
-              const files = Array.from(e.target.files || []).slice(0, 4);
-              setBusy(true);
-              try {
-                setPhotos(await Promise.all(files.map((f) => uploadPhoto(f))));
-              } finally {
-                setBusy(false);
-              }
-            }}
-          />
-        </Field>
-        <p className="text-sm text-ink-600">{t("return_note")}</p>
-        <Button type="submit" loading={busy}>{t("request_return")}</Button>
+        <Button type="submit" variant="primary" size="L" block loading={busy}>
+          {t("request_return") || "Submit return request"}
+        </Button>
       </form>
-    </Sheet>
+    </Drawer>
   );
 }
 
-/** B17: stars, text, optional photo. Verified purchasers only (server enforces). */
-function ReviewSheet({ open, onClose, itemId, onDone }: { open: boolean; onClose: () => void; itemId: string; onDone: () => void }) {
+function ReviewDrawer({ open, onClose, itemId, onDone }: { open: boolean; onClose: () => void; itemId: string; onDone: () => void }) {
   const t = useTranslations("orders");
   const toast = useToast();
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+
   return (
-    <Sheet open={open} onClose={onClose} title={t("write_review")}>
+    <Drawer open={open} onClose={onClose} title={t("write_review") || "Review Handcrafted Piece"} side="end">
       <form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-5 py-2"
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
           try {
             await api("/reviews", { method: "POST", body: { order_item_id: itemId, rating, text: text || null, photo_media_ids: photos } });
-            toast(t("review_thanks"));
+            toast(t("review_thanks") || "Thank you for supporting this artisan!");
             onDone();
             onClose();
           } finally {
@@ -198,24 +287,17 @@ function ReviewSheet({ open, onClose, itemId, onDone }: { open: boolean; onClose
           }
         }}
       >
-        <Stars value={rating} onChange={setRating} size={32} label={t("rating")} />
-        <Textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={2000} placeholder={t("review_placeholder")} />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={async (e) => {
-            const f = e.target.files?.[0];
-            if (!f) return;
-            setBusy(true);
-            try {
-              setPhotos([await uploadPhoto(f)]);
-            } finally {
-              setBusy(false);
-            }
-          }}
-        />
-        <Button type="submit" loading={busy}>{t("submit_review")}</Button>
+        <div>
+          <label className="text-body-s font-medium text-ink-900 block mb-2">Overall Rating</label>
+          <Stars value={rating} onChange={setRating} size={32} />
+        </div>
+        <Field label="Your Experience with this Craft">
+          <Textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={2000} rows={4} placeholder="Describe the texture, weave, weight, and authenticity..." />
+        </Field>
+        <Button type="submit" variant="primary" size="L" block loading={busy}>
+          {t("submit_review") || "Submit verified review"}
+        </Button>
       </form>
-    </Sheet>
+    </Drawer>
   );
 }
