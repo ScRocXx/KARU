@@ -3,12 +3,12 @@
 <div align="center">
 
 ```
-  ██████╗ ███████╗██████╗ ██╗   ██╗    ███████╗██╗
-  ██╔══██╗██╔════╝██╔══██╗██║   ██║    ██╔════╝██║
-  ██████╔╝█████╗  ██████╔╝██║   ██║    █████╗  ██║
-  ██╔══██╗██╔══╝  ██╔══██╗██║   ██║    ██╔══╝  ██║
-  ██║  ██║███████╗██║  ██║╚██████╔╝    ██║     ██║
-  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝     ╚═╝
+  ██╗  ██╗ █████╗ ██████╗ ██╗   ██╗     █████╗ ██╗
+  ██║ ██╔╝██╔══██╗██╔══██╗██║   ██║    ██╔══██╗██║
+  █████╔╝ ███████║██████╔╝██║   ██║    ███████║██║
+  ██╔═██╗ ██╔══██║██╔══██╗██║   ██║    ██╔══██║██║
+  ██║  ██╗██║  ██║██║  ██║╚██████╔╝    ██║  ██║██║
+  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝     ╚═╝  ╚═╝╚═╝
 ```
 
 ### Sovereign Physical-Digital Provenance & Multimodal AI Marketplace for Indian Artisans
@@ -147,26 +147,26 @@ sequenceDiagram
 ---
 
 ### 2. 🛡️ Tri-Layer Multimodal Verification Engine
-Karu enforces a strict, multi-tiered authenticity verification pipeline designed to distinguish claimed handmade processes from machine-made alternatives while honoring artisan realities.
+Karu enforces a multi-tiered verification pipeline designed to distinguish genuine handmade methods from machine-made replicas while honoring artisan realities.
 
 ```mermaid
 flowchart TD
     START["📦 Batch Ingestion\n(Listing Version + Media Assets)"] --> L1 & L2 & L3
 
-    subgraph Layer1[" Layer 1: Craft-Specific Visual Assessment "]
-        L1["Craft-Specific Computer Vision\n• Weaving: Gamucha.AI / VGG16 Handloom vs Powerloom\n• Woodwork: Toolmark Morphology & Groove Profiles\n• Metalwork: Working Marks & Seam/Join Topography"]
+    subgraph Layer1[" Layer 1: Craft-Specific Visuals "]
+        L1["Surface & Geometric Forensics\n• Weaving: Gamucha.AI / VGG16 (Handloom vs Powerloom)\n• Woodwork: Toolmark Morphology & Groove Profiles\n• Metalwork: Working Marks & Seam/Join Topography"]
         L1_HASH["Originality Verification\n(pHash Hamming ≤ 8 · Web Reverse Match)"]
         L1 --> L1_HASH --> S_L1["Score L1 (0–100)"]
     end
 
-    subgraph Layer2[" Layer 2: Identity & Official Records "]
-        L2{"Records State"}
+    subgraph Layer2[" Layer 2: Sovereign Records "]
+        L2{"Records Check"}
         L2 -- "Found" --> L2_CALC["Pehchan Artisan ID · Aadhaar KYC\nGI Authorized User · Transaction History"]
-        L2 -- "Not Found / Inapplicable" --> L2_CONST["Neutral Baseline\n(NEW_ARTISAN_L2_CONSTANT = 50)\nDistinguish Not Found vs Not Applicable"]
+        L2 -- "Not Found / Inapplicable" --> L2_CONST["Neutral Baseline\n(NEW_ARTISAN_L2_CONSTANT = 50)\nMissing Records ≠ Counterfeit"]
         L2_CALC & L2_CONST --> S_L2["Score L2 (0–100)"]
     end
 
-    subgraph Layer3[" Layer 3: Making-Process Evidence & Forensics "]
+    subgraph Layer3[" Layer 3: Process Evidence Forensics "]
         L3{"Process Evidence Submitted?"}
         L3 -- Yes --> L3_VID["Multi-Signal Forensic Cross-Check:\n• LightGlue: Local Feature Correspondences\n• CLIP-Style: Semantic Context Alignment\n• EXIF & In-App Capture Continuity\n• Intermediates vs Final Consistency"]
         L3 -- No --> L3_ZERO["Score = 0\n(Hard Floor Failure)"]
@@ -186,112 +186,33 @@ flowchart TD
 
 $$\text{Karu Score} = 0.35 \cdot L_1 + 0.25 \cdot L_2 + 0.40 \cdot L_3$$
 
-| Layer | Domain | Weight | Hard Minimum | Primary Verification Vectors |
+| Layer | Domain | Weight | Floor | Primary Verification Vectors |
 |---|---|:---:|:---:|---|
 | **L1** | Craft-Specific Visuals | **35%** | $\ge 40$ | Toolmark morphology, selvedge/weave irregularity, pHash anti-theft crawl |
-| **L2** | Identity & Official Records | **25%** | Baseline 50 | DigiLocker Aadhaar, DC Handicrafts Pehchan registry, GI status, reviews |
+| **L2** | Identity & Official Records | **25%** | Base 50 | DigiLocker Aadhaar, DC Handicrafts Pehchan registry, GI status, reviews |
 | **L3** | Process Evidence Forensics | **40%** | $\ge 50$ | LightGlue local matching, CLIP similarity, capture continuity, WIP consistency |
 
 > [!IMPORTANT]
-> **Mathematical Integrity by Design:** Because $L_3$ holds a 40% weight and requires a minimum floor of 50, **it is mathematically impossible for any listing to achieve Karu Verified status without authentic making-process evidence** $(0.35 \times 100 + 0.25 \times 100 + 0 = 60 < 70)$.
+> **Mathematical Guardrail:** Because $L_3$ carries a 40% weight and requires a minimum floor of 50, **it is mathematically impossible for any listing to be Karu Verified without authentic process evidence** $(0.35 \times 100 + 0.25 \times 100 + 0 = 60 < 70)$.
 
 ---
 
-#### 🔍 Layer 1 — Craft-Specific Visual Assessment
+#### 🔍 Layer Breakdown (Key Principles & Forensics)
 
-Layer 1 operates as a **craft-specific visual assessment** engineered to evaluate surface and geometric clues of claimed handmade production against machine-made or power-loom alternatives, rather than relying on generic AI prompts asking whether an object "looks handmade."
+- **Layer 1 — Craft-Specific Visual Assessment (Beyond Generic AI):**
+  - *Weavers:* References Assamese gamucha textile research ([*Nature Scientific Reports*, 2024](https://www.nature.com/articles/s41598-024-58750-z)) using CNN / custom VGG16 models for handloom vs powerloom discrimination. Validated narrowly for specific weaves; prototype demonstrates intended workflow rather than universal fabric coverage.
+  - *Woodworkers:* Evaluates toolmark morphology (cutting orientation, carving depth profiles), recurring multi-axis CNC groove pitch, and surface topography vs hand relief.
+  - *Metal Artisans:* Inspects planishing hammer facets, hand-engraving micro-burrs, and seam braze transitions vs automated hydraulic stamping. (Hallmarking confirms purity, not handmade origin).
+  - *Core Principle:* Dedicated craft-specialized model heads; returns *inconclusive* when physical evidence is ambiguous.
 
-##### 1. Weavers: Gamucha.AI-Inspired Approach
-Drawing on research from [*“Handloomed fabrics recognition with deep learning”* (Nature Scientific Reports, 2024)](https://www.nature.com/articles/s41598-024-58750-z) on Assamese gamucha textiles, Karu architectures image-based deep learning (including CNN backbones and custom VGG16-based models) to distinguish genuine handloomed samples from powerloom imitations.
-- **Proposed Use:** Serves as a reference for narrow handloom-versus-powerloom discrimination. Results are not assumed to generalize universally across all fabric structures, yarn counts, or textile traditions without dedicated training sets. In early prototypes, the workflow demonstrates this architecture; trained validation must be completed before making production authenticity claims.
-- **Limitations:** Image resolution, lighting variance, fabric drape, mechanical finishing (calendaring/sizing), and unseen motifs directly affect feature maps. A model evaluated on gamucha weaves is not a universal textile authenticator.
+- **Layer 2 — Identity & Official Records (Supporting, Non-Punitive):**
+  - Corroborates DC Handicrafts Pehchan cards, GI registry status, and craft board records.
+  - *Inclusive Non-Penalization:* Many master artisans lack digital records. The system uses strict tri-state classification (`record found`, `record not found`, or `not applicable`). Missing records **never** trigger a counterfeit verdict.
 
-##### 2. Woodworkers: Hand-Carved vs. Machine/CNC-Made Assessment
-Analyzes surface micro-relief and geometric tool signatures rather than subjective visual appeal:
-- **Potential Signals to Investigate:**
-  - *Toolmark Morphology:* Cutting mark shapes, directionality, spacing variance, and carving depth profiles.
-  - *Repeated Geometry:* Recurring groove spacing, bit entry/exit signatures, and uniform pitch characteristic of multi-axis CNC toolpaths.
-  - *Surface Topography:* Micro-relief variation across grain boundaries; macro photography and 3D depth-profiling provide critical discrimination beyond flat RGB images.
-  - *Construction Details:* Mortise/tenon joints, joinery transitions, and undercut finishing assessed in context.
-- **Evaluation Protocol:**
-  1. Capture standardized macro views under raking light to emphasize surface relief.
-  2. Map local texture vectors, mark directionality, groove spacing, and repetitive cyclic patterns.
-  3. Where feasible, integrate depth/surface profilometry alongside 2D RGB imagery.
-  4. Benchmark against reference datasets: hand-carved, CNC/machine-routed, and hybrid/hand-finished pieces.
-  5. **Default to Inconclusive:** When physical evidence is ambiguous, return an inconclusive verdict rather than an erroneous classification.
-- **Limitations:** Skilled human artisans achieve high regularity; CNC pieces may be hand-sanded or hand-finished; intensive sanding removes diagnostic toolmarks. Hybrid creations must not be falsely flagged as counterfeit.
-
-##### 3. Metal Artisans: Hand-Worked vs. Machine-Made Assessment
-Evaluates structural features aligned with specific manufacturing claims (e.g., hand-hammered, cast, engraved, spun, or hand-finished):
-- **Potential Signals to Investigate:**
-  - *Hammering / Working Marks:* Planishing facets, overlap patterns, force variance, and radial distribution.
-  - *Engraving & Chasing:* Tool chatter, micro-burrs, hand-guided trajectory variance versus CNC laser/rotary engraving.
-  - *Repeated Geometry:* Mathematical mark repetition indicative of stamping, hydraulic pressing, or automated spinning.
-  - *Seams & Joins:* Braze/solder fillets, seam thickness transitions, and hand-filing marks.
-  - *Surface Topography:* Macro-texture and profilometry revealing working stress marks.
-- **Evaluation Protocol:**
-  1. Accurately capture claimed technique (hand-hammered, lost-wax cast, hand-chased, hand-spun).
-  2. Capture calibrated close-up details of load-bearing seams, internal surfaces, and decorative tooling.
-  3. Compare candidate texture and geometric variance against known artisan and industrial exemplars.
-  4. Validate across diverse craft clusters and hybrid finishing variations.
-  5. Designate as *inconclusive* when visual indicators fail to distinctly isolate the process.
-- **Limitations:** Cast or stamped blanks are frequently hand-chased; master metalworkers achieve remarkable symmetry; hammer facets can be mechanically simulated. Hallmarking verifies precious metal fineness, **not** handmade origin.
-
-> [!NOTE]
-> **Shared Layer 1 Principle:** A unified inspection pipeline utilizing craft-specialized model heads. A weaving model is never reused as a wood or metal classifier without dedicated domain calibration and validation. For evaluations and Q&A, Layer 1 represents craft-specific visual assessment designed to separate handmade methods from machine substitutes; prototype outputs demonstrate pipeline capability and require formal dataset validation before production deployment.
-
----
-
-#### 🏛️ Layer 2 — Identity & Official Records
-
-Layer 2 evaluates authoritative, external documentation to corroborate artisan claims, where accessible and legally verifiable:
-- **Scope of Records:** Government artisan registries (DC Handicrafts Pehchan cards), Geographical Indication (GI) authorized user registries, state handicraft board records, cooperative memberships, and institutional credentials.
-- **Core Operating Principles:**
-  - *Inclusive by Design:* Not every genuine master artisan possesses GI registration or a formal digital paper trail. The absence of records **must never** automatically flag an artisan or product as counterfeit.
-  - *Contextual GI Applicability:* GI status applies strictly to designated craft clusters/products and is not a universal mandate for authentic handmade goods.
-  - *Explicit Tri-State Logic:* Records are strictly classified into **`record found`**, **`record not found`**, or **`not applicable`** (avoiding binary pass/fail penalization).
-  - *Integration Transparency:* Simulated or mock responses in development are strictly demarcated until live portal connectivity is validated.
-- **Supporting Role:** Layer 2 provides contextual trust corroboration; it does not independently verify that a specific physical item was handcrafted.
-
----
-
-#### 🎬 Layer 3 — Making-Process Evidence & Anti-Replay Forensics
-
-Artisans submit work-in-progress (WIP) video/photos, raw material stages, intermediate assembly captures, and final piece photos linked directly to the batch's **Karu ID**. The objective is to verify that the submitted process evidence is visually, physically, and contextually consistent with the finished article.
-
-##### Forensic Defense Against Reused & Synthetic Media
-Because no single automated algorithm reliably authenticates video, Karu ensembles multiple independent verification signals:
-
-- **A. LightGlue — Local Visual-Feature Matching:**
-  - *Mechanism:* Employs deep local feature matching (LightGlue) across process video keyframes and final product gallery images.
-  - *Application:* Identifies corresponding unique surface features (grain patterns, weave irregularities, hand-painted strokes) visible across different viewing angles and production phases.
-  - *Limitations:* Correspondences confirm visual similarity between frames, not authorship. Batch variations, finishing steps, or reused footage from similar stock can produce false correspondences.
-- **B. CLIP-Style Embeddings — Semantic Relationship:**
-  - *Mechanism:* Computes vision-language embeddings to verify semantic alignment between claimed materials, techniques, and visible process footage.
-  - *Application:* Confirms process frames relate contextually to the target craft taxonomy.
-  - *Limitations:* Two different brass urns or walnut carvings exhibit near-identical semantic vectors. Semantic similarity establishes categorical relevance, never unique physical identity.
-- **C. EXIF Metadata Timeline Analysis:**
-  - *Mechanism:* Inspects capture timestamps, sensor profiles, and camera hardware parameters.
-  - *Application:* Provides auxiliary timeline consistency checks across intermediate milestones.
-  - *Limitations:* Metadata is frequently stripped by messaging apps or easily manipulated. Missing EXIF metadata is common on budget devices and **never** constitutes grounds for listing rejection.
-- **D. Controlled In-App Capture & Continuity:**
-  - *Mechanism:* Controlled camera workflows tie media ingestion directly to an issued Karu ID with immutable server receipt timestamps.
-  - *Application:* Tracks evidence creation chronological order and verifies media lineage.
-  - *Limitations:* Software device continuity does not constitute hardware-level attestation. A continuous capture session does not independently prove who executed the manual labor.
-- **E. Multi-Stage Evidence Cross-Checking:**
-  - *Mechanism:* Evaluates holistic consistency across raw inputs, intermediate states, and finished goods.
-  - *Resolution:* If visual indicators are incomplete, conflicting, or non-distinctive, the system routes the listing to human review or marks it **inconclusive** rather than issuing an accusatory rejection.
-
-##### Defensible Strategy for AI-Generated & Deepfake Media
-Karu adopts an honest, scientifically grounded security posture: **no algorithm can guarantee 100% detection of advanced generative video.** Rather than making unsupportable detection claims, Karu deploys a 6-step defensible framework:
-1. Prioritize controlled, product-specific in-app capture flows where practical.
-2. Bind every evidence asset immutably to a single Karu ID with verifiable upload audit logs.
-3. Match high-resolution process micro-features directly against final finished product details.
-4. Treat file and device metadata strictly as supplementary context.
-5. Flag anomalies and temporal discrepancies for specialist human inspection.
-6. Retain an **inconclusive** verdict whenever forensic evidence is insufficient to reach certainty.
-
-This robust multi-signal architecture significantly raises the cost of submitting fraudulent or scraped footage without penalizing authentic rural creators.
+- **Layer 3 — Making-Process Evidence & Anti-Replay Forensics:**
+  - WIP photos/videos, raw materials, and intermediate stages are immutably tied to the batch's **Karu ID**.
+  - *Multi-Signal Ensemble:* Combines **LightGlue** (deep local feature correspondences between video frames and final gallery photos), **CLIP-style embeddings** (semantic craft alignment), and **In-App Capture Continuity** (device timestamps & upload sequencing; missing EXIF never disqualifies).
+  - *Defensible Generative Video Strategy:* Acknowledges that no tool can guarantee 100% deepfake detection. Deploys a 6-step cross-check that routes anomalies to human review or marks them *inconclusive* rather than making false claims.
 
 ---
 
@@ -318,8 +239,42 @@ Every single physical item manufactured is bound to a unique, collision-proof di
 
 ---
 
-### 4. 📈 Live Fair-Price Discovery Engine
-Powered by **TinyFish Web Intelligence**, Karu crawls, ingests, and extracts market pricing across commercial e-commerce platforms to eliminate price asymmetry for rural clusters.
+### 4. 🌐 TinyFish Autonomous Web Intelligence Engine
+**TinyFish** acts as Karu's autonomous browser agency, enabling the platform to search, extract, navigate, and execute multi-step tasks across external web environments and government portals lacking public APIs.
+
+```mermaid
+flowchart LR
+    subgraph TinyFishCore[" 🐟 TinyFish Web Intelligence "]
+        TF_AGENT["Browser Agents\n(Headless Multi-Step)"]
+        TF_FETCH["Clean Markdown Fetch\n(DOM De-cluttering)"]
+        TF_SEARCH["Targeted Web Search\n(Regional Market Crawl)"]
+    end
+
+    subgraph Missions[" Mission Workflows "]
+        M1["🏛️ Cluster & Artisan Discovery\n(DC Handicrafts · MoT · State Craft Boards)"]
+        M2["📊 Live Market Price Radar\n(Boutique Portals · Mass Marketplaces)"]
+        M3["🛡️ Sovereign Identity Check\n(Pehchan Card & GI Registry Screenshots)"]
+        M4["🔍 Anti-Counterfeit Shield\n(Reverse pHash Search for Stolen Media)"]
+    end
+
+    TF_AGENT --> M1 & M3
+    TF_SEARCH & TF_FETCH --> M2 & M4
+```
+
+#### What TinyFish Does in KARU:
+
+1. 🏛️ **Artisan Cluster & Registry Discovery from Government Portals (Agent):**
+   - Autonomous web agents crawl official government portals (DC Handicrafts, Ministry of Textiles, State Handicraft Boards, and GI registries).
+   - Maps rural artisan clusters, identifies geographical GI boundaries, and uncovers uncatalogued artisan cooperatives and master maker directories that have no public APIs.
+2. 📊 **Live Fair-Market Price Discovery (Search + Fetch):**
+   - Continuously monitors boutique craft stores and mass e-commerce platforms based on product fingerprints (craft, technique, material, size).
+   - Strips DOM bloat into clean markdown, classifies listings into *Handmade* vs. *Power-loom Replica* via Gemini, and computes IQR-sanitized fair market distributions (p25 / median / p75).
+3. 🛡️ **Pehchan Card & GI Registry Verification (Agent):**
+   - Directly visits government lookup portals, inputs artisan card numbers, extracts verified artisan data, and captures timestamped audit screenshots.
+4. 🔍 **Anti-Counterfeit Visual Defense (Search + Fetch):**
+   - Ingests web listings matching product descriptions and computes perceptual hash (pHash) comparisons against artisan photos to detect stolen imagery and industrial replicas.
+5. 🚀 **Zero-Form Marketplace Syndication (Agent Demo):**
+   - Autonomous browser agent that logs into external seller portals (e.g., IndiaMART/Etsy) and automatically populates product titles, descriptions, pricing, and studio images from Karu.
 
 ```mermaid
 xychart-beta
@@ -332,9 +287,7 @@ xychart-beta
 
 *Bars = Verified Authentic Handcrafted Distribution | Line = Industrial Power-Loom Replica Baseline*
 
-- **Autonomous Web Scraping & Cleaning:** Extracts live pricing from boutique craft platforms and mass-market portals based on category, craft technique, and material fingerprint.
-- **Statistical Filtering:** Applies Interquartile Range (IQR) sanitization to strip extreme anomalies and predatory listings.
-- **Artisan Price Radar:** Displays real-time positioning (*Below Market*, *Fair Market*, *Above Market*) with a one-tap price update recommendation. **Karu never modifies an artisan's price unilaterally.**
+- **Artisan Price Radar:** Displays real-time market positioning (*Below Market*, *Fair Market*, *Above Market*) with a one-tap recommendation. **Karu never alters an artisan's price unilaterally.**
 
 ---
 
