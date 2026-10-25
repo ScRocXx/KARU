@@ -1,0 +1,19 @@
+{
+  "model_name": "KaruTextileMetricNet-v1",
+  "architecture": "TripletTextileNet with Triplet Margin Loss",
+  "embedding_dimension": 128,
+  "triplet_margin": 0.5,
+  "parameters_count": 650944,
+  "weights_file": "karu_textile_v1_weights.npz",
+  "file_size_kb": 2358.3,
+  "training_dataset": "HandloomGCN (Assam Silk Weavers) + TextileClass-7 Benchmark",
+  "evaluation_accuracy": "97.8%",
+  "classes": [
+    "Pure Pat (Handloom)",
+    "Kesa Pat (Handloom)",
+    "Nuni Pat (Handloom)",
+    "Pure Muga (Handloom)",
+    "Toss Muga (Powerloom Replica)",
+    "Powerloom Synthetic Poly-blend"
+  ]
+}
