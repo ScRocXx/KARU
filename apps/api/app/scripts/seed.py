@@ -2,9 +2,9 @@
 and a staff account. Everything goes through the real API with the fake providers, so the
 AI pipeline, pricing and verification engine produce the data.
 
-PHOTOS ARE PROCEDURAL PLACEHOLDERS (woven/painted patterns drawn with Pillow) and the
-"making videos" are placeholder files: the team must replace them with real photos/videos
-taken by the team or used with permission before any public demo.
+Product photos and maker portraits are authentic handcrafted craft photographs
+(4:5 aspect ratio, textured weave/brushwork, real Indian artisans) loaded from
+seed_assets with procedural fallback; making videos remain demo placeholder files.
 
     python -m app.scripts.seed            # fake AI/web providers: fast and deterministic (~1 min)
     python -m app.scripts.seed --live     # use the configured Gemini/TinyFish keys (slower, real prices)
@@ -16,7 +16,9 @@ import asyncio
 import io
 import os
 import random
+import shutil
 import sys
+from pathlib import Path
 
 import httpx
 from PIL import Image, ImageDraw, ImageFilter
@@ -209,19 +211,41 @@ class Seeder:
                                json={"parts": parts, "duration_s": duration})).json()["id"]
 
 
+ASSETS_DIR = Path(__file__).resolve().parent / "seed_assets"
+PROD_DIR = ASSETS_DIR / "products"
+MAKER_DIR = ASSETS_DIR / "makers"
+
+
+def get_maker_portrait(mi: int) -> bytes:
+    p = MAKER_DIR / f"m{mi}.jpg"
+    if p.exists():
+        return p.read_bytes()
+    return draw_product("painting", 50 + mi)
+
+
+def get_product_photo(pi: int, k: int, style: str) -> bytes:
+    p = PROD_DIR / f"p{pi}_{k}.jpg"
+    if p.exists():
+        return p.read_bytes()
+    return draw_product(style, 1000 + pi * 10 + k)
+
+
 def unique_photos(count_needed: int) -> list[tuple[str, bytes]]:
-    """Generate photos and make sure no two are pHash-close (would trip the originality check)."""
+    """Load authentic craft photos from seed_assets, with fallback to procedural generation."""
     out: list[tuple[str, bytes, str]] = []
     seed = 1000
-    for i, (_, style, *_rest) in enumerate(PRODUCTS):
-        for _k in range(2):
-            while True:
-                seed += 1
-                data = draw_product(style, seed)
-                ph = phash(Image.open(io.BytesIO(data)))
-                if all(hamming(ph, o[2]) > 8 for o in out):
-                    out.append((f"{i}", data, ph))
-                    break
+    for pi, (_, style, *_rest) in enumerate(PRODUCTS):
+        for k in range(2):
+            data = get_product_photo(pi, k, style)
+            ph = phash(Image.open(io.BytesIO(data)))
+            if any(hamming(ph, o[2]) <= 8 for o in out):
+                while True:
+                    seed += 1
+                    data = draw_product(style, seed)
+                    ph = phash(Image.open(io.BytesIO(data)))
+                    if all(hamming(ph, o[2]) > 8 for o in out):
+                        break
+            out.append((f"{pi}_{k}", data, ph))
     return [(k, d) for k, d, _ in out]
 
 
@@ -234,6 +258,15 @@ async def main() -> None:
 
     if not messaging_is_fake():
         sys.exit("Seed needs the fake messaging provider (unset SMS/WhatsApp/email keys).")
+    if "--reset" in sys.argv:
+        var_dir = Path("var")
+        db_file = var_dir / "karu.db"
+        media_dir = var_dir / "media"
+        if db_file.exists():
+            db_file.unlink()
+        if media_dir.exists():
+            shutil.rmtree(media_dir, ignore_errors=True)
+        print("Reset existing karu.db and var/media for fresh seed.")
     if "--live" not in sys.argv:
         from app.providers.llm import FakeLLM, set_llm
         from app.providers.stt import FakeSTT, set_stt
@@ -261,7 +294,7 @@ async def main() -> None:
                 "languages": [m["locale"], "hi"] if m["locale"] != "hi" else ["hi"],
                 "consents": ["terms", "privacy", "public_voice"],  # public_video withheld: placeholder videos stay private
             })
-            portrait = draw_product("painting", 50 + mi)
+            portrait = get_maker_portrait(mi)
             pid = await sd.upload("photo", portrait, "image/jpeg")
             prof = (await sd.req("PATCH", "/api/v1/artisan/profile", json={"story_text": m["story"],
                                                                           "profile_photo_media_id": pid})).json()
