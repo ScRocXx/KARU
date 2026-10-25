@@ -38,11 +38,6 @@ export default async function HomePage() {
       {/* 1. Hero Carousel (Full-bleed 640px, 5/7 split, Mrittika slide indicators) */}
       <HeroCarousel cards={data.verified_picks} />
 
-      {/* Deckle Edge divider into section 2 */}
-      <div className="text-surface-alt -mt-6">
-        <DeckleEdge fill="var(--color-surface-alt)" />
-      </div>
-
       {/* 2. Trust Strip on surface-alt */}
       <Section tone="alt" pad="tight">
         <Container size="page">

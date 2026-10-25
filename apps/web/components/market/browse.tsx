@@ -138,7 +138,7 @@ export function Browse({
   const filterContent = (
     <div className="flex flex-col gap-5">
       {/* 1. Karu Verified Toggle */}
-      <div className="rounded-xs border border-peacock-200 bg-verified-soft p-3.5">
+      <div className="rounded-xs border border-peacock-200/60 bg-verified-soft/70 p-3">
         <Switch
           checked={params.get("verified") === "true"}
           onChange={(v) => setFilter("verified", v ? "true" : null)}
@@ -333,12 +333,12 @@ export function Browse({
       </div>
 
       {/* Main Grid Layout: 3-col Desktop Sticky Filter Sidebar + 9-col Results */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 pt-4">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         {/* Desktop Sticky Filter Sidebar (3 cols) */}
         <aside className="hidden lg:col-span-3 lg:block">
-          <div className="sticky top-28 rounded-sm border border-line bg-surface-alt p-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-line pb-3 mb-4">
-              <span className="text-eyebrow text-ink-900">Filters</span>
+          <div className="sticky top-24 rounded-xs border border-line/60 bg-surface p-4 sm:p-5">
+            <div className="min-h-[40px] flex items-center justify-between border-b border-line/60 pb-3 mb-4">
+              <span className="text-eyebrow text-text font-semibold">Filters</span>
               {activeFilters.length > 0 && (
                 <button
                   type="button"
@@ -356,7 +356,7 @@ export function Browse({
         {/* Results Area (9 cols) */}
         <div className="lg:col-span-9 flex flex-col gap-6">
           {/* Results Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+          <div className="min-h-[40px] flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-3">
             <div className="flex items-center gap-2">
               <span className="text-body-s font-medium text-ink-900">
                 {total} {total === 1 ? "piece" : "pieces"}
@@ -367,7 +367,7 @@ export function Browse({
                   {activeFilters.map((af) => (
                     <span
                       key={af.key}
-                      className="inline-flex items-center gap-1 rounded-xs border border-line bg-surface px-2 py-0.5 text-caption text-ink-800"
+                      className="inline-flex items-center gap-1.5 rounded-xs border border-line/60 bg-surface-alt px-2.5 py-1 text-caption text-text"
                     >
                       {af.label}
                       <button

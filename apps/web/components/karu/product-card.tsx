@@ -137,7 +137,7 @@ export function ProductCard({
       href={`/p/${card.code}`}
       className={cx(
         "group flex flex-col overflow-hidden rounded-sm transition-all focus-visible:outline-none",
-        variant === "grid" ? "border border-line bg-surface hover:border-line-strong hover:shadow-lift" : "",
+        variant === "grid" ? "border border-line/60 bg-surface hover:border-line-strong hover:shadow-2xs" : "",
         className
       )}
     >
@@ -275,7 +275,7 @@ export function ProductRail({ cards }: { cards: Card[] }) {
         ref={railRef}
         tabIndex={0}
         aria-roledescription="carousel"
-        className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 focus-visible:outline-none"
+        className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 py-2 pb-6 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 focus-visible:outline-none"
       >
         {cards.map((c) => (
           <div key={c.id} className="w-44 shrink-0 snap-start sm:w-56 md:w-60">

@@ -9,7 +9,6 @@ import {
   Home,
   LayoutGrid,
   Menu,
-  QrCode,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -58,38 +57,40 @@ export function AnnouncementBar() {
     <div
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="bg-brand text-on-dark min-h-[36px] px-4 sm:px-6 lg:px-10 text-caption font-medium transition-all flex items-center justify-between border-b border-terracotta-900/30"
+      className="w-full bg-brand text-on-dark border-b border-white/10"
     >
-      {/* Desktop Messages: all three with gold bullets */}
-      <div className="hidden lg:flex items-center gap-3 mx-auto">
-        <span>{t("announce.1")}</span>
-        <span className="text-gold-300">•</span>
-        <span>{t("announce.2")}</span>
-        <span className="text-gold-300">•</span>
-        <span>{t("announce.3")}</span>
-      </div>
+      <div className="mx-auto flex min-h-[36px] max-w-[1360px] items-center justify-between px-4 sm:px-6 lg:px-10 text-caption font-medium">
+        {/* Desktop Messages */}
+        <div className="hidden lg:flex items-center gap-3">
+          <span>{t("announce.1")}</span>
+          <span className="text-gold-300">•</span>
+          <span>{t("announce.2")}</span>
+          <span className="text-gold-300">•</span>
+          <span>{t("announce.3")}</span>
+        </div>
 
-      {/* Mobile / Tablet Message: single rotating message */}
-      <div className="lg:hidden mx-auto text-center py-1.5 transition-opacity">
-        <span>{t(`announce.${activeMsg}` as any)}</span>
-      </div>
+        {/* Mobile / Tablet Message: single rotating message */}
+        <div className="lg:hidden mx-auto text-center py-1.5 transition-opacity">
+          <span>{t(`announce.${activeMsg}` as any)}</span>
+        </div>
 
-      {/* Desktop Utility Links (End Side) */}
-      <div className="hidden lg:flex items-center gap-4 text-caption shrink-0">
-        <Link
-          href="/sell"
-          className="hover:text-gold-200 transition-colors flex items-center gap-1 font-semibold"
-        >
-          <Store className="size-3.5" />
-          <span>{t("sell")}</span>
-        </Link>
-        <span className="text-white/20">|</span>
-        <Link
-          href="/account/orders"
-          className="hover:text-gold-200 transition-colors"
-        >
-          {t("track_order")}
-        </Link>
+        {/* Desktop Utility Links (End Side) */}
+        <div className="hidden lg:flex items-center gap-4 text-caption shrink-0 ms-auto">
+          <Link
+            href="/sell"
+            className="hover:text-gold-200 transition-colors flex items-center gap-1 font-semibold"
+          >
+            <Store className="size-3.5" />
+            <span>{t("sell")}</span>
+          </Link>
+          <span className="text-white/20">|</span>
+          <Link
+            href="/account/orders"
+            className="hover:text-gold-200 transition-colors"
+          >
+            {t("track_order")}
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -669,11 +670,9 @@ export function MarketFooter() {
   };
 
   return (
-    <footer className="relative mt-auto w-full bg-brand text-on-dark">
-      {/* Deckle Edge Transition: Khadi to Terracotta */}
-      <div className="text-brand -mt-6">
-        <DeckleEdge fill="var(--color-brand)" />
-      </div>
+    <footer className="relative mt-16 sm:mt-24 w-full bg-brand text-on-dark">
+      {/* Subtle gold accent border */}
+      <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-gold-400/40 to-transparent" />
 
       <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-10 pt-12 pb-24 md:pb-12">
         {/* Top: Brand & Newsletter Split */}

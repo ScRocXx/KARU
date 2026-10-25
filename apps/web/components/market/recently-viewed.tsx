@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { Container } from "@/components/layout/container";
 import { ProductRail } from "@/components/karu/product-card";
 import type { Card } from "@/lib/types";
 
@@ -31,9 +32,16 @@ export function RecentlyViewed() {
   }, []);
   if (cards.length < 2) return null;
   return (
-    <section>
-      <h2 className="font-display mb-4 text-[22px] md:text-[28px]">{t("recently_viewed")}</h2>
-      <ProductRail cards={cards} />
-    </section>
+    <div className="w-full border-t border-line/60 py-12 sm:py-16">
+      <Container size="page">
+        <div className="flex flex-col gap-6">
+          <div>
+            <span className="text-eyebrow text-brand">Your Browsing History</span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-medium text-text mt-1">{t("recently_viewed")}</h2>
+          </div>
+          <ProductRail cards={cards} />
+        </div>
+      </Container>
+    </div>
   );
 }

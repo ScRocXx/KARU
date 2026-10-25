@@ -62,7 +62,7 @@ export function FeaturedRail({
         )}
       >
         {/* Mobile Scroll / Desktop 4-col Grid */}
-        <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:grid md:grid-cols-4 md:gap-4">
+        <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 py-1 pb-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:grid md:grid-cols-4 md:gap-4">
           {displayItems.map((item) => (
             <div key={item.id} className="w-44 shrink-0 snap-start sm:w-56 md:w-full">
               <ProductCard card={item} variant="grid" />
