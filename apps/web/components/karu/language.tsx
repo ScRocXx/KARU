@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Globe, Volume2 } from "lucide-react";
+import { Check, ChevronDown, Globe, Volume2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
@@ -20,29 +20,56 @@ export async function setLocale(locale: Locale, signedIn: boolean) {
   }
 }
 
+export interface LanguageSwitcherProps {
+  signedIn?: boolean;
+  variant?: "default" | "dark" | "compact";
+  className?: string;
+}
+
 /** Header language switcher (artisan header / buyer header + footer). */
-export function LanguageSwitcher({ signedIn, className }: { signedIn: boolean; className?: string }) {
+export function LanguageSwitcher({
+  signedIn = false,
+  variant = "default",
+  className,
+}: LanguageSwitcherProps) {
   const locale = useLocale() as Locale;
   const t = useTranslations("common");
-  const router = useRouter();
+
+  const variantStyles = {
+    dark: "border border-white/20 bg-white/10 text-white hover:bg-white/15",
+    compact: "border border-line bg-surface text-ink-900 text-caption py-0.5 px-2",
+    default: "border border-line/80 bg-surface text-text hover:border-brand shadow-2xs py-1 px-2.5 text-caption",
+  }[variant];
+
   return (
-    <label className={cx("relative inline-flex items-center gap-1.5 rounded-full border border-ink-300 bg-white ps-2.5 pe-1 text-sm", className)}>
-      <Globe className="size-4 text-ink-600" aria-hidden />
+    <label
+      className={cx(
+        "relative inline-flex items-center gap-1.5 rounded-xs transition-colors cursor-pointer select-none",
+        variantStyles,
+        className
+      )}
+    >
+      <Globe className={cx("size-3.5 shrink-0", variant === "dark" ? "text-gold-300" : "text-muted")} aria-hidden />
       <span className="sr-only">{t("language")}</span>
       <select
         value={locale}
         onChange={async (e) => {
-          await setLocale(e.target.value as Locale, signedIn);
-          router.refresh();
+          const next = e.target.value as Locale;
+          await setLocale(next, signedIn);
+          window.location.reload();
         }}
-        className="min-h-9 appearance-none bg-transparent pe-2 font-medium focus:outline-none"
+        className="appearance-none bg-transparent font-medium cursor-pointer focus:outline-none pe-4 text-inherit"
       >
         {locales.map((l) => (
-          <option key={l} value={l}>
-            {languageNames[l].native}
+          <option key={l} value={l} className="bg-white text-ink-900">
+            {languageNames[l].native} ({languageNames[l].english})
           </option>
         ))}
       </select>
+      <ChevronDown
+        className={cx("pointer-events-none absolute end-1.5 top-1/2 -translate-y-1/2 size-3", variant === "dark" ? "text-white/60" : "text-muted")}
+        aria-hidden
+      />
     </label>
   );
 }

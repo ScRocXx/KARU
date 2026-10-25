@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 import { MakerCard } from "@/components/karu/maker-card";
-import { DeckleEdge } from "@/components/karu/ornaments";
 import { EmptyState } from "@/components/ui/empty-state";
 import { serverApi } from "@/lib/server-api";
 import type { Maker } from "@/lib/types";
@@ -43,7 +41,7 @@ export default async function MakersDirectoryPage({
             Meet the Makers
           </h1>
           <p className="mx-auto max-w-xl text-body text-muted mt-3">
-            Every thread, chisel mark, and clay curve has a name. Explore certified master artisans preserving India's ancestral craft traditions.
+            Every thread, chisel mark, and clay curve has a name. Explore certified master artisans preserving India&apos;s ancestral craft traditions.
           </p>
         </div>
       </section>

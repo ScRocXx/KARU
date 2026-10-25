@@ -215,7 +215,7 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
 
                   {maker.story && (
                     <blockquote className="border-s-2 border-brand ps-3 font-serif italic text-body-s text-ink-900" lang={maker.story_lang}>
-                      "{maker.story}"
+                      &ldquo;{maker.story}&rdquo;
                     </blockquote>
                   )}
                 </div>

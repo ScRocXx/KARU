@@ -27,7 +27,7 @@ function Wishlist() {
       <div className="border-b border-line pb-4">
         <h1 className="font-serif text-h2 text-ink-900">{t("wishlist") || "My Wishlist"}</h1>
         <p className="text-body-s text-muted mt-1">
-          Handcrafted pieces you've bookmarked for your home and wardrobe.
+          Handcrafted pieces you&apos;ve bookmarked for your home and wardrobe.
         </p>
       </div>
 

@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { DeckleEdge, Woven } from "@/components/karu/ornaments";
 import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import { StatTile } from "@/components/ui/stat-tile";
 import { serverApi } from "@/lib/server-api";
@@ -83,10 +82,10 @@ export default async function ImpactPage() {
               Every unit is physically checked at the workshop cluster against our deterministic provenance schema. Machine weaves, synthetic polyesters posing as silk, and chemical dyes in natural-dye claims are rejected.
             </AccordionItem>
             <AccordionItem title="Tamper-Evident Physical Karu ID Tags">
-              Each certified piece is sealed with a serialized QR tag registered on the Karu immutable registry before courier pickup, linking buyer directly to the maker's workshop passport.
+              Each certified piece is sealed with a serialized QR tag registered on Karu before courier pickup, linking buyer directly to the maker&apos;s workshop passport.
             </AccordionItem>
             <AccordionItem title="Zero Pixel Hallucination Policy">
-              Catalog photography preserves 100% of the artisan's original physical product pixels. Relighting and studio staging never modify weave motifs or carve textures.
+              Catalog photography preserves 100% of the artisan&apos;s original physical product pixels. Relighting and studio staging never modify weave motifs or carve textures.
             </AccordionItem>
           </Accordion>
         </section>

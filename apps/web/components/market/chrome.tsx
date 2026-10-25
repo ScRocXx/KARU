@@ -2,9 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowRight,
   ChevronDown,
-  Globe,
   Heart,
   Home,
   LayoutGrid,
@@ -21,11 +19,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Wordmark } from "@/components/karu/badges";
-import { DeckleEdge, Emblem } from "@/components/karu/ornaments";
 import { LanguageSwitcher } from "@/components/karu/language";
 import { Drawer } from "@/components/ui/drawer";
 import { IconButton } from "@/components/ui/icon-button";
-import { Popover } from "@/components/ui/popover";
 import { api } from "@/lib/api";
 import { cx } from "@/lib/format";
 import { useMe } from "@/lib/hooks";
@@ -71,11 +67,13 @@ export function AnnouncementBar() {
 
         {/* Mobile / Tablet Message: single rotating message */}
         <div className="lg:hidden mx-auto text-center py-1.5 transition-opacity">
-          <span>{t(`announce.${activeMsg}` as any)}</span>
+          <span>{t(`announce.${activeMsg as 1 | 2 | 3}`)}</span>
         </div>
 
         {/* Desktop Utility Links (End Side) */}
-        <div className="hidden lg:flex items-center gap-4 text-caption shrink-0 ms-auto">
+        <div className="hidden lg:flex items-center gap-3 text-caption shrink-0 ms-auto">
+          <LanguageSwitcher variant="dark" />
+          <span className="text-white/20">|</span>
           <Link
             href="/sell"
             className="hover:text-gold-200 transition-colors flex items-center gap-1 font-semibold"
@@ -762,9 +760,8 @@ export function MarketFooter() {
 
         {/* Bottom Bar: Language, Payment Marks, Copyright */}
         <div className="border-t border-terracotta-900/60 pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-caption text-on-dark/70">
-          <div className="flex items-center gap-3">
-            <Globe className="size-4 text-gold-300" />
-            <LanguageSwitcher signedIn={false} />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher signedIn={false} variant="dark" />
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-mono tracking-wider uppercase text-on-dark/80">

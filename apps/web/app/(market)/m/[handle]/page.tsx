@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { FollowButton, ListenButton } from "@/components/karu/maker-card";
-import { DeckleEdge, Woven } from "@/components/karu/ornaments";
 import { PassportCard } from "@/components/karu/passport-card";
 import { ProductGrid } from "@/components/karu/product-card";
 import { ProductReviews } from "@/components/market/product-reviews";
@@ -116,7 +115,7 @@ export default async function MakerPage({
                   className="font-serif italic text-body-l text-ink-900 leading-relaxed pt-2 border-t border-line/60"
                   lang={m.story_lang}
                 >
-                  "{m.story}"
+                  &ldquo;{m.story}&rdquo;
                 </blockquote>
               )}
             </div>
@@ -168,7 +167,7 @@ export default async function MakerPage({
                   {m.story ? (
                     <div className="prose prose-stone text-body leading-relaxed text-ink-900">
                       <p className="font-serif text-lg italic text-brand leading-relaxed">
-                        "{m.story}"
+                        &ldquo;{m.story}&rdquo;
                       </p>
                       {m.story_translated && (
                         <p className="text-caption text-muted">{t("story_translated")}</p>

@@ -6,9 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Wordmark } from "@/components/karu/badges";
-import { DeckleEdge, Emblem } from "@/components/karu/ornaments";
+import { Emblem } from "@/components/karu/ornaments";
 import { OtpLogin } from "@/components/otp-login";
-import { Tabs } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import { usePublicConfig } from "@/lib/hooks";
 import type { Me } from "@/lib/types";
@@ -73,7 +72,7 @@ function Login() {
 
           <div className="max-w-md">
             <blockquote className="font-serif italic text-h3 sm:text-h2 text-khadi-100 leading-snug">
-              "When you purchase authentic handmade craft, you preserve ancestral culture and honour living hands."
+              &ldquo;When you purchase authentic handmade craft, you preserve ancestral culture and honour living hands.&rdquo;
             </blockquote>
             <p className="mt-3 text-caption text-gold-300 uppercase tracking-widest font-mono">
               Certified Physical Origin · Zero Pixel Hallucination

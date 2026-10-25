@@ -203,7 +203,7 @@ export function ProductReviews({
 
                   {r.text && (
                     <blockquote className="font-serif italic text-body text-ink-900 leading-relaxed max-w-2xl">
-                      "{r.text}"
+                      &ldquo;{r.text}&rdquo;
                     </blockquote>
                   )}
 

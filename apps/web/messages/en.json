@@ -774,7 +774,15 @@
       "new": "Add a new product",
       "requests": "Requests",
       "me": "Me",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "products": "Products",
+      "payouts": "Payouts",
+      "passport": "Passport",
+      "help": "Help & Academy",
+      "settings": "Settings",
+      "new_product": "New Product",
+      "studio_title": "Artisan Workshop Studio",
+      "view_shop": "View Public Shop"
     },
     "queue": {
       "offline": "Waiting for network — {n, plural, one {# product is} other {# products are}} saved on your phone",
@@ -1337,6 +1345,19 @@
     "notifications": {
       "title": "Notifications",
       "none": "Nothing new"
+    },
+    "products": {
+      "title": "Workshop Products",
+      "subtitle": "Manage your handcrafted pieces, verification, and active inventory.",
+      "filter_all": "All Pieces",
+      "filter_published": "Live & Listed",
+      "filter_not_verified": "Verification Pending",
+      "filter_drafts": "Drafts",
+      "filter_paused": "Paused",
+      "empty_title": "No products found",
+      "empty_body": "Photograph a finished piece on your workbench to list it across India.",
+      "add_first": "List your first piece",
+      "manage": "Manage Piece"
     }
   }
 }
