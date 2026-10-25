@@ -112,8 +112,13 @@ class TextileMetricAnalyzer:
         Extracts micro-texture features from fabric image and projects into
         the metric embedding space.
         """
-        # Ensure RGB mode and standardized size
-        img = image.convert("RGB").resize((512, 512))
+        # Standardize size: if image is large, preserve thread structure via a 512x512 micro-crop
+        w, h = image.size
+        if w > 640 and h > 640:
+            cx, cy = w // 2, h // 2
+            img = image.convert("RGB").crop((cx - 256, cy - 256, cx + 256, cy + 256))
+        else:
+            img = image.convert("RGB").resize((512, 512))
         arr = np.asarray(img, dtype=np.float32) / 255.0
         
         # 1. Grayscale luminance for structural weave analysis
