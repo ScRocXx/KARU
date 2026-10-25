@@ -12,7 +12,7 @@ from app.core.db import get_db, utcnow
 from app.core.deps import ip_hash, locale_dep, optional_user
 from app.core.errors import AppError
 from app.core.i18n import format_inr, pick_lang
-from app.core.ids import is_karu_id, normalise_code
+from app.core.ids import is_karu_id, is_short_code, normalise_code
 from app.core.jobs import enqueue
 from app.modules.artisans.models import ArtisanProfile, Passport
 from app.modules.artisans.service import public_maker
@@ -251,12 +251,32 @@ async def product_reviews(code: str, cursor: int = 0, limit: int = Query(10, le=
 @router.get("/karu-ids/{code}")
 async def karu_id(code: str, locale: str = Depends(locale_dep), user=Depends(optional_user), db: AsyncSession = Depends(get_db)):
     code = normalise_code(code)
-    if not is_karu_id(code):
+    if not is_karu_id(code) and not is_short_code(code):
         raise AppError(404, "karu_id_not_found")
     data = await public_karu_id(db, code, locale, user.id if user else None)
     if data is None:
         raise AppError(404, "karu_id_not_found")
     return data
+
+
+@router.get("/karu-ids/{code}/qr.png")
+async def karu_id_qr_png(code: str, db: AsyncSession = Depends(get_db)):
+    """Crisp scannable QR code PNG for the Karu ID certificate."""
+    code = normalise_code(code)
+    if not is_karu_id(code) and not is_short_code(code):
+        raise AppError(404, "karu_id_not_found")
+    data = await public_karu_id(db, code, "en", None)
+    if not data:
+        raise AppError(404, "karu_id_not_found")
+    from fastapi.responses import Response
+
+    from app.core.config import get_settings
+    from app.core.imaging import encode, make_qr
+
+    target_url = f"{get_settings().public_base_url}/k/{data['code']}"
+    qr_img = make_qr(target_url, 320)
+    png_bytes = encode(qr_img, "PNG", 95)
+    return Response(content=png_bytes, media_type="image/png", headers={"Cache-Control": "public, max-age=86400"})
 
 
 @router.get("/makers")

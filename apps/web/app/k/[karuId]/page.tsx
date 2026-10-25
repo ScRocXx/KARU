@@ -253,7 +253,18 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
                   <dd className="font-medium text-ink-900 mt-0.5">{d.verified_label || "Certified"}</dd>
                 </div>
               </dl>
-              <div className="mt-4 pt-4 border-t border-line flex items-center justify-between">
+              <div className="mt-4 pt-4 border-t border-line flex items-center gap-3 bg-surface-alt p-3 rounded-xs">
+                <img
+                  src={`http://127.0.0.1:8000/api/v1/karu-ids/${d.code}/qr.png`}
+                  alt={`QR Verification Code for Karu ID ${d.code}`}
+                  className="size-16 rounded-xs border border-line bg-white p-1 shrink-0"
+                />
+                <div className="flex flex-col min-w-0">
+                  <span className="text-caption font-semibold text-ink-900">Physical Origin QR Tag</span>
+                  <span className="text-[11px] text-muted">Scan to verify authentic certificate on the Karu public ledger</span>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-line flex items-center justify-between">
                 <ReportButton code={d.code} labels={{ link: t("report_fake"), sent: t("report_sent"), prompt: t("report_prompt") }} />
                 <span className="text-[11px] font-mono text-muted">Immutable Ledger Entry</span>
               </div>

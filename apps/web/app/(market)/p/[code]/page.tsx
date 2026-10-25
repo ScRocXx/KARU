@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { GiTag, KaruIdChip, StockPill, VerifiedBadge, Woven } from "@/components/karu/badges";
+import { GiTag, StockPill, VerifiedBadge, Woven } from "@/components/karu/badges";
 import { ListenButton, MakerCard } from "@/components/karu/maker-card";
 import { ProductRail } from "@/components/karu/product-card";
 import { ProvenancePanel } from "@/components/karu/provenance-panel";
@@ -141,10 +141,9 @@ export default async function ProductPage({ params }: { params: Promise<{ code: 
                 <StockPill stock={p.stock} />
               </div>
 
-              {/* Karu ID Badge line */}
+              {/* Verification Badge line */}
               <div className="flex items-center gap-3 pt-1">
                 <VerifiedBadge status={v.status} size="lg" />
-                <KaruIdChip code={p.code} />
               </div>
             </div>
 

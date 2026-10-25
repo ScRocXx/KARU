@@ -29,6 +29,22 @@ def unit_url(code: str) -> str:
 async def public_karu_id(db: AsyncSession, code: str, locale: str, viewer_id: uuid.UUID | None) -> dict | None:
     unit = (await db.execute(select(KaruId).where(KaruId.code == code))).scalar_one_or_none()
     if unit is None:
+        listing_match = (await db.execute(select(Listing).where(Listing.short_code == code))).scalar_one_or_none()
+        if listing_match:
+            unit = (await db.execute(select(KaruId).where(KaruId.listing_id == listing_match.id).order_by(KaruId.created_at))).scalars().first()
+            if unit is None:
+                from app.core.ids import new_karu_id, uuid7
+                unit = KaruId(
+                    id=uuid7(),
+                    code=new_karu_id(),
+                    listing_id=listing_match.id,
+                    artisan_id=listing_match.artisan_id,
+                    status="available",
+                )
+                db.add(unit)
+                await db.commit()
+                await db.refresh(unit)
+    if unit is None:
         return None
     listing = await db.get(Listing, unit.listing_id)
     profile = await db.get(ArtisanProfile, unit.artisan_id)
