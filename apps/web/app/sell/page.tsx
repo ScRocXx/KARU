@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Eye, IndianRupee, Package, Plus, ShieldCheck, X } from "lucide-react";
+import { Plus, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -9,7 +9,6 @@ import { Suspense, useEffect, useState } from "react";
 import { SellPage } from "@/components/artisan/shell";
 import { AuthGate } from "@/components/auth-gate";
 import { StockPill, VerifiedBadge } from "@/components/karu/badges";
-import { PassportCard } from "@/components/karu/passport-card";
 import { SpeakerButton } from "@/components/karu/voice";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ import { api } from "@/lib/api";
 import { cx, inr } from "@/lib/format";
 import { db, onOutboxChange, retryItem, type OutboxItem } from "@/lib/offline";
 import { speak } from "@/lib/speech";
-import type { ImageSet, Maker, Stock, VerificationStatus } from "@/lib/types";
+import type { ImageSet, Stock, VerificationStatus } from "@/lib/types";
 
 interface Dashboard {
   greeting_name: string;
@@ -337,7 +336,7 @@ function Home() {
                   `${d.impact.pieces_sold} pieces delivered to patrons across ${d.impact.buyer_cities} cities`}
               </p>
               <div className="pt-2 border-t border-white/10 flex justify-between items-center text-caption text-gold-300">
-                <span>0% Commission Charged</span>
+                <span>Direct Maker Payouts</span>
                 <Link href="/sell/payouts" className="underline hover:text-white">
                   Payout History →
                 </Link>

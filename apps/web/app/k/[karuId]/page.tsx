@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, CircleDashed, ShieldCheck, ShieldOff } from "lucide-react";
+import { BadgeCheck, CircleDashed, ShieldOff } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -52,7 +52,7 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <p className="font-mono text-xs tracking-[0.2em] uppercase text-sand-300">
-                Tamper-Evident ID · {d.code}
+                Karu ID Certificate · {d.code}
               </p>
               <div className="mt-2 flex items-center gap-2.5">
                 {verified ? (
@@ -71,12 +71,12 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
               </div>
             </div>
 
-            <div className="sm:text-right">
+            <div className="sm:text-end">
               <span className="text-eyebrow text-gold-300">
-                100% Physical Origin Checked
+                Physical Origin Checked
               </span>
               <p className="font-mono text-xs text-sand-300/80 mt-0.5">
-                Tamper-proof registry record on the Karu public ledger
+                Verified certificate registered on Karu
               </p>
             </div>
           </div>
@@ -232,7 +232,7 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
               <ProofChecks checks={d.proof.checks} />
             </section>
 
-            {/* Public Ledger Record */}
+            {/* Karu Provenance Record */}
             <section className="rounded-sm border border-line bg-surface p-6 shadow-xs text-body-s">
               <h3 className="font-serif text-h4 text-ink-900 mb-3">Registry Metadata</h3>
               <dl className="grid grid-cols-2 gap-3 text-caption">
@@ -261,12 +261,12 @@ export default async function KaruIdPageView({ params }: { params: Promise<{ kar
                 />
                 <div className="flex flex-col min-w-0">
                   <span className="text-caption font-semibold text-ink-900">Physical Origin QR Tag</span>
-                  <span className="text-[11px] text-muted">Scan to verify authentic certificate on the Karu public ledger</span>
+                  <span className="text-caption text-muted">Scan to verify authentic certificate on Karu</span>
                 </div>
               </div>
               <div className="mt-4 pt-3 border-t border-line flex items-center justify-between">
                 <ReportButton code={d.code} labels={{ link: t("report_fake"), sent: t("report_sent"), prompt: t("report_prompt") }} />
-                <span className="text-[11px] font-mono text-muted">Immutable Ledger Entry</span>
+                <span className="text-caption font-mono text-muted">Verified Karu Certificate</span>
               </div>
             </section>
           </div>

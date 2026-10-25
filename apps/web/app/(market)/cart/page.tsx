@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Heart, Lock, ShieldCheck, Trash2 } from "lucide-react";
+import { ArrowRight, Lock, ShieldCheck, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AuthGate } from "@/components/auth-gate";
@@ -225,7 +225,7 @@ function Cart() {
 
             <div className="rounded-xs bg-verified-soft p-3 text-caption text-verified flex items-center gap-2">
               <ShieldCheck className="size-4 shrink-0" />
-              <span>100% of item price goes directly to makers. Zero commission.</span>
+              <span>Direct from artisan clusters. Your payment goes directly to the makers.</span>
             </div>
 
             <Link href="/checkout" className="w-full">

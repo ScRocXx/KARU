@@ -2,10 +2,10 @@ import { CheckCircle2, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 
 export function TrustStrip() {
   const items = [
-    { icon: ShieldCheck, title: "Karu ID on Every Piece", subtitle: "Tamper-evident verification tag" },
-    { icon: CheckCircle2, title: "Paid Directly to Maker", subtitle: "Zero commission intermediaries" },
-    { icon: Truck, title: "Free Shipping Over ₹999", subtitle: "Direct from artisan cluster" },
-    { icon: RotateCcw, title: "Authenticity Guarantee", subtitle: "Hassle-free verified returns" },
+    { icon: ShieldCheck, title: "Karu ID on Every Piece", subtitle: "Scan the tag to see who made it" },
+    { icon: CheckCircle2, title: "Paid Directly to Maker", subtitle: "Direct artisan cluster payouts" },
+    { icon: Truck, title: "Free Shipping Across India", subtitle: "Direct from artisan cluster" },
+    { icon: RotateCcw, title: "Verified Craft Origins", subtitle: "Directly from certified makers" },
   ];
 
   return (

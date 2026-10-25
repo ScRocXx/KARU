@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowRight, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { VerifiedBadge } from "@/components/karu/badges";
@@ -68,7 +68,7 @@ export function CartDrawer({
               <span className="font-serif text-lg">{inr(data.subtotal_inr)}</span>
             </div>
             <p className="rounded-xs bg-verified-soft p-2 text-center text-caption font-medium text-verified">
-              100% of item price goes directly to makers. Zero commission.
+              Direct from artisan clusters. Your payment goes directly to the makers.
             </p>
             <div className="flex gap-2.5">
               <Link href="/cart" onClick={onClose} className="flex-1">

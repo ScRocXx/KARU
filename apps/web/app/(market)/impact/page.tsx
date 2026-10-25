@@ -3,7 +3,7 @@ import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import { StatTile } from "@/components/ui/stat-tile";
 import { serverApi } from "@/lib/server-api";
 
-export const metadata = { title: "Public Impact Ledger · Karu" };
+export const metadata = { title: "Artisan Impact Report · Karu" };
 
 export default async function ImpactPage() {
   const t = await getTranslations("impact");
@@ -20,12 +20,12 @@ export default async function ImpactPage() {
       {/* Header Band */}
       <section className="bg-surface-alt border-b border-line pt-12 pb-14">
         <div className="container-page text-center">
-          <span className="text-eyebrow text-brand">Public Provenance Ledger</span>
+          <span className="text-eyebrow text-brand">Artisan Impact Report</span>
           <h1 className="font-serif text-display text-ink-900 mt-2">
             Measurable, Verified Impact
           </h1>
           <p className="mx-auto max-w-2xl text-body-l text-muted mt-3 leading-relaxed">
-            Every rupee generated through Karu flows directly to certified artisans. We track provenance, physical authenticity, and economic empowerment with zero marketplace commission.
+            Every rupee generated through Karu flows directly to certified artisans. We track provenance, physical authenticity, and economic empowerment with direct maker payments.
           </p>
         </div>
       </section>
@@ -33,10 +33,10 @@ export default async function ImpactPage() {
       <div className="container-page py-12 flex flex-col gap-12">
         {/* Large Stat Numerals Grid */}
         <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
-          <StatTile label="Master Artisans" value={d.artisans} />
-          <StatTile label="Pieces Verified" value={d.pieces_verified} />
-          <StatTile label="Paid to Artisans" value={d.paid_to_artisans} />
-          <StatTile label="Regional Clusters" value={d.clusters} />
+          <StatTile label={t("artisans") || "Master Artisans"} value={d.artisans} />
+          <StatTile label={t("pieces_verified") || "Pieces Verified"} value={d.pieces_verified} />
+          <StatTile label={t("paid") || "Paid to Artisans"} value={d.paid_to_artisans} />
+          <StatTile label={t("clusters") || "Regional Clusters"} value={d.clusters} />
           <StatTile label="States Active" value={d.states} />
         </div>
 
@@ -70,7 +70,7 @@ export default async function ImpactPage() {
           </div>
 
           <div className="rounded-xs bg-verified-soft p-4 text-body-s font-medium text-verified border border-peacock-200">
-            Karu charges 0% commission to artisans. Operating costs are sponsored through institutional grants, patron gifts, and transparent bulk sourcing services.
+            Karu ensures direct payments to artisans. Operating costs are supported through institutional grants, patron gifts, and transparent bulk sourcing services.
           </div>
         </section>
 
@@ -81,8 +81,8 @@ export default async function ImpactPage() {
             <AccordionItem title="Physical Thread & Chisel Verification">
               Every unit is physically checked at the workshop cluster against our deterministic provenance schema. Machine weaves, synthetic polyesters posing as silk, and chemical dyes in natural-dye claims are rejected.
             </AccordionItem>
-            <AccordionItem title="Tamper-Evident Physical Karu ID Tags">
-              Each certified piece is sealed with a serialized QR tag registered on Karu before courier pickup, linking buyer directly to the maker&apos;s workshop passport.
+            <AccordionItem title="Physical Karu ID Tags on Every Piece">
+              Each certified piece is labeled with a serialized QR tag registered on Karu before courier pickup, linking buyer directly to the maker&apos;s workshop passport.
             </AccordionItem>
             <AccordionItem title="Zero Pixel Hallucination Policy">
               Catalog photography preserves 100% of the artisan&apos;s original physical product pixels. Relighting and studio staging never modify weave motifs or carve textures.

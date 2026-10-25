@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { DeckleEdge, Woven } from "@/components/karu/ornaments";
+import { Woven } from "@/components/karu/ornaments";
 import { ProductGrid } from "@/components/karu/product-card";
 import { Container, Section, SectionHeader } from "@/components/layout";
 import { MakerSpotlight } from "@/components/market/artisan-spotlight";
@@ -51,10 +51,10 @@ export default async function HomePage() {
           <SectionHeader
             align="center"
             eyebrow="Craft Disciplines"
-            title="Explore by Craft"
+            title={t("categories") || "Explore by Craft"}
             accentWord="Heritage"
             intro="Generational Indian craft disciplines certified by Karu provenance standards."
-            action={{ href: "/categories", label: "All Categories" }}
+            action={{ href: "/categories", label: t("see_all") || "All Categories" }}
           />
           <CategoryShowcase categories={data.categories} />
         </Container>
@@ -152,12 +152,12 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               <StatTile label="Master Artisans" value={String(data.impact.artisans)} hint="Across certified clusters" />
               <StatTile label="Pieces Verified" value={String(data.impact.pieces_verified)} hint="100% physically proven" />
-              <StatTile label="Paid to Artisans" value={data.impact.paid_to_artisans || "100%"} hint="0% platform commission" />
+              <StatTile label="Paid to Artisans" value={data.impact.paid_to_artisans || "100%"} hint="Direct artisan payouts" />
               <StatTile label="Craft Clusters" value={String(data.impact.clusters)} hint="In 3 heritage states" />
             </div>
             <div className="flex items-center justify-between border-t border-line pt-4 text-caption text-muted">
               <p className="font-serif italic">
-                Zero machine intermediaries. Every rupee accounted for on the Karu public ledger.
+                Direct artisan partnerships. Every purchase supports master makers across India.
               </p>
               <Link href="/impact" className="inline-flex items-center gap-1 text-eyebrow text-brand hover:underline">
                 <span>View Full Impact Report</span>

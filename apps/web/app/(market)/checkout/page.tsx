@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown, ChevronUp, CreditCard, Globe2, Landmark, Lock, Plus, ShieldCheck, Smartphone, Wallet } from "lucide-react";
+import { ChevronDown, ChevronUp, CreditCard, Globe2, Landmark, Plus, ShieldCheck, Smartphone, Wallet } from "lucide-react";
 import Script from "next/script";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -16,7 +16,7 @@ import { RadioCard } from "@/components/ui/checkbox";
 import { CardSkeleton } from "@/components/ui/skeleton";
 import { Stepper } from "@/components/ui/stepper";
 import { ApiError, api } from "@/lib/api";
-import { cx, inr } from "@/lib/format";
+import { inr } from "@/lib/format";
 import { usePublicConfig } from "@/lib/hooks";
 import type { Card as ProductCardT, Me } from "@/lib/types";
 
@@ -184,7 +184,7 @@ function Checkout({ me }: { me: Me }) {
           steps={[
             { title: "Delivery address", description: "Where to ship" },
             { title: "Payment", description: "Direct maker payout" },
-            { title: "Karu ID issued", description: "Tamper-evident verification" },
+            { title: "Karu ID issued", description: "Verified physical tag" },
           ]}
         />
       </div>
@@ -252,7 +252,7 @@ function Checkout({ me }: { me: Me }) {
               <button
                 type="button"
                 onClick={() => setAdding(true)}
-                className="flex min-h-[96px] flex-col items-center justify-center gap-1.5 rounded-xs border border-dashed border-line bg-surface-alt p-4 text-center text-body-s font-medium text-brand hover:border-brand transition-colors cursor-pointer"
+                className="flex min-h-24 flex-col items-center justify-center gap-1.5 rounded-xs border border-dashed border-line bg-surface-alt p-4 text-center text-body-s font-medium text-brand hover:border-brand transition-colors cursor-pointer"
               >
                 <Plus className="size-5" />
                 <span>{t("add_address")}</span>
@@ -375,7 +375,7 @@ function Checkout({ me }: { me: Me }) {
                   </li>
                 ))}
               </ul>
-              <div className="mt-3 pt-2 border-t border-line/60 flex items-center gap-1.5 text-[11px] text-verified font-medium">
+              <div className="mt-3 pt-2 border-t border-line/60 flex items-center gap-1.5 text-caption text-verified font-medium">
                 <ShieldCheck className="size-3.5" />
                 <span>100% item value transferred directly to artisan bank accounts.</span>
               </div>

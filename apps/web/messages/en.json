@@ -79,7 +79,8 @@
     "story_translated": "Story shown in your language where available.",
     "member_since": "On Karu since {date}",
     "pieces": "{n, plural, one {# piece} other {# pieces}}",
-    "reviews": "What buyers say"
+    "reviews": "What buyers say",
+    "meet": "Meet the Maker"
   },
   "passport": {
     "title": "Karu Passport",
@@ -126,7 +127,7 @@
     "view_all": "View all",
     "announce": {
       "1": "Every piece carries a Karu ID",
-      "2": "Free shipping over ₹999",
+      "2": "Free shipping across India",
       "3": "Paid directly to the maker"
     }
   },

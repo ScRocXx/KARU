@@ -1,13 +1,13 @@
-import { ArrowRight, CheckCircle2, ChevronRight, Info, RotateCcw, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { RotateCcw, Truck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { GiTag, StockPill, VerifiedBadge, Woven } from "@/components/karu/badges";
+import { GiTag, StockPill, VerifiedBadge } from "@/components/karu/badges";
 import { ListenButton, MakerCard } from "@/components/karu/maker-card";
 import { ProductRail } from "@/components/karu/product-card";
 import { ProvenancePanel } from "@/components/karu/provenance-panel";
-import { Container, Section } from "@/components/layout";
+import { Container } from "@/components/layout";
 import { BuyBox } from "@/components/market/buy-box";
 import { ProductGallery } from "@/components/market/product-gallery";
 import { ProductReviews } from "@/components/market/product-reviews";
@@ -210,8 +210,8 @@ export default async function ProductPage({ params }: { params: Promise<{ code: 
 
           <Accordion title="Shipping, Dispatch & Returns" iconStyle="plus">
             <p className="text-body-s text-muted leading-relaxed">
-              Every order is hand-packaged directly in the artisan&apos;s cluster and shipped with tamper-evident Karu ID seals.
-              {p.returnable ? ` Returns are accepted within ${p.return_window_days} days of delivery if seals remain intact.` : " Due to the custom handmade nature of this piece, returns are not accepted unless damaged in transit."}
+              Every order is hand-packaged directly in the artisan&apos;s cluster and shipped with its verified Karu ID tag.
+              {p.returnable ? ` Returns are accepted within ${p.return_window_days} days of delivery if the tag remains attached.` : " Due to the custom handmade nature of this piece, returns are not accepted unless damaged in transit."}
             </p>
           </Accordion>
         </div>

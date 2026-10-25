@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, Package, QrCode, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { use, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -20,7 +20,6 @@ import { Stepper } from "@/components/ui/stepper";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { date, inr } from "@/lib/format";
-import { uploadPhoto } from "@/lib/media";
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -105,9 +104,9 @@ function OrderDetail({ id }: { id: string }) {
                 <dd className="font-serif text-brand">{inr(order.total_inr)}</dd>
               </div>
             </dl>
-            <div className="mt-4 pt-3 border-t border-line text-[11px] text-muted flex items-center gap-1.5">
+            <div className="mt-4 pt-3 border-t border-line text-caption text-muted flex items-center gap-1.5">
               <ShieldCheck className="size-3.5 text-verified" />
-              <span>Full artisan transfer verified via Karu ledger</span>
+              <span>Direct payment recorded for artisan</span>
             </div>
           </div>
         </aside>
@@ -225,7 +224,7 @@ function ReturnDrawer({ open, onClose, orderId, itemId, onDone }: { open: boolea
   const t = useTranslations("orders");
   const [reason, setReason] = useState("not_as_described");
   const [details, setDetails] = useState("");
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
   return (
@@ -267,7 +266,7 @@ function ReviewDrawer({ open, onClose, itemId, onDone }: { open: boolean; onClos
   const toast = useToast();
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
   return (

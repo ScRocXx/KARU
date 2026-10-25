@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, ChevronRight, Package } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { AuthGate } from "@/components/auth-gate";
@@ -40,7 +40,7 @@ function Orders() {
         <EmptyState
           art="basket"
           title={t("empty") || "No orders yet"}
-          description="When you purchase handcrafted items, they will appear here with tamper-evident Karu ID records."
+          description="When you purchase handcrafted items, they will appear here with their unique Karu ID certificates."
           action={
             <Link href="/">
               <Button variant="primary" size="M">
