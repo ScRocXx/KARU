@@ -55,7 +55,7 @@ export function AnnouncementBar() {
       onMouseLeave={() => setPaused(false)}
       className="w-full bg-brand text-on-dark border-b border-white/10"
     >
-      <div className="mx-auto flex min-h-[36px] max-w-[1360px] items-center justify-between px-4 sm:px-6 lg:px-10 text-caption font-medium">
+      <div className="mx-auto flex min-h-9 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10 text-caption font-medium">
         {/* Desktop Messages */}
         <div className="hidden lg:flex items-center gap-3">
           <span>{t("announce.1")}</span>
@@ -131,7 +131,7 @@ export function MarketHeader() {
           scrolled ? "h-16 shadow-2xs" : "h-20"
         )}
       >
-        <div className="mx-auto flex h-full max-w-[1360px] items-center justify-between px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
           {/* Mobile Start: Menu Drawer Button */}
           <div className="flex lg:hidden items-center gap-2">
             <IconButton
@@ -269,7 +269,7 @@ export function MarketHeader() {
               >
                 <ShoppingBag className="size-5" />
                 {typeof cartCount === "number" && cartCount > 0 && (
-                  <span className="absolute end-1.5 top-1.5 flex min-w-4.5 h-4.5 items-center justify-center rounded-full bg-brand px-1 text-[10.5px] font-bold text-white tabular-nums shadow-xs">
+                  <span className="absolute end-1.5 top-1.5 flex min-w-4.5 h-4.5 items-center justify-center rounded-full bg-brand px-1 text-caption font-bold text-white tabular-nums shadow-xs">
                     {cartCount}
                   </span>
                 )}
@@ -287,7 +287,7 @@ export function MarketHeader() {
             onMouseLeave={handleMouseLeave}
             className="absolute start-0 top-full w-full border-b border-line bg-surface shadow-pop animate-in fade-in slide-in-from-top-2 duration-150"
           >
-            <div className="mx-auto max-w-[1360px] p-8 sm:px-10">
+            <div className="mx-auto max-w-7xl p-8 sm:px-10">
               {activeMega === "shop" && (
                 <div className="grid grid-cols-4 gap-8">
                   <div>
@@ -352,7 +352,7 @@ export function MarketHeader() {
                   </div>
                   <div className="rounded-sm border border-line bg-surface-alt p-5 flex flex-col justify-between">
                     <div>
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-brand">
+                      <span className="text-caption font-semibold uppercase tracking-widest text-brand">
                         The Karu Edit
                       </span>
                       <h4 className="font-serif text-lg font-medium text-text mt-1">
@@ -388,8 +388,8 @@ export function MarketHeader() {
                         </Link>
                       </li>
                       <li>
-                        <Link href="/craft/chanderi" className="hover:text-brand transition-colors">
-                          Chanderi Weaves (MP)
+                        <Link href="/craft/phulkari" className="hover:text-brand transition-colors">
+                          Phulkari Embroidery (Punjab)
                         </Link>
                       </li>
                     </ul>
@@ -403,8 +403,8 @@ export function MarketHeader() {
                         </Link>
                       </li>
                       <li>
-                        <Link href="/craft/dhokra-metal" className="hover:text-brand transition-colors">
-                          Bastar Dhokra Casting (CG)
+                        <Link href="/craft/dokra" className="hover:text-brand transition-colors">
+                          Bastar Dokra Casting (CG)
                         </Link>
                       </li>
                     </ul>
@@ -413,7 +413,7 @@ export function MarketHeader() {
                     <h3 className="text-eyebrow text-muted mb-3">Folk Paintings & Prints</h3>
                     <ul className="flex flex-col gap-2.5 text-body-s">
                       <li>
-                        <Link href="/craft/madhubani-painting" className="hover:text-brand transition-colors">
+                        <Link href="/craft/madhubani" className="hover:text-brand transition-colors">
                           Mithila Madhubani (Bihar)
                         </Link>
                       </li>
@@ -426,7 +426,7 @@ export function MarketHeader() {
                   </div>
                   <div className="flex flex-col justify-center border-s border-line ps-8">
                     <p className="font-serif text-lg text-text">
-                      100% GI-Protected Lineages
+                      GI-Protected Heritage Lineages
                     </p>
                     <p className="text-body-s text-muted mt-1">
                       Every craft verified against genuine geographical indications.
@@ -524,7 +524,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
       aria-modal="true"
       className="fixed inset-0 z-50 flex flex-col bg-bg/98 backdrop-blur-md animate-in fade-in duration-200"
     >
-      <div className="mx-auto flex h-20 w-full max-w-[1360px] items-center justify-between px-4 sm:px-6 lg:px-10 border-b border-line">
+      <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10 border-b border-line">
         <Wordmark showTagline={false} />
         <IconButton aria-label="Close search" onClick={onClose} className="text-text">
           <X className="size-6" />
@@ -546,7 +546,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search sarees, pottery, brass, makers… बनारसी"
+            placeholder={t("search_placeholder") || "Search sarees, pottery, brass, makers… बनारसी"}
             className="w-full bg-transparent ps-12 pe-4 py-3 font-serif text-2xl sm:text-3xl text-text placeholder:text-muted focus:outline-none border-b-2 border-line focus:border-brand transition-colors"
           />
         </form>
@@ -584,8 +584,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
 /** Mobile NavDrawer */
 export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
-  const path = usePathname();
-
+  
   return (
     <Drawer open={open} onClose={onClose} side="start" title={<Wordmark showTagline={false} />}>
       <div className="flex flex-col gap-6 py-2">
@@ -672,7 +671,7 @@ export function MarketFooter() {
       {/* Subtle gold accent border */}
       <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-gold-400/40 to-transparent" />
 
-      <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-10 pt-12 pb-24 md:pb-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pt-12 pb-24 md:pb-12">
         {/* Top: Brand & Newsletter Split */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 border-b border-terracotta-900/60 pb-12">
           <div>
@@ -764,7 +763,7 @@ export function MarketFooter() {
             <LanguageSwitcher signedIn={false} variant="dark" />
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-mono tracking-wider uppercase text-on-dark/80">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-caption font-mono tracking-wider uppercase text-on-dark/80">
             <span className="rounded-xs border border-white/20 px-2 py-0.5">UPI</span>
             <span className="rounded-xs border border-white/20 px-2 py-0.5">RuPay</span>
             <span className="rounded-xs border border-white/20 px-2 py-0.5">Visa</span>
@@ -777,7 +776,7 @@ export function MarketFooter() {
               <ShieldCheck className="size-4 text-gold-300" />
               <span>{t("promise")}</span>
             </p>
-            <p className="mt-1 text-[11px] text-on-dark/60">
+            <p className="mt-1 text-caption text-on-dark/60">
               © {new Date().getFullYear()} Karu Handmade Technologies Pvt Ltd. Made in India.
             </p>
           </div>
@@ -792,7 +791,6 @@ export function MarketBottomNav() {
   const t = useTranslations("nav");
   const path = usePathname();
   const { data: me } = useMe();
-  const { data: cartCount } = useCartCount(!!me);
 
   // Hidden on PDP (/p/*), cart (/cart), checkout (/checkout) as specified in §5.2 and §13.5
   if (path.startsWith("/p/") || path === "/cart" || path === "/checkout") {
@@ -827,7 +825,7 @@ export function MarketBottomNav() {
               <span className="absolute top-0 h-0.5 w-8 rounded-full bg-brand" />
             )}
             <Icon className="size-5.5" strokeWidth={1.5} />
-            <span className="text-[12px] font-medium leading-none">{item.label}</span>
+            <span className="text-caption font-medium leading-none">{item.label}</span>
           </Link>
         );
       })}

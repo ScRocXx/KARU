@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { Woven } from "@/components/karu/ornaments";
 import { ProvenanceSteps } from "@/components/market/provenance-steps";
 import { Button } from "@/components/ui/button";
 
@@ -80,14 +79,14 @@ export default async function ContentPage({ params }: { params: Promise<{ page: 
 
             {page === "verification-explained" && (
               <div className="mt-6 rounded-sm border border-line bg-surface-alt p-6 flex flex-col gap-3">
-                <h3 className="font-serif text-h3 text-ink-900">Try a sample Karu ID certificate</h3>
+                <h3 className="font-serif text-h3 text-ink-900">Explore verified craft pieces</h3>
                 <p className="text-body-s text-muted">
-                  Inspect the immutable registry entry, tamper-evident checks, and craft heritage records.
+                  Inspect authentic Karu ID certificates with craft heritage records and direct maker provenance.
                 </p>
                 <div>
-                  <Link href="/k/KRU-BNR-8492">
+                  <Link href="/search?verified=true">
                     <Button variant="primary" size="M">
-                      View Demo Certificate (Banarasi Brocade)
+                      See Verified Pieces
                     </Button>
                   </Link>
                 </div>
