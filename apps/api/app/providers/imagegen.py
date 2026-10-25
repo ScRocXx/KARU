@@ -9,6 +9,7 @@ Fake: Deterministic PIL compositing onto a 4:5 white canvas for tests and offlin
 
 from __future__ import annotations
 
+import asyncio
 import os
 from typing import Protocol
 
@@ -90,18 +91,22 @@ class GeminiImageGen:
             image_parts.append(types.Part.from_bytes(data=img, mime_type=mime))
 
         contents = [*image_parts, prompt]
+        # TEXT+IMAGE: Pro sometimes "thinks aloud" before the image; IMAGE-only then returns no inline data.
         config = types.GenerateContentConfig(
-            response_modalities=["IMAGE"],
+            response_modalities=["TEXT", "IMAGE"],
             image_config=types.ImageConfig(aspect_ratio=aspect_ratio, image_size="2K"),
         )
 
         cost = DEFAULTS["costs.v1"].get("gemini.image", 11.5)
         try:
             async with track_call("gemini", purpose, cost_inr=cost, listing_id=listing_id):
-                resp = await self.client.aio.models.generate_content(
-                    model=model,
-                    contents=contents,
-                    config=config,
+                resp = await asyncio.wait_for(
+                    self.client.aio.models.generate_content(
+                        model=model,
+                        contents=contents,
+                        config=config,
+                    ),
+                    timeout=150,
                 )
             for part in resp.parts or []:
                 if part.inline_data and part.inline_data.data:

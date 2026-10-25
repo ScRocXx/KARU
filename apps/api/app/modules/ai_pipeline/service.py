@@ -212,176 +212,223 @@ SHOT_GROUPS = {
     "leather": "leather",
 }
 
+# Art direction per shot. Photography language (lens, light, surface, composition) is what lifts
+# Nano Banana output from "AI-looking" to catalogue grade; keep each line concrete and visual.
+_WHITE = ("seamless pure-white (#FFFFFF) studio sweep, large overhead softbox key light from upper-left, white bounce "
+          "fill from the right, subtle contact shadow under the product, 85mm lens at f/8, everything tack-sharp")
+_MACRO = ("100mm macro lens, focus-stacked so the whole detail is sharp, raking side light at a low angle to reveal "
+          "texture and relief, frame filled edge to edge by the product surface, no background visible")
+_HOME = ("warm, uncluttered Indian home styled like a premium décor catalogue: soft golden-hour window light from the "
+         "side, gentle shadows, shallow depth of field (50mm, f/2.8) with the product in sharp focus on a rule-of-thirds "
+         "point; tasteful props only (handloom jute runner, teak wood, brass, a few marigolds or a green plant), muted "
+         "earthy palette so the product is the hero")
+
 SHOTS: dict[str, list[tuple[str, str]]] = {
     "object": [
-        ("hero", "white bg, 3/4 front view, soft shadow"),
-        ("lifestyle", "warm Indian home (shelf or table), natural light"),
-        ("detail", "macro of glaze, carving or tool marks"),
-        ("scale", "held in a hand or next to a cup, using height/width attributes"),
-        ("angle", "side or top view on white"),
+        ("hero", f"Hero packshot: three-quarter front view, slightly above eye level, product fills ~80% of the frame, "
+                 f"centred. {_WHITE}."),
+        ("lifestyle", f"Lifestyle: the product placed naturally on a wooden shelf, console or dining table. {_HOME}."),
+        ("detail", f"Detail close-up of the most characteristic surface — glaze, carving, engraving, weave or tool marks. "
+                   f"{_MACRO}."),
+        ("scale", "Scale shot: the product gently held in an Indian person's hand (hand and wrist only, natural skin, "
+                  "clean short nails) or beside an everyday chai cup, so its true size is obvious; soft daylight, "
+                  "neutral light-grey backdrop, 50mm f/4."),
+        ("angle", f"Alternate angle: clean side profile or top-down view showing the form from a new direction. {_WHITE}."),
     ],
     "textile": [
-        ("hero", "neatly folded on white, border visible"),
-        ("worn", "draped on an Indian model, light-grey studio"),
-        ("detail", "weave or motif macro"),
-        ("spread", "laid flat, full pattern or pallu"),
-        ("lifestyle", "festive styled scene"),
+        ("hero", f"Hero packshot: neatly folded with crisp edges, border and pallu motif visible on top, product fills "
+                 f"~80% of the frame. {_WHITE}."),
+        ("worn", "On-model: elegantly draped/worn by an Indian model in a natural, graceful pose, cropped at the "
+                 "shoulders or showing the full drape; light-grey seamless studio backdrop, large soft key light with "
+                 "gentle rim light, 85mm f/4, fabric falls in natural folds that show its sheen and weight."),
+        ("detail", f"Detail close-up of the weave, embroidery or printed motif, individual threads visible. {_MACRO}."),
+        ("spread", "Flat lay from directly overhead: fully spread out to show the complete pattern, border and pallu, "
+                   "smoothed with natural soft folds at the edges, on a light warm-grey linen surface, even shadowless "
+                   "diffused light, true-to-life colour."),
+        ("lifestyle", f"Festive lifestyle: styled for a celebration — draped over a carved wooden chair or folded on a "
+                      f"brass tray with diyas and marigolds, warm bokeh lights in the background. {_HOME}."),
     ],
     "home": [
-        ("hero", "folded on white"),
-        ("lifestyle", "on a bed, sofa or table in a room"),
-        ("detail", "weave macro"),
-        ("spread", "full pattern laid flat"),
-        ("scale", "on furniture"),
+        ("hero", f"Hero packshot: neatly folded stack with edges aligned, pattern visible, fills ~80% of the frame. {_WHITE}."),
+        ("lifestyle", f"Lifestyle: in use on a made bed, sofa or dining table in a bright, airy room. {_HOME}."),
+        ("detail", f"Detail close-up of the weave, block print or embroidery. {_MACRO}."),
+        ("spread", "Flat lay from directly overhead showing the full pattern edge to edge, on a light warm-grey surface, "
+                   "even diffused light, true-to-life colour."),
+        ("scale", f"In context on furniture so the real size reads instantly (a cushion on an armchair, a runner on a "
+                  f"table). {_HOME}."),
     ],
     "jewel": [
-        ("hero", "white bg, about 75% fill"),
-        ("worn", "close crop on a model (neck, ear or wrist)"),
-        ("detail", "macro"),
-        ("scale", "in a palm"),
-        ("lifestyle", "on fabric or a tray, gift mood"),
+        ("hero", f"Hero packshot: product fills ~75% of the frame, slight angle to catch highlights on metal and stones, "
+                 f"controlled specular reflections, no blown-out hotspots. {_WHITE}."),
+        ("worn", "On-model: close crop of an Indian model's neck, ear or wrist wearing the piece, natural skin texture, "
+                 "soft beauty lighting with a large diffused key, neutral warm backdrop, 100mm f/4, jewellery in "
+                 "razor-sharp focus."),
+        ("detail", f"Macro of the craftsmanship — filigree, stone setting, enamel or engraving. {_MACRO}."),
+        ("scale", "Scale shot: resting in an open palm (hand only), soft daylight, neutral light-grey backdrop, 85mm f/4."),
+        ("lifestyle", "Gift mood: arranged on rich silk fabric or an open velvet jewellery box beside a brass tray and a "
+                      "few rose petals, warm soft light, shallow depth of field, luxurious but uncluttered."),
     ],
     "art": [
-        ("hero", "straight-on, white surround"),
-        ("lifestyle", "on a wall above furniture (also shows scale)"),
-        ("detail", "brushwork macro"),
-        ("angle", "30° view showing the edge or frame"),
-        ("scale", "next to a person or chair"),
+        ("hero", "Hero: perfectly straight-on, square to the camera with no keystone distortion, even shadowless "
+                 "gallery lighting from two diffused sources at 45°, white surround, colours true to the original."),
+        ("lifestyle", f"Lifestyle: hanging at eye level on a plain warm-white wall above a sofa or sideboard, correct "
+                      f"real-world scale. {_HOME}."),
+        ("detail", f"Close-up of the brushwork, linework or paper/canvas texture. {_MACRO}."),
+        ("angle", "30° angled view showing the edge, frame and depth of the piece, soft gallery light, white surround."),
+        ("scale", f"Scale: on a wall next to a chair or a person seen from behind, so the size is obvious. {_HOME}."),
     ],
     "leather": [
-        ("hero", "white bg"),
-        ("worn", "carried or in use"),
-        ("detail", "stitching macro"),
-        ("angle", "open, showing the inside"),
-        ("scale", "in a hand"),
+        ("hero", f"Hero packshot: three-quarter view, shape fully presented (stuffed if a bag), fills ~80% of the frame. "
+                 f"{_WHITE}."),
+        ("worn", "In use: carried or worn by an Indian person (product in focus, face out of frame), natural outdoor "
+                 "daylight in a clean urban or courtyard setting, 85mm f/2.8 with soft background blur."),
+        ("detail", f"Detail of the stitching, tooling, edge finish and grain. {_MACRO}."),
+        ("angle", f"Opened up to show the inside, lining and compartments. {_WHITE}."),
+        ("scale", "Scale shot: held in a hand (hand and wrist only), soft daylight, neutral light-grey backdrop, 50mm f/4."),
     ],
 }
 
+# Retry instructions for shots that need a person (often safety-blocked); same role, no people.
+SHOT_FALLBACKS = {
+    "worn": "Styled on a neutral fabric mannequin/bust (no person), light-grey studio backdrop, soft key light, 85mm f/4.",
+    "scale": "Placed beside familiar everyday objects (a chai cup, a book) on a light wood table so the size is obvious, "
+             "soft daylight, 50mm f/4. No people.",
+}
+
 SHOT_PROMPT_PREFIX = (
-    "Using the reference photo, create a professional e-commerce product photograph. "
-    "The product must remain exactly identical: same shape, proportions, colours, pattern, "
-    "glaze, and handmade imperfections. Do not add, remove or alter anything on the product. "
-    "No text, logos or watermarks."
+    "You are a world-class product photographer shooting a premium e-commerce catalogue for handmade Indian crafts. "
+    "Create ONE photorealistic photograph of the product in the reference photo(s). Image 1 is the main reference; "
+    "any others show the same product from other angles.\n"
+    "PRODUCT FIDELITY (most important): the product must be exactly the same object — identical shape, proportions, "
+    "colours, pattern, motif count and placement, glaze, texture and every handmade irregularity. Do not redesign, "
+    "clean up, add or remove anything on the product. Show exactly one product."
+)
+
+SHOT_PROMPT_SUFFIX = (
+    "Look and finish: high-end commercial photography, true-to-life colour, natural contrast, crisp micro-detail, "
+    "realistic materials and shadows. Avoid: CGI or plastic look, oversaturation, harsh flash, distorted perspective, "
+    "cluttered props competing with the product, duplicated products, any text, logos, labels or watermarks."
 )
 
 
+def _product_context(listing: Listing, craft_name: str | None, place: str) -> list[str]:
+    title = listing.title or {}
+    desc = listing.description or {}
+    attrs = listing.attributes or {}
+    lines = []
+    if t := title.get("en") or title.get(listing.source_lang):
+        lines.append(f"Product: {t}")
+    if craft_name:
+        lines.append(f"Craft: {craft_name}" + (f", made in {place}" if place else ""))
+    for key, label in (("material", "Material"), ("technique", "Technique"), ("finish", "Finish"), ("dye", "Dye")):
+        if attrs.get(key):
+            lines.append(f"{label}: {attrs[key]}")
+    if colours := attrs.get("colour"):
+        lines.append(f"Colours (keep exact): {', '.join(map(str, colours)) if isinstance(colours, list) else colours}")
+    dims = attrs.get("dimensions")
+    if isinstance(dims, dict) and (d := ", ".join(f"{k.replace('_', ' ')} {v}" for k, v in dims.items() if v)):
+        lines.append(f"Real size: {d} — render at this true scale")
+    if d := (desc.get("en") or "")[:220]:
+        lines.append(f"About: {d}")
+    return lines
+
+
+def _shot_prompt(instruction: str, context: list[str]) -> str:
+    parts = [SHOT_PROMPT_PREFIX]
+    if context:
+        parts.append("Product facts:\n" + "\n".join(f"- {c}" for c in context))
+    parts += [f"THIS SHOT: {instruction}", SHOT_PROMPT_SUFFIX]
+    return "\n\n".join(parts)
+
+
 async def generate_shots(db: AsyncSession, listing: Listing, job=None) -> int:
-    """Generate up to 5 marketplace-style AI catalogue images from real photos."""
+    """Generate up to 5 marketplace-style AI catalogue images from real photos.
+
+    API calls run concurrently (bounded); each finished shot is saved and committed as it lands so the
+    review screen fills in progressively. A failed shot is retried once (people shots retry without people).
+    """
     rows = await listing_media(db, listing.id, ("photo",))
     if not rows:
         return 0
     rows.sort(key=lambda r: (not r[0].is_primary, r[0].position))
     primary_orig = rows[0][1]
 
+    # Originals (not the enhanced copies: gray-world balancing can shift true product colours), high-res.
     st = get_storage()
     photo_bytes: list[bytes] = []
-    for _, m in rows:
-        data = await st.get_private(m.storage_key)
-        img = await asyncio.to_thread(imaging.load_image, data)
-        compressed = await asyncio.to_thread(imaging.compress_for_llm, img)
-        photo_bytes.append(compressed)
+    for _, m in rows[:3]:
+        img = await asyncio.to_thread(imaging.load_image, await st.get_private(m.storage_key))
+        photo_bytes.append(await asyncio.to_thread(imaging.compress_for_llm, img, 2048, 92))
 
     cat_slug = "other"
-    if listing.category_id:
-        cat = await db.get(Category, listing.category_id)
-        if cat:
-            cat_slug = cat.slug
-    group = SHOT_GROUPS.get(cat_slug, "object")
-    shot_list = SHOTS.get(group, SHOTS["object"])
+    if listing.category_id and (cat := await db.get(Category, listing.category_id)):
+        cat_slug = cat.slug
+    shot_list = SHOTS.get(SHOT_GROUPS.get(cat_slug, "object"), SHOTS["object"])
 
-    all_media = await listing_media(db, listing.id)
-    existing_shots = {lm.role for lm, _ in all_media if (lm.role or "").startswith("ai_")}
+    craft = await db.get(Craft, listing.craft_id) if listing.craft_id else None
+    profile = await db.get(ArtisanProfile, listing.artisan_id) if listing.artisan_id else None
+    context = _product_context(listing, (craft.name or {}).get("en") if craft else None,
+                               place_of(profile) if profile else "")
 
-    title_en = (listing.title or {}).get("en") or (listing.title or {}).get(listing.source_lang, "")
-    attrs = listing.attributes or {}
-    dims = attrs.get("dimensions")
-    dims_str = ""
-    if isinstance(dims, dict):
-        dims_str = ", ".join(f"{k}: {v}" for k, v in dims.items() if v)
-    elif dims:
-        dims_str = str(dims)
+    existing = {lm.role for lm, _ in await listing_media(db, listing.id) if (lm.role or "").startswith("ai_")}
+    todo = [(i, shot, instr) for i, (shot, instr) in enumerate(shot_list) if f"ai_{shot}" not in existing]
+    if not todo:
+        return 0
+    imagegen = get_imagegen()
+    sem = asyncio.Semaphore(3)  # ponytail: fixed concurrency; make it a setting if the Vertex quota changes
 
-    count = 0
-    total = len(shot_list)
-    for i, (shot, instruction) in enumerate(shot_list):
-        role = f"ai_{shot}"
-        if role in existing_shots:
-            continue
+    async def render(i: int, shot: str, instruction: str):
+        for n, instr in enumerate((instruction, SHOT_FALLBACKS.get(shot, instruction))):
+            try:
+                async with sem:
+                    return i, shot, await imagegen.edit(_shot_prompt(instr, context), photo_bytes, aspect_ratio="4:5",
+                                                        purpose="ai_image", listing_id=listing.id)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("ai shot %s attempt %d failed for listing %s: %s", shot, n + 1, listing.id, exc)
+        return i, shot, None
 
-        prompt_lines = [
-            SHOT_PROMPT_PREFIX,
-            f"Shot instruction: {instruction}.",
-        ]
-        if title_en:
-            prompt_lines.append(f"Title: {title_en}")
-        if cat_slug:
-            prompt_lines.append(f"Category: {cat_slug}")
-        if attrs.get("material"):
-            prompt_lines.append(f"Material: {attrs['material']}")
-        if dims_str:
-            prompt_lines.append(f"Dimensions: {dims_str}")
-        prompt = "\n".join(prompt_lines)
-
-        try:
-            ai_bytes = await get_imagegen().edit(
-                prompt,
-                photo_bytes,
-                aspect_ratio="4:5",
-                purpose="ai_image",
-                listing_id=listing.id,
-            )
-        except Exception as exc:
-            logger.warning("ai shot %s failed for listing %s: %s", shot, listing.id, exc)
-            continue
-
-        try:
-            ai_img = await asyncio.to_thread(imaging.load_image, ai_bytes)
-            derived = Media(
-                owner_user_id=primary_orig.owner_user_id,
-                kind="ai_image",
-                mime="image/jpeg",
-                storage_key="pending",
-                status="ready",
-                created_at=utcnow(),
-            )
-            db.add(derived)
-            await db.flush()
-
-            derived.storage_key = f"derived/{derived.id}.jpg"
-            await st.put_private(derived.storage_key, imaging.encode(ai_img, "JPEG", 90), "image/jpeg")
-
-            vars_ = await asyncio.to_thread(imaging.variants, ai_img)
-            keys = {}
-            for name, blob in vars_.items():
-                key = f"public/{derived.id}/{name}"
-                await st.put_public(key, blob, "image/webp" if name.endswith(".webp") else "image/jpeg")
-                keys[name] = key
-            derived.variants = keys
-            derived.public_key = keys.get("800_4x5.jpg")
-            derived.width, derived.height = ai_img.size
-
-            db.add(ListingMedia(
-                listing_id=listing.id,
-                media_id=derived.id,
-                role=role,
-                position=i,
-                source_media_id=primary_orig.id,
-            ))
-            await db.commit()
-            count += 1
-        except Exception as exc:
-            logger.warning("saving ai shot %s failed for listing %s: %s", shot, listing.id, exc)
-            continue
-
+    count, done, total = 0, 0, len(todo)
+    # Renders run concurrently, but all DB work happens here, one shot at a time, on the single session.
+    for fut in asyncio.as_completed([render(*t) for t in todo]):
+        i, shot, ai_bytes = await fut
+        done += 1
+        if ai_bytes is not None:
+            try:
+                await _save_shot(db, listing, primary_orig, f"ai_{shot}", i, ai_bytes)
+                count += 1
+            except Exception as exc:  # noqa: BLE001
+                await db.rollback()
+                logger.warning("saving ai shot %s failed for listing %s: %s", shot, listing.id, exc)
         if job:
-            pct = int((i + 1) / total * 100)
-            await set_progress(db, job, pct, f"shot_{shot}")
+            await set_progress(db, job, 5 + int(done / total * 95), f"shot_{shot}")
             await db.commit()
-
     return count
 
 
-@handler("ai.generate_shots", queue="ai", max_attempts=2, timeout_s=300)
+async def _save_shot(db: AsyncSession, listing: Listing, primary_orig: Media, role: str, position: int,
+                     ai_bytes: bytes) -> None:
+    st = get_storage()
+    ai_img = await asyncio.to_thread(imaging.load_image, ai_bytes)
+    derived = Media(owner_user_id=primary_orig.owner_user_id, kind="ai_image", mime="image/jpeg",
+                    storage_key="pending", status="ready", created_at=utcnow())
+    db.add(derived)
+    await db.flush()
+    derived.storage_key = f"derived/{derived.id}.jpg"
+    await st.put_private(derived.storage_key, imaging.encode(ai_img, "JPEG", 92), "image/jpeg")
+    keys = {}
+    for name, blob in (await asyncio.to_thread(imaging.variants, ai_img)).items():
+        key = f"public/{derived.id}/{name}"
+        await st.put_public(key, blob, "image/webp" if name.endswith(".webp") else "image/jpeg")
+        keys[name] = key
+    derived.variants = keys
+    derived.public_key = keys.get("800_4x5.jpg")
+    derived.width, derived.height = ai_img.size
+    db.add(ListingMedia(listing_id=listing.id, media_id=derived.id, role=role, position=position,
+                        source_media_id=primary_orig.id))
+    await db.commit()
+
+
+@handler("ai.generate_shots", queue="ai", max_attempts=2, timeout_s=600)
 async def generate_shots_job(db: AsyncSession, job) -> dict:
     listing = await db.get(Listing, uuid.UUID(job.ref_id))
     if listing is None:

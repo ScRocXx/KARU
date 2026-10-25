@@ -14,7 +14,17 @@ TRANSCRIPT = ("यह भागलपुरी सूती साड़ी ह�
 
 
 @pytest.mark.asyncio
-async def test_full_marketplace_flow(make_client):
+async def test_full_marketplace_flow(make_client, monkeypatch):
+    from app.modules.ai_pipeline import service as ai
+    from app.providers.imagegen import FakeImageGen
+
+    class SafetyBlocksPeople(FakeImageGen):  # the saree "worn" shot is refused; its no-person fallback must land
+        async def edit(self, prompt, images, **kw):
+            if "Indian model" in prompt:
+                raise RuntimeError("blocked")
+            return await super().edit(prompt, images, **kw)
+
+    monkeypatch.setattr(ai, "get_imagegen", SafetyBlocksPeople)
     artisan = await make_client()
     me = await login(artisan, "9876543210")
     assert me["is_new"] and me["user"]["roles"] == ["buyer"]

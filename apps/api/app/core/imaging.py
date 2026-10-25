@@ -258,10 +258,10 @@ def variants(img: Image.Image, sizes: tuple[int, ...] = (400, 800, 1600)) -> dic
     return out
 
 
-def compress_for_llm(img: Image.Image, max_side: int = 1024) -> bytes:
+def compress_for_llm(img: Image.Image, max_side: int = 1024, quality: int = 80) -> bytes:
     small = img.copy()
-    small.thumbnail((max_side, max_side))
-    return encode(small, "JPEG", 80)
+    small.thumbnail((max_side, max_side), Image.Resampling.LANCZOS)
+    return encode(small, "JPEG", quality)
 
 
 # ---- fonts & text ------------------------------------------------------------------------------
