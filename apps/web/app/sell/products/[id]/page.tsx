@@ -39,7 +39,7 @@ function Manage({ id }: { id: string }) {
   if (isLoading || !l) return <SellPage><Skeleton className="h-96" /></SellPage>;
   const title = l.title[l.source_lang] || l.title.en || "";
   return (
-    <SellPage title={title} back="/sell">
+    <SellPage title={title} back="/sell/products">
       <div className="flex flex-wrap items-center gap-2">
         <VerifiedBadge status={l.verification_status as never} />
         <StockPill stock={{ state: l.quantity_available <= 0 ? "out" : l.quantity_available <= 3 ? "low" : "in", count: l.quantity_available }} />

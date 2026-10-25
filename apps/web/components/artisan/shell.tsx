@@ -68,13 +68,13 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
 
   const navItems = [
     { href: "/sell", icon: Home, label: t("home") || "Home", exact: true },
-    { href: "/sell/products", icon: Package, label: "Products" },
+    { href: "/sell/products", icon: Package, label: t("products") || "Products" },
     { href: "/sell/orders", icon: Package, label: t("orders") || "Orders" },
     { href: "/sell/requests", icon: Inbox, label: t("requests") || "Custom Requests" },
-    { href: "/sell/payouts", icon: Coins, label: "Payouts" },
-    { href: "/sell/passport", icon: ShieldCheck, label: t("me") || "Passport" },
-    { href: "/sell/help", icon: HelpCircle, label: "Help & Academy" },
-    { href: "/sell/settings", icon: Settings, label: "Settings" },
+    { href: "/sell/payouts", icon: Coins, label: t("payouts") || "Payouts" },
+    { href: "/sell/passport", icon: ShieldCheck, label: t("passport") || t("me") || "Passport" },
+    { href: "/sell/help", icon: HelpCircle, label: t("help") || "Help & Academy" },
+    { href: "/sell/settings", icon: Settings, label: t("settings") || "Settings" },
   ];
 
   return (
@@ -95,7 +95,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
           {/* New Product Action Button */}
           <Link href="/sell/new">
             <Button variant="primary" size="L" block icon={<Plus className="size-5" />}>
-              + New Product
+              {t("new_product") || "New Product"}
             </Button>
           </Link>
 
@@ -108,10 +108,10 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
                   key={it.href}
                   href={it.href}
                   className={cx(
-                    "flex items-center gap-3 rounded-xs px-3 py-2.5 text-body-s font-medium transition-colors",
+                    "flex items-center gap-3 rounded-xs px-3 py-2.5 text-body-s font-medium transition-colors border-s-2",
                     active
-                      ? "bg-surface-alt text-brand font-semibold border-s-2 border-brand"
-                      : "text-ink-800 hover:bg-surface-alt hover:text-ink-900"
+                      ? "bg-surface-alt text-brand font-semibold border-brand"
+                      : "border-transparent text-ink-800 hover:bg-surface-alt hover:text-ink-900"
                   )}
                 >
                   <it.icon className={cx("size-4.5", active ? "text-brand" : "text-muted")} />
@@ -123,12 +123,12 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
         </div>
 
         {/* Bottom Profile Summary */}
-        <div className="border-t border-line pt-3 flex items-center justify-between px-2">
+        <div className="border-t border-line pt-3 flex flex-col gap-2 px-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <ProgressRing value={dash?.profile_completion ?? 100} size={36}>
               <UserRound className="size-4 text-brand" />
             </ProgressRing>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-medium text-body-s text-ink-900 truncate">
                 {me?.display_name || "Master Artisan"}
               </p>
@@ -137,7 +137,6 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
               </p>
             </div>
           </div>
-          <LanguageSwitcher signedIn={!!me} />
         </div>
       </aside>
 
@@ -147,11 +146,13 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
         <header className="hidden lg:flex h-16 shrink-0 items-center justify-between border-b border-line bg-surface/95 px-8 backdrop-blur sticky top-0 z-20">
           <div className="flex items-center gap-4">
             <span className="font-serif text-lg font-medium text-ink-900">
-              Artisan Workshop Studio
+              {t("studio_title") || "Artisan Workshop Studio"}
             </span>
           </div>
 
           <div className="flex items-center gap-4">
+            <LanguageSwitcher signedIn={!!me} variant="default" />
+
             <Link
               href="/sell/notifications"
               className="relative p-2 text-ink-800 hover:text-brand transition-colors rounded-full hover:bg-surface-alt"
@@ -163,16 +164,16 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
               ) : null}
             </Link>
 
-            <Link href="/" target="_blank" className="text-caption text-muted hover:text-brand">
-              View Public Shop ↗
+            <Link href="/" target="_blank" className="text-caption font-medium text-muted hover:text-brand">
+              {t("view_shop") || "View Public Shop"} ↗
             </Link>
           </div>
         </header>
 
         {/* Mobile Header (< lg) */}
         <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur lg:hidden">
-          <div className="mx-auto flex h-16 items-center justify-between px-4">
-            <div className="flex items-center gap-2">
+          <div className="mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+            <div className="flex items-center gap-2 shrink-0">
               <Link href="/sell" aria-label="Karu">
                 <Wordmark />
               </Link>
@@ -181,8 +182,8 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
               </span>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <LanguageSwitcher signedIn={!!me} />
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher signedIn={!!me} variant="compact" />
               {me?.has_artisan_profile && (
                 <>
                   <Link
@@ -190,14 +191,14 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
                     className="tap relative inline-flex items-center justify-center p-2 rounded-full hover:bg-surface-alt"
                     aria-label={t("notifications")}
                   >
-                    <Bell className="size-5.5 text-ink-900" />
+                    <Bell className="size-5 text-ink-900" />
                     {notes?.unread ? (
                       <span className="absolute end-1.5 top-1.5 size-2 rounded-full bg-brand" />
                     ) : null}
                   </Link>
                   <Link href="/sell/passport" aria-label={t("me")} className="tap inline-flex items-center justify-center">
-                    <ProgressRing value={dash?.profile_completion ?? 100} size={36}>
-                      <UserRound className="size-4.5 text-brand" />
+                    <ProgressRing value={dash?.profile_completion ?? 100} size={32}>
+                      <UserRound className="size-4 text-brand" />
                     </ProgressRing>
                   </Link>
                 </>
@@ -207,7 +208,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
         </header>
 
         {/* Queue Banner */}
-        <div className="px-4 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8">
           <UploadQueueBanner />
         </div>
 
@@ -250,7 +251,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
               <Link
                 href="/sell/new"
                 className="-mt-6 flex size-15 items-center justify-center rounded-full bg-brand text-white shadow-lift ring-4 ring-surface hover:bg-brand-hover transition-transform active:scale-95"
-                aria-label={t("new") || "New Product"}
+                aria-label={t("new_product") || "New Product"}
               >
                 <Plus className="size-7" />
               </Link>
@@ -361,19 +362,23 @@ export function SellPage({
   back?: string;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 lg:px-8 py-6">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-6">
       {title && (
         <div className="flex items-center gap-3 mb-6">
           {back && (
             <Link
               href={back}
-              className="tap -ms-2 inline-flex items-center justify-center p-2 rounded-full hover:bg-surface-alt transition-colors"
+              className="tap inline-flex items-center justify-center size-9 rounded-full hover:bg-surface-alt transition-colors shrink-0 text-ink-700"
               aria-label="Back"
             >
-              <span className="flip-rtl text-lg">←</span>
+              <span className="flip-rtl text-lg leading-none">←</span>
             </Link>
           )}
-          <h1 className="font-serif text-h2 text-ink-900">{title}</h1>
+          {typeof title === "string" ? (
+            <h1 className="font-serif text-h2 text-ink-900">{title}</h1>
+          ) : (
+            <div className="min-w-0 flex-1">{title}</div>
+          )}
         </div>
       )}
       {children}

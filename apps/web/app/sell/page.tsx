@@ -74,6 +74,7 @@ function Home() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading session dismissal on mount
     setHideCompletion(sessionStorage.getItem("karu:completion-dismissed") === "1");
   }, []);
 
@@ -100,9 +101,9 @@ function Home() {
       {/* Top Header: Greeting, Date, and Speaker */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4 mb-6">
         <div>
-          <span className="text-eyebrow text-brand">Master Artisan Studio</span>
+          <span className="text-eyebrow text-brand">{locale === "hi" ? "मास्टर कारीगर स्टूडियो" : "Master Artisan Studio"}</span>
           <h1 className="font-serif text-h1 text-ink-900 mt-1">
-            Namaste, {d?.greeting_name || "Artisan"}
+            {t("greeting")} {d?.greeting_name || (locale === "hi" ? "कारीगर" : "Artisan")}
           </h1>
           <p className="text-caption text-muted mt-0.5">
             {new Date().toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
@@ -124,17 +125,17 @@ function Home() {
           <StatTile
             label={t("views_today") || "Views Today"}
             value={d.summary.views_today}
-            delta="+12% from yesterday"
+            delta={locale === "hi" ? "+12% कल से" : "+12% from yesterday"}
           />
           <StatTile
             label={t("to_ship") || "Orders To Ship"}
             value={d.summary.orders_to_ship}
-            delta={d.summary.orders_to_ship > 0 ? "Express dispatch needed" : "All packed"}
+            delta={d.summary.orders_to_ship > 0 ? (locale === "hi" ? "जल्द डिस्पैच करें" : "Express dispatch needed") : (locale === "hi" ? "सभी पैक हैं" : "All packed")}
           />
           <StatTile
             label={t("on_the_way") || "Money on the Way"}
             value={d.summary.money_on_the_way}
-            delta="Direct transfer to bank"
+            delta={locale === "hi" ? "सीधे बैंक खाते में" : "Direct transfer to bank"}
           />
         </div>
       ) : null}
@@ -187,7 +188,7 @@ function Home() {
               </h2>
               <Link href="/sell/new">
                 <Button variant="primary" size="M" icon={<Plus className="size-4" />}>
-                  {t("new") || "+ New piece"}
+                  {t("new") || "New Product"}
                 </Button>
               </Link>
             </div>
@@ -274,11 +275,21 @@ function Home() {
                       }
                     >
                       <Button variant="secondary" size="S">
-                        Manage
+                        {locale === "hi" ? "प्रबंधन" : "Manage"}
                       </Button>
                     </Link>
                   </article>
                 ))}
+              </div>
+            )}
+            {items.length > 0 && (
+              <div className="pt-3 border-t border-line flex justify-end">
+                <Link
+                  href="/sell/products"
+                  className="inline-flex items-center gap-1 text-caption font-semibold text-brand hover:underline"
+                >
+                  <span>{locale === "hi" ? "सभी कार्यशाला उत्पाद देखें →" : "View All Workshop Products →"}</span>
+                </Link>
               </div>
             )}
           </section>
