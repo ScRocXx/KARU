@@ -13,7 +13,6 @@ export interface AccordionItemProps {
 }
 
 export function AccordionItem({
-  value,
   title,
   children,
   defaultOpen = false,

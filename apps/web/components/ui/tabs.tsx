@@ -96,7 +96,7 @@ export function Tabs<T extends string = string>({
                 {tab.count !== undefined && (
                   <span
                     className={cx(
-                      "rounded-full px-1.5 text-[10px]",
+                      "rounded-full px-1.5 text-caption",
                       active ? "bg-white/20 text-white" : "bg-sand-300 text-muted"
                     )}
                   >
@@ -125,7 +125,7 @@ export function Tabs<T extends string = string>({
               {tab.icon}
               <span>{tab.label}</span>
               {tab.count !== undefined && (
-                <span className="ms-1 rounded-full bg-sand-200 px-1.5 py-0.5 text-[10px] font-mono text-muted">
+                <span className="ms-1 rounded-full bg-sand-200 px-1.5 py-0.5 text-caption font-mono text-muted">
                   {tab.count}
                 </span>
               )}

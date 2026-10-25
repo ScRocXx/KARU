@@ -5,14 +5,12 @@ import {
   Bell,
   CloudOff,
   Coins,
-  HeartHandshake,
   HelpCircle,
   Home,
   Inbox,
   Package,
   Plus,
   RefreshCw,
-  Search,
   Settings,
   ShieldCheck,
   UserRound,
@@ -87,7 +85,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
             <Link href="/" aria-label="Karu">
               <Wordmark />
             </Link>
-            <span className="rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+            <span className="rounded-full bg-brand px-2 py-0.5 text-caption font-bold uppercase tracking-wider text-white">
               STUDIO
             </span>
           </div>
@@ -132,7 +130,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
               <p className="font-medium text-body-s text-ink-900 truncate">
                 {me?.display_name || "Master Artisan"}
               </p>
-              <p className="text-[11px] text-muted truncate">
+              <p className="text-caption text-muted truncate">
                 {dash?.profile_completion ?? 100}% completed
               </p>
             </div>
@@ -177,7 +175,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
               <Link href="/sell" aria-label="Karu">
                 <Wordmark />
               </Link>
-              <span className="rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+              <span className="rounded-full bg-brand px-2 py-0.5 text-caption font-bold uppercase tracking-wider text-white">
                 STUDIO
               </span>
             </div>

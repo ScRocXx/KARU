@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { cx } from "@/lib/format";
 import type { Card } from "@/lib/types";
 
 export interface HeroSlide {
@@ -61,7 +60,7 @@ export function HeroCarousel({ cards = [] }: { cards?: Card[] }) {
       onMouseLeave={() => setPaused(false)}
       className="relative w-full overflow-hidden bg-bg border-b border-line min-h-[560px] lg:h-[640px] flex items-center"
     >
-      <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:px-10 py-10 lg:py-0 h-full flex flex-col justify-center">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 py-10 lg:py-0 h-full flex flex-col justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center h-full">
           {/* Left Column: Copy & Actions (5 cols) */}
           <div className="lg:col-span-5 flex flex-col gap-6 z-10 py-6 lg:py-0">
@@ -154,7 +153,7 @@ export function HeroCarousel({ cards = [] }: { cards?: Card[] }) {
       </div>
 
       {/* Vertical Side Tagline on Desktop End Edge (Mrittika reference) */}
-      <div className="hidden xl:flex absolute end-4 top-1/2 -translate-y-1/2 rotate-90 origin-right text-[11px] font-semibold uppercase tracking-[0.28em] text-muted select-none pointer-events-none">
+      <div className="hidden xl:flex absolute end-4 top-1/2 -translate-y-1/2 rotate-90 origin-right text-caption font-semibold uppercase tracking-[0.28em] text-muted select-none pointer-events-none">
         Handwoven · Verified · Direct
       </div>
     </div>

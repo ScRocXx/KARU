@@ -35,8 +35,8 @@ function Notes() {
         <ul className="flex flex-col gap-2">
           {data.items.map((n) => {
             const body = (
-              <div className={cx("rounded-[14px] border bg-white p-4", n.read ? "border-ink-100" : "border-indigo-900/40")}>
-                <p className="text-[15px]">{n.body}</p>
+              <div className={cx("rounded-md border bg-white p-4", n.read ? "border-ink-100" : "border-brand/40")}>
+                <p className="text-body-s">{n.body}</p>
                 <p className="mt-1 text-xs text-ink-600">{timeAgo(n.created_at, (k, v) => tc(k, v))}</p>
               </div>
             );

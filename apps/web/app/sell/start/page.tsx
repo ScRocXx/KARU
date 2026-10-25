@@ -87,7 +87,7 @@ export default function StartPage() {
       {detailIndex >= 0 && (
         <div className="flex justify-center gap-2" aria-label={t("progress", { n: detailIndex + 1, total: DETAIL_STEPS.length })}>
           {DETAIL_STEPS.map((s, i) => (
-            <span key={s} className={cx("h-2 rounded-full transition-all", i <= detailIndex ? "w-8 bg-indigo-900" : "w-2 bg-ink-300")} />
+            <span key={s} className={cx("h-2 rounded-full transition-all", i <= detailIndex ? "w-8 bg-brand" : "w-2 bg-ink-300")} />
           ))}
         </div>
       )}
@@ -139,7 +139,7 @@ export default function StartPage() {
                   type="button"
                   aria-pressed={on}
                   onClick={() => setForm({ ...form, crafts: on ? form.crafts.filter((x) => x !== c.slug) : [...form.crafts, c.slug] })}
-                  className={cx("flex min-h-20 flex-col items-start justify-center rounded-[14px] border-2 bg-white p-3 text-start", on ? "border-indigo-900 bg-indigo-50" : "border-ink-100")}
+                  className={cx("flex min-h-20 flex-col items-start justify-center rounded-md border-2 bg-white p-3 text-start", on ? "border-brand bg-brand-soft" : "border-ink-100")}
                 >
                   <span className="font-semibold">{c.name}</span>
                   <span className="text-xs text-ink-600">{c.regions[0]}</span>
@@ -206,10 +206,10 @@ export default function StartPage() {
         <section className="flex flex-col gap-5">
           <div className="flex items-start gap-2">
             <ShieldCheck className="mt-1 size-8 shrink-0 text-peacock-600" />
-            <h1 className="font-display flex-1 text-[26px] leading-tight">{t("consent_title")}</h1>
+            <h1 className="font-display flex-1 text-h2 leading-tight">{t("consent_title")}</h1>
             <SpeakerButton text={`${t("consent_title")}. ${t("consent_1")} ${t("consent_2")} ${t("consent_3")} ${t("consent_4")}`} auto />
           </div>
-          <ul className="flex flex-col gap-3 rounded-[16px] bg-white p-5 text-[17px]">
+          <ul className="flex flex-col gap-3 rounded-md bg-white p-5 text-body">
             {[1, 2, 3, 4].map((n) => (
               <li key={n} className="flex gap-3">
                 <span className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-peacock-50 text-sm font-bold text-peacock-600">✓</span>
@@ -218,7 +218,7 @@ export default function StartPage() {
             ))}
           </ul>
           <p className="text-sm text-ink-600">
-            {t("consent_full")} <Link href="/terms" className="font-semibold text-indigo-900 underline">{t("terms")}</Link> · <Link href="/privacy" className="font-semibold text-indigo-900 underline">{t("privacy")}</Link>
+            {t("consent_full")} <Link href="/terms" className="font-semibold text-brand underline">{t("terms")}</Link> · <Link href="/privacy" className="font-semibold text-brand underline">{t("privacy")}</Link>
           </p>
           <Button size="L" variant="verified" loading={busy} onClick={finish}>{t("agree")}</Button>
         </section>
@@ -231,7 +231,7 @@ function Header({ title, body }: { title: string; body?: string }) {
   return (
     <div className="flex items-start gap-2">
       <div className="flex-1">
-        <h1 className="font-display text-[28px] leading-tight">{title}</h1>
+        <h1 className="font-display text-h2 leading-tight">{title}</h1>
         {body && <p className="mt-1 text-ink-600">{body}</p>}
       </div>
       <SpeakerButton text={`${title}. ${body || ""}`} auto />
@@ -253,7 +253,7 @@ function Question({ title, children, onNext, onSkip, canNext }: { title: string;
       {children}
       <Button type="submit" size="L" disabled={!canNext}>{t("next")}</Button>
       {onSkip && (
-        <button type="button" onClick={onSkip} className="min-h-12 font-semibold text-indigo-900 underline">
+        <button type="button" onClick={onSkip} className="min-h-12 font-semibold text-brand underline">
           {t("skip")}
         </button>
       )}

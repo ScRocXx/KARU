@@ -86,7 +86,7 @@ export function MicButton({ onText, size = 48, maxSeconds = 15, label }: { onTex
         title={unsupported ? t("unsupported") : undefined}
         className={cx(
           "inline-flex shrink-0 items-center justify-center rounded-full text-white transition-colors",
-          state === "listening" ? "animate-pulse-ring bg-terracotta-600" : state === "error" ? "bg-danger-600" : "bg-indigo-900 hover:bg-indigo-700",
+          state === "listening" ? "animate-pulse-ring bg-terracotta-600" : state === "error" ? "bg-danger-600" : "bg-brand hover:bg-brand",
           unsupported && "opacity-40",
         )}
         style={{ width: size, height: size }}
@@ -121,7 +121,7 @@ export const VoiceField = forwardRef<
       {multiline ? (
         <textarea
           className={cx(
-            "min-h-28 w-full rounded-[8px] border border-ink-300 bg-white px-3 py-2.5 text-base focus:border-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-900/20",
+            "min-h-28 w-full rounded-xs border border-ink-300 bg-white px-3 py-2.5 text-base focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20",
             className,
           )}
           value={textareaValue}
@@ -134,7 +134,7 @@ export const VoiceField = forwardRef<
         <input
           ref={ref}
           className={cx(
-            "min-h-12 w-full rounded-[8px] border border-ink-300 bg-white px-3 py-2.5 text-base focus:border-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-900/20",
+            "min-h-12 w-full rounded-xs border border-ink-300 bg-white px-3 py-2.5 text-base focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20",
             className,
           )}
           {...rest}
@@ -158,7 +158,7 @@ export function SpeakerButton({ text, lang, auto }: { text: string; lang?: strin
     <button
       type="button"
       onClick={() => speak(text, tag)}
-      className="tap inline-flex items-center justify-center rounded-full text-indigo-900 hover:bg-indigo-50"
+      className="tap inline-flex items-center justify-center rounded-full text-brand hover:bg-brand-soft"
       aria-label={t("read_aloud")}
     >
       <Volume2 className="size-5" />

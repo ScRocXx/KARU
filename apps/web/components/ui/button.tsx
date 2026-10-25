@@ -40,9 +40,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   }[resolvedVariant];
 
   const sizeClasses = {
-    L: "min-h-[52px] px-6 text-eyebrow gap-2.5",
-    M: "min-h-[44px] px-4 text-eyebrow gap-2",
-    S: "min-h-[36px] px-3 text-caption font-semibold gap-1.5",
+    L: "min-h-13 px-6 text-eyebrow gap-2.5",
+    M: "min-h-11 px-4 text-eyebrow gap-2",
+    S: "min-h-9 px-3 text-caption font-semibold gap-1.5",
   }[size];
 
   return (

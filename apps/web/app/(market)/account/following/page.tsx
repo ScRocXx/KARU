@@ -17,7 +17,7 @@ function Following() {
   const { data, isLoading } = useQuery({ queryKey: ["following"], queryFn: () => api<{ items: Maker[] }>("/following") });
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4 pt-6">
-      <h1 className="font-display text-[26px] md:text-4xl">{t("following")}</h1>
+      <h1 className="font-display text-h2 md:text-4xl">{t("following")}</h1>
       {isLoading ? <Skeleton className="h-40" /> : data?.items.length ? data.items.map((m) => <MakerCard key={m.id} maker={{ ...m, following: true }} />) : <EmptyState title={t("following_empty")} />}
     </div>
   );

@@ -16,7 +16,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   return (
     <div
       className={cx(
-        "flex min-h-[48px] w-full items-center rounded-xs border bg-surface transition-colors duration-150",
+        "flex min-h-12 w-full items-center rounded-xs border bg-surface transition-colors duration-150",
         invalid
           ? "border-danger-600 focus-within:ring-2 focus-within:ring-danger-600/20"
           : "border-line-strong focus-within:border-brand focus-within:ring-3 focus-within:ring-brand/15",

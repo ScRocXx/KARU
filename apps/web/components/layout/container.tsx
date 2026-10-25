@@ -11,9 +11,9 @@ export function Container({
   ...rest
 }: ContainerProps) {
   const sizeClasses = {
-    page: "max-w-[1360px] px-4 sm:px-6 lg:px-10",
-    wide: "max-w-[1480px] px-4 sm:px-6 lg:px-10",
-    prose: "max-w-[760px] px-4 sm:px-6",
+    page: "max-w-7xl px-4 sm:px-6 lg:px-10",
+    wide: "max-w-7xl px-4 sm:px-6 lg:px-10",
+    prose: "max-w-3xl px-4 sm:px-6",
   }[size];
 
   return (

@@ -94,7 +94,7 @@ function Addresses() {
           <button
             type="button"
             onClick={() => setEditing("new")}
-            className="flex min-h-[160px] flex-col items-center justify-center gap-2 rounded-sm border border-dashed border-line bg-surface-alt p-6 text-body-s font-medium text-brand hover:border-brand transition-colors cursor-pointer"
+            className="flex min-h-40 flex-col items-center justify-center gap-2 rounded-sm border border-dashed border-line bg-surface-alt p-6 text-body-s font-medium text-brand hover:border-brand transition-colors cursor-pointer"
           >
             <Plus className="size-5" />
             <span>{t("add") || "Add another address"}</span>

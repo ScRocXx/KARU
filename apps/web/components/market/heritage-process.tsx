@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { TextLink } from "@/components/ui/text-link";
-import { cx } from "@/lib/format";
 
 interface HeritageTile {
   title: string;
@@ -81,7 +79,7 @@ export function HeritageGrid() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-brand">
+              <span className="text-caption font-semibold uppercase tracking-wider text-brand">
                 {tech.region}
               </span>
               <h3 className="font-serif text-body font-medium text-text group-hover:text-brand transition-colors line-clamp-1">

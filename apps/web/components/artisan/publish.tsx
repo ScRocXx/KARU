@@ -38,7 +38,7 @@ export function MakingVideoPicker({ listingId, onAttached, compact }: { listingI
   return (
     <div className="flex flex-col gap-3">
       {!compact && (
-        <ul className="list-disc space-y-1 ps-5 text-[15px] text-ink-600">
+        <ul className="list-disc space-y-1 ps-5 text-body-s text-ink-600">
           <li>{t("guide_hands")}</li>
           <li>{t("guide_tools")}</li>
           <li>{t("guide_end")}</li>
@@ -74,9 +74,9 @@ export function FinalStep({ listing, onPublished }: { listing: ArtisanListing; o
   const hasVideo = !!listing.making_video;
   return (
     <section className="flex flex-col gap-5">
-      <h1 className="font-display text-[26px] leading-tight">{t("title")}</h1>
+      <h1 className="font-display text-h2 leading-tight">{t("title")}</h1>
       {error && <Banner tone="danger">{error}</Banner>}
-      <div className="flex items-center justify-between rounded-[16px] bg-white p-4">
+      <div className="flex items-center justify-between rounded-md bg-white p-4">
         <div>
           <p className="font-semibold">{t("quantity")}</p>
           <p className="text-sm text-ink-600">{t("quantity_hint")}</p>
@@ -87,12 +87,12 @@ export function FinalStep({ listing, onPublished }: { listing: ArtisanListing; o
           <button className="tap flex items-center justify-center" onClick={() => setQty(Math.min(500, qty + 1))} aria-label={t("more")}><Plus className="size-5" /></button>
         </div>
       </div>
-      <div className="rounded-[16px] bg-white p-4">
+      <div className="rounded-md bg-white p-4">
         <Switch checked={returnable} onChange={setReturnable} label={t("returnable")} description={t("returnable_nudge")} />
       </div>
-      <div className="flex flex-col gap-3 rounded-[16px] border-2 border-peacock-600/30 bg-peacock-50 p-4">
+      <div className="flex flex-col gap-3 rounded-md border-2 border-peacock-600/30 bg-peacock-50 p-4">
         <p className="flex items-center gap-2 font-semibold text-peacock-600"><BadgeCheck className="size-5" /> {t("get_verified")}</p>
-        <p className="text-[15px] text-ink-900">{t("get_verified_body")}</p>
+        <p className="text-body-s text-ink-900">{t("get_verified_body")}</p>
         {hasVideo ? <Banner tone="success">{t("video_added")}</Banner> : <MakingVideoPicker listingId={listing.id} onAttached={() => qc.invalidateQueries({ queryKey: ["listing", listing.id] })} />}
         {!hasVideo && <p className="text-sm text-ink-600">{t("video_later")}</p>}
       </div>
@@ -131,27 +131,27 @@ export function Published({ listing, result }: { listing: ArtisanListing; result
       <span className="animate-settle flex size-20 items-center justify-center rounded-full bg-peacock-50 text-peacock-600">
         <PartyPopper className="size-10" />
       </span>
-      <h1 className="font-display text-[28px] leading-tight">{t("title", { title })}</h1>
+      <h1 className="font-display text-h2 leading-tight">{t("title", { title })}</h1>
       <p className="text-ink-600">{t("ids_created", { n: result.karu_ids.length })}</p>
       <ul className="flex flex-wrap justify-center gap-2">
         {result.karu_ids.map((k) => (
-          <li key={k} className="rounded-full bg-white px-3 py-1 font-mono text-sm font-semibold text-indigo-900">{k}</li>
+          <li key={k} className="rounded-full bg-white px-3 py-1 font-mono text-sm font-semibold text-brand">{k}</li>
         ))}
       </ul>
-      <div className="flex flex-col items-center gap-2 rounded-[16px] bg-white p-4">
+      <div className="flex flex-col items-center gap-2 rounded-md bg-white p-4">
         <VerifiedBadge status={listing.making_video ? "checking" : "not_verified"} size="lg" />
         <p className="text-sm text-ink-600">{listing.making_video ? t("checking") : t("add_video_hint")}</p>
       </div>
       <div className="flex w-full flex-col gap-2">
-        <Link href={`/sell/products/${listing.id}?tab=share`} className="flex min-h-12 items-center justify-center gap-2 rounded-[10px] bg-indigo-900 font-semibold text-white">
+        <Link href={`/sell/products/${listing.id}?tab=share`} className="flex min-h-12 items-center justify-center gap-2 rounded-sm bg-brand font-semibold text-white">
           <Share2 className="size-5" /> {t("share")}
         </Link>
         {!listing.making_video && (
-          <Link href={`/sell/products/${listing.id}?tab=verification`} className="flex min-h-12 items-center justify-center rounded-[10px] border-2 border-peacock-600 font-semibold text-peacock-600">
+          <Link href={`/sell/products/${listing.id}?tab=verification`} className="flex min-h-12 items-center justify-center rounded-sm border-2 border-peacock-600 font-semibold text-peacock-600">
             {t("get_verified")}
           </Link>
         )}
-        <Link href="/sell" className="min-h-12 font-semibold text-indigo-900 underline">{t("home")}</Link>
+        <Link href="/sell" className="min-h-12 font-semibold text-brand underline">{t("home")}</Link>
       </div>
     </section>
   );

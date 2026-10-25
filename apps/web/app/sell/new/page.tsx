@@ -108,13 +108,13 @@ function Uploading({ onHome }: { onHome: () => void }) {
     <section className="flex flex-col items-center gap-5 py-10 text-center">
       {online ? (
         <>
-          <div className="size-16 animate-spin rounded-full border-4 border-indigo-50 border-t-indigo-900" />
+          <div className="size-16 animate-spin rounded-full border-4 border-brand-soft border-t-brand" />
           <h1 className="font-display text-2xl">{t("sending")}</h1>
           <p className="text-ink-600">{t("sending_body")}</p>
         </>
       ) : (
         <>
-          <CloudOff className="size-14 text-haldi-500" />
+          <CloudOff className="size-14 text-gold-500" />
           <h1 className="font-display text-2xl">{t("waiting_network")}</h1>
           <p className="text-ink-600">{t("saved_on_phone")}</p>
           <Button variant="secondary" onClick={onHome}>{t("go_home")}</Button>

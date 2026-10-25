@@ -184,7 +184,7 @@ export default function BusinessPage() {
             <Button type="submit" variant="primary" size="L" block loading={busy}>
               {t("submit") || "Send Bulk Inquiry"}
             </Button>
-            <p className="mt-2.5 text-center text-[11px] text-muted">
+            <p className="mt-2.5 text-center text-caption text-muted">
               {t("privacy") || "Your business details are strictly kept confidential and shared only with certified producer partners."}
             </p>
           </div>

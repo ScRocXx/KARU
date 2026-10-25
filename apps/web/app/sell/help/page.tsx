@@ -17,10 +17,10 @@ export default function HelpPage() {
     <SellPage title={t("title")} back="/sell/passport">
       <ul className="flex flex-col gap-3">
         {topics.map((k) => (
-          <li key={k} className="flex items-start gap-3 rounded-[16px] border border-ink-100 bg-white p-4">
+          <li key={k} className="flex items-start gap-3 rounded-md border border-ink-100 bg-white p-4">
             <div className="flex-1">
               <h2 className="font-semibold">{t(`${k}.title`)}</h2>
-              <p className="text-[15px] text-ink-600">{t(`${k}.body`)}</p>
+              <p className="text-body-s text-ink-600">{t(`${k}.body`)}</p>
             </div>
             <SpeakerButton text={`${t(`${k}.title`)}. ${t(`${k}.body`)}`} lang={speechTags[locale]} />
           </li>
@@ -28,8 +28,8 @@ export default function HelpPage() {
       </ul>
       {HELP_PHONE ? (
         <div className="grid grid-cols-2 gap-2">
-          <a href={`tel:${HELP_PHONE}`} className="flex min-h-14 items-center justify-center gap-2 rounded-[12px] bg-indigo-900 font-semibold text-white"><Phone className="size-5" /> {t("call")}</a>
-          <a href={`https://wa.me/${HELP_PHONE.replace(/\D/g, "")}`} className="flex min-h-14 items-center justify-center gap-2 rounded-[12px] bg-peacock-600 font-semibold text-white"><MessageCircle className="size-5" /> WhatsApp</a>
+          <a href={`tel:${HELP_PHONE}`} className="flex min-h-14 items-center justify-center gap-2 rounded-sm bg-brand font-semibold text-white"><Phone className="size-5" /> {t("call")}</a>
+          <a href={`https://wa.me/${HELP_PHONE.replace(/\D/g, "")}`} className="flex min-h-14 items-center justify-center gap-2 rounded-sm bg-peacock-600 font-semibold text-white"><MessageCircle className="size-5" /> WhatsApp</a>
         </div>
       ) : (
         <p className="text-sm text-ink-600">{t("contact_soon")}</p>

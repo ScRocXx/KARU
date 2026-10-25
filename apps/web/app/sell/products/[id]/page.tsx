@@ -69,7 +69,7 @@ function Overview({ l }: { l: ArtisanListing }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="no-scrollbar flex gap-2 overflow-x-auto">
-        {l.gallery.map((g) => g.card && <img key={g.id} src={g.card} alt="" className="aspect-[4/5] w-36 shrink-0 rounded-[12px] object-cover" />)}
+        {l.gallery.map((g) => g.card && <img key={g.id} src={g.card} alt="" className="aspect-[4/5] w-36 shrink-0 rounded-sm object-cover" />)}
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Stat label={t("price")} value={inr(l.price_inr)} />
@@ -82,7 +82,7 @@ function Overview({ l }: { l: ArtisanListing }) {
         <p className="text-2xl font-semibold">{inr(l.sales.revenue_inr)}</p>
         <p className="text-sm text-ink-600">{t("zero_commission")}</p>
       </Card>
-      <Link href={`/p/${l.code}`} target="_blank" className="inline-flex items-center gap-1 font-semibold text-indigo-900 underline">
+      <Link href={`/p/${l.code}`} target="_blank" className="inline-flex items-center gap-1 font-semibold text-brand underline">
         <ExternalLink className="size-4" /> {t("view_public")}
       </Link>
     </div>
@@ -91,7 +91,7 @@ function Overview({ l }: { l: ArtisanListing }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[12px] border border-ink-100 bg-white p-3">
+    <div className="rounded-sm border border-ink-100 bg-white p-3">
       <p className="text-xs text-ink-600">{label}</p>
       <p className="text-xl font-semibold">{value}</p>
     </div>
@@ -155,8 +155,8 @@ function VerificationTab({ l, onChange }: { l: ArtisanListing; onChange: () => v
     <div className="flex flex-col gap-4">
       <Card className="flex flex-col items-start gap-3 p-4">
         <VerifiedBadge status={data.status as never} size="lg" />
-        {data.status === "checking" && <p className="text-[15px] text-ink-600">{t("checking")}</p>}
-        {data.status === "verified" && <p className="text-[15px] text-peacock-600">{t("verified_body", { date: date(data.run?.completed_at, locale) })}</p>}
+        {data.status === "checking" && <p className="text-body-s text-ink-600">{t("checking")}</p>}
+        {data.status === "verified" && <p className="text-body-s text-peacock-600">{t("verified_body", { date: date(data.run?.completed_at, locale) })}</p>}
         {data.run?.hard_fail && <Banner tone="info">{t("under_review")}</Banner>}
       </Card>
       <Card className="p-4">
@@ -173,12 +173,12 @@ function VerificationTab({ l, onChange }: { l: ArtisanListing; onChange: () => v
           <h3 className="font-semibold">{t("whats_missing")}</h3>
           <ul className="flex flex-col gap-2">
             {data.run.tips.map((tip) => (
-              <li key={tip.key} className="flex gap-2 text-[15px]">
-                <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-haldi-100 text-sm font-bold">!</span>
+              <li key={tip.key} className="flex gap-2 text-body-s">
+                <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-gold-100 text-sm font-bold">!</span>
                 <span>
                   {tip.text}
                   {tip.key === "tip.verify_aadhaar" && (
-                    <Link href="/sell/passport" className="ms-2 font-semibold text-indigo-900 underline">{t("go")}</Link>
+                    <Link href="/sell/passport" className="ms-2 font-semibold text-brand underline">{t("go")}</Link>
                   )}
                 </span>
               </li>
@@ -232,7 +232,7 @@ function StockTab({ l, onChange }: { l: ArtisanListing; onChange: () => void }) 
     <div className="flex flex-col gap-4">
       <Card className="flex items-center gap-3 p-4">
         <span className="flex-1 font-semibold">{t("add_stock")}</span>
-        <input type="number" min={1} max={500} value={add} onChange={(e) => setAdd(Math.max(1, Number(e.target.value)))} className="min-h-12 w-20 rounded-[8px] border border-ink-300 px-3 text-center text-lg" aria-label={t("add_stock")} />
+        <input type="number" min={1} max={500} value={add} onChange={(e) => setAdd(Math.max(1, Number(e.target.value)))} className="min-h-12 w-20 rounded-xs border border-ink-300 px-3 text-center text-lg" aria-label={t("add_stock")} />
         <Button
           onClick={async () => {
             await api(`/listings/${l.id}/stock`, { method: "POST", body: { add } });
@@ -244,15 +244,15 @@ function StockTab({ l, onChange }: { l: ArtisanListing; onChange: () => void }) 
           {t("add")}
         </Button>
       </Card>
-      <a href={`/api/v1/listings/${l.id}/tags.pdf`} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[10px] border-2 border-indigo-900 font-semibold text-indigo-900">
+      <a href={`/api/v1/listings/${l.id}/tags.pdf`} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm border-2 border-brand font-semibold text-brand">
         <Printer className="size-5" /> {t("print_tags")}
       </a>
-      <ul className="divide-y divide-ink-100 rounded-[12px] border border-ink-100 bg-white">
+      <ul className="divide-y divide-ink-100 rounded-sm border border-ink-100 bg-white">
         {data?.items.map((k) => (
           <li key={k.code} className="flex items-center gap-3 px-4 py-3">
-            <QrCode className="size-5 text-indigo-900" />
+            <QrCode className="size-5 text-brand" />
             <Link href={`/k/${k.code}`} target="_blank" className="flex-1 font-mono font-semibold">{k.code}</Link>
-            <span className={cx("rounded-full px-2 py-0.5 text-xs font-semibold", k.status === "available" ? "bg-peacock-50 text-peacock-600" : k.status === "sold" ? "bg-indigo-50 text-indigo-900" : "bg-ink-100 text-ink-600")}>
+            <span className={cx("rounded-full px-2 py-0.5 text-xs font-semibold", k.status === "available" ? "bg-peacock-50 text-peacock-600" : k.status === "sold" ? "bg-brand-soft text-brand" : "bg-ink-100 text-ink-600")}>
               {t(`unit.${k.status}`)}
             </span>
             {k.status === "returned" && (
@@ -311,7 +311,7 @@ function ShareTab({ l }: { l: ArtisanListing }) {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-3 gap-2">
         {(["9x16", "4x5", "clean"] as const).map((f) => (
-          <button key={f} onClick={() => void make(f)} className={cx("flex min-h-20 flex-col items-center justify-center gap-1 rounded-[12px] border-2 bg-white p-2 text-sm font-semibold", format === f && res ? "border-indigo-900" : "border-ink-100")}>
+          <button key={f} onClick={() => void make(f)} className={cx("flex min-h-20 flex-col items-center justify-center gap-1 rounded-sm border-2 bg-white p-2 text-sm font-semibold", format === f && res ? "border-brand" : "border-ink-100")}>
             {f === "clean" ? <ImageIcon className="size-6" /> : <span className={cx("rounded-sm border-2 border-current", f === "9x16" ? "h-7 w-4" : "h-6 w-5")} />}
             {t(`format.${f}`)}
           </button>
@@ -320,10 +320,10 @@ function ShareTab({ l }: { l: ArtisanListing }) {
       {busy && <Skeleton className="aspect-[4/5]" />}
       {res && !busy && (
         <>
-          <img src={res.image_url} alt={t("preview")} className="mx-auto max-h-[60vh] rounded-[12px] shadow" />
+          <img src={res.image_url} alt={t("preview")} className="mx-auto max-h-[60vh] rounded-sm shadow" />
           {format === "clean" && <Banner tone="info">{t("clean_note")}</Banner>}
           <Button size="L" icon={<MessageCircle className="size-5" />} onClick={() => void shareNative()}>{t("share_whatsapp")}</Button>
-          <a href={res.image_url} download className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[10px] border-2 border-indigo-900 font-semibold text-indigo-900">
+          <a href={res.image_url} download className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm border-2 border-brand font-semibold text-brand">
             <Download className="size-5" /> {t("download")}
           </a>
           <p className="text-sm text-ink-600">{t("instagram_hint")}</p>
@@ -409,13 +409,13 @@ function SyndicationProgress({ syndicationId, jobId, onClose }: { syndicationId:
   return (
     <Sheet open onClose={onClose} title={data?.portal_name || t("syndicate_title")}>
       <div className="flex flex-col gap-3">
-        <div className="h-2 overflow-hidden rounded-full bg-ink-100"><div className="h-full bg-indigo-900 transition-all" style={{ width: `${job?.progress ?? 5}%` }} /></div>
+        <div className="h-2 overflow-hidden rounded-full bg-ink-100"><div className="h-full bg-brand transition-all" style={{ width: `${job?.progress ?? 5}%` }} /></div>
         <ol className="flex flex-col gap-1.5">
           {(data?.steps || []).map((s, i) => (
-            <li key={i} className={cx("text-[15px]", s.kind === "error" ? "text-danger-600" : "text-ink-900")}>✓ {s.step}</li>
+            <li key={i} className={cx("text-body-s", s.kind === "error" ? "text-danger-600" : "text-ink-900")}>✓ {s.step}</li>
           ))}
         </ol>
-        {data?.streaming_url && <a href={data.streaming_url} target="_blank" rel="noreferrer" className="font-semibold text-indigo-900 underline">{t("watch_live")}</a>}
+        {data?.streaming_url && <a href={data.streaming_url} target="_blank" rel="noreferrer" className="font-semibold text-brand underline">{t("watch_live")}</a>}
         {data?.status === "completed" && data.result_url && (
           <Banner tone="success" action={<a href={data.result_url} target="_blank" rel="noreferrer" className="font-semibold underline">{t("open")}</a>}>{t("syndicated")}</Banner>
         )}

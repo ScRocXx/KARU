@@ -63,16 +63,16 @@ function Requests() {
         ) : (
           <ul className="flex flex-col gap-3">
             {reqs.data.items.map((r) => (
-              <li key={r.id} className="flex flex-col gap-3 rounded-[16px] border border-ink-100 bg-white p-4">
+              <li key={r.id} className="flex flex-col gap-3 rounded-md border border-ink-100 bg-white p-4">
                 <div className="flex gap-3">
-                  {r.image?.thumb && <img src={r.image.thumb} alt="" className="aspect-[4/5] w-16 rounded-[8px] object-cover" />}
+                  {r.image?.thumb && <img src={r.image.thumb} alt="" className="aspect-[4/5] w-16 rounded-xs object-cover" />}
                   <div className="flex-1">
                     <p className="font-semibold">{r.title}</p>
-                    <p className="text-[15px]">{t("wants", { name: r.buyer_first_name || t("a_buyer"), n: r.quantity })}</p>
+                    <p className="text-body-s">{t("wants", { name: r.buyer_first_name || t("a_buyer"), n: r.quantity })}</p>
                     {r.needed_by && <p className="text-sm text-ink-600">{t("by_date", { date: r.needed_by })}</p>}
                   </div>
                 </div>
-                {r.note && <p className="rounded-[10px] bg-khadi-50 p-3 text-[15px]">“{r.note}”</p>}
+                {r.note && <p className="rounded-sm bg-khadi-50 p-3 text-body-s">“{r.note}”</p>}
                 {r.status === "open" ? (
                   <div className="flex gap-2">
                     <Button block onClick={() => setReplying(r)}>{t("reply")}</Button>
@@ -105,7 +105,7 @@ function Requests() {
               bulk.data.items.map((o) => (
                 <Card key={o.id} className="flex flex-col gap-2 p-4">
                   <p className="font-semibold">{o.product_type}</p>
-                  <p className="text-[15px]">{t("bulk_line", { n: o.quantity, deadline: o.deadline || "—" })}</p>
+                  <p className="text-body-s">{t("bulk_line", { n: o.quantity, deadline: o.deadline || "—" })}</p>
                   {o.target_price && <p className="text-sm text-ink-600">{t("target", { price: o.target_price })}</p>}
                   {o.description && <p className="text-sm">{o.description}</p>}
                   {o.my_response ? (
@@ -167,7 +167,7 @@ function JoinSheet({ opp, onClose, onDone }: { opp: Opportunity | null; onClose:
         }}
       >
         <Field label={t("how_many")}><Input inputMode="numeric" required value={qty} onChange={(e) => setQty(e.target.value.replace(/\D/g, ""))} /></Field>
-        <label className="flex items-center gap-2"><input type="checkbox" className="size-5 accent-indigo-900" checked={canMeet} onChange={(e) => setCanMeet(e.target.checked)} />{t("can_meet")}</label>
+        <label className="flex items-center gap-2"><input type="checkbox" className="size-5 accent-brand" checked={canMeet} onChange={(e) => setCanMeet(e.target.checked)} />{t("can_meet")}</label>
         <Button type="submit" size="L" disabled={!qty}>{t("join")}</Button>
       </form>
     </Sheet>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BadgeCheck } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { ListenButton } from "@/components/karu/maker-card";
 import { Button } from "@/components/ui/button";
 import type { Maker } from "@/lib/types";
@@ -26,7 +26,7 @@ export function MakerSpotlight({ maker }: { maker?: Maker }) {
             {/* Passport Hallmark Tag */}
             <div className="absolute bottom-4 inset-x-4 flex items-center justify-between rounded-xs bg-surface/95 p-3 backdrop-blur-md shadow-2xs border border-line">
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-brand">
+                <p className="text-caption font-semibold uppercase tracking-widest text-brand">
                   Karu Passport Verified
                 </p>
                 <p className="font-serif text-body-s font-semibold text-text truncate">{maker.name}</p>

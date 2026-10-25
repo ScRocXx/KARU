@@ -38,7 +38,7 @@ export default function AdminDashboard() {
         {tiles.map(([label, value, sub]) => (
           <Card key={label} className="p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-ink-600">{label}</p>
-            <p className="font-display mt-1 text-3xl text-indigo-900">{value}</p>
+            <p className="font-display mt-1 text-3xl text-brand">{value}</p>
             {sub && <p className="text-xs text-ink-600">{sub}</p>}
           </Card>
         ))}

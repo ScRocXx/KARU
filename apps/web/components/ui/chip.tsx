@@ -43,7 +43,7 @@ export function FilterChip({
     >
       <span>{children || label}</span>
       {count !== undefined && (
-        <span className={cx("text-[11px]", isSelected ? "text-white/80" : "text-muted")}>
+        <span className={cx("text-caption", isSelected ? "text-white/80" : "text-muted")}>
           ({count})
         </span>
       )}

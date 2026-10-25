@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { ProductTag, VerifiedBadge } from "./badges";
-import { IconButton } from "@/components/ui/icon-button";
 import { api } from "@/lib/api";
 import { cx, inr } from "@/lib/format";
 import { useMe } from "@/lib/hooks";

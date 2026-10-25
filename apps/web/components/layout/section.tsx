@@ -10,7 +10,6 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 export function Section({
   children,
   tone = "bg",
-  bleed = false,
   pad = "default",
   className,
   labelledBy,

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, QrCode, Shield, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Woven } from "@/components/karu/ornaments";
 
 export function ProvenanceSteps() {
   const t = useTranslations("home");
@@ -30,7 +29,7 @@ export function ProvenanceSteps() {
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-        {steps.map((s, idx) => {
+        {steps.map((s) => {
           const Icon = s.icon;
           return (
             <div

@@ -18,7 +18,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
         ref={ref}
         disabled={disabled}
         className={cx(
-          "w-full appearance-none rounded-xs border bg-surface min-h-[48px] px-3.5 pe-10 py-2.5 text-body text-text transition-colors duration-150 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+          "w-full appearance-none rounded-xs border bg-surface min-h-12 px-3.5 pe-10 py-2.5 text-body text-text transition-colors duration-150 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
           invalid
             ? "border-danger-600 focus:ring-2 focus:ring-danger-600/20"
             : "border-line-strong focus:border-brand focus:ring-3 focus:ring-brand/15",

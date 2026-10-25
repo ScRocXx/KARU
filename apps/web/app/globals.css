@@ -78,20 +78,6 @@
   --color-danger-600: #c0362c;
   --color-danger-700: #a02a21;
 
-  /* Backward Compatibility Aliases for Migration */
-  --color-indigo-950: #141210;
-  --color-indigo-900: #8c3b1e;
-  --color-indigo-700: #9e482b;
-  --color-indigo-600: #b9532e;
-  --color-indigo-200: #f3d9cb;
-  --color-indigo-100: #fbf1ec;
-  --color-indigo-50: #fdf8f5;
-
-  --color-haldi-600: #b38029;
-  --color-haldi-500: #c59b27;
-  --color-haldi-400: #d9b24a;
-  --color-haldi-100: #fbf3db;
-  --color-haldi-50: #fdfaf0;
   --color-unverified: #766d63;
 
   /* Semantic Aliases */

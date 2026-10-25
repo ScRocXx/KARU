@@ -34,10 +34,10 @@ export function PhotoStep({ photos, setPhotos, max = 6, onNext }: { photos: Phot
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-start gap-2">
-        <h1 className="font-display flex-1 text-[26px] leading-tight">{t("photos_title")}</h1>
+        <h1 className="font-display flex-1 text-h2 leading-tight">{t("photos_title")}</h1>
         <SpeakerButton text={`${t("photos_title")}. ${t("tip_daylight")}. ${t("tip_plain")}. ${t("tip_whole")}.`} auto />
       </div>
-      <ul className="grid grid-cols-3 gap-2 rounded-[14px] bg-indigo-50 p-3 text-sm font-medium text-indigo-900">
+      <ul className="grid grid-cols-3 gap-2 rounded-md bg-brand-soft p-3 text-sm font-medium text-brand">
         <li className="flex flex-col items-center gap-1 text-center"><Sun className="size-6" />{t("tip_daylight")}</li>
         <li className="flex flex-col items-center gap-1 text-center"><span className="size-6 rounded border-2 border-current" />{t("tip_plain")}</li>
         <li className="flex flex-col items-center gap-1 text-center"><Camera className="size-6" />{t("tip_whole")}</li>
@@ -45,9 +45,9 @@ export function PhotoStep({ photos, setPhotos, max = 6, onNext }: { photos: Phot
       {photos.some((p) => p.dark) && <Banner tone="warn">{t("too_dark")}</Banner>}
       <div className="grid grid-cols-3 gap-2">
         {photos.map((p, i) => (
-          <div key={p.url} className={cx("relative aspect-[4/5] overflow-hidden rounded-[12px] border-2", p.dark ? "border-haldi-500" : "border-transparent")}>
+          <div key={p.url} className={cx("relative aspect-[4/5] overflow-hidden rounded-sm border-2", p.dark ? "border-gold-500" : "border-transparent")}>
             <img src={p.url} alt={t("photo_n", { n: i + 1 })} className="size-full object-cover" />
-            {i === 0 && <span className="absolute start-1 top-1 rounded-full bg-indigo-900 px-2 text-xs font-semibold text-white">{t("main_photo")}</span>}
+            {i === 0 && <span className="absolute start-1 top-1 rounded-full bg-brand px-2 text-xs font-semibold text-white">{t("main_photo")}</span>}
             <button
               type="button"
               onClick={() => setPhotos(photos.filter((_, j) => j !== i))}
@@ -62,7 +62,7 @@ export function PhotoStep({ photos, setPhotos, max = 6, onNext }: { photos: Phot
           <button
             type="button"
             onClick={() => camera.current?.click()}
-            className="flex aspect-[4/5] flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed border-indigo-900 bg-white text-indigo-900"
+            className="flex aspect-[4/5] flex-col items-center justify-center gap-2 rounded-sm border-2 border-dashed border-brand bg-white text-brand"
           >
             <Camera className="size-8" />
             <span className="text-sm font-semibold">{photos.length ? t("add_photo") : t("take_photo")}</span>
@@ -143,12 +143,12 @@ export function VoiceStep({ maxSeconds, onDone, onSkip }: { maxSeconds: number; 
   return (
     <section className="flex flex-col items-center gap-5 text-center">
       <div className="flex w-full items-start gap-2 text-start">
-        <h1 className="font-display flex-1 text-[26px] leading-tight">{t("voice_title")}</h1>
+        <h1 className="font-display flex-1 text-h2 leading-tight">{t("voice_title")}</h1>
         <SpeakerButton text={`${t("voice_title")}. ${t("voice_prompt")}`} auto />
       </div>
-      <p className="rounded-[14px] bg-white p-4 text-[17px] text-ink-900">“{t("voice_prompt")}”</p>
+      <p className="rounded-md bg-white p-4 text-body text-ink-900">“{t("voice_prompt")}”</p>
       {error && <Banner tone="danger">{error}</Banner>}
-      <div className="flex h-16 w-full items-center justify-center gap-[3px]" aria-hidden>
+      <div className="flex h-16 w-full items-center justify-center gap-1" aria-hidden>
         {levels.map((l, i) => (
           <span key={i} className={cx("w-1.5 rounded-full transition-[height]", state === "recording" ? "bg-terracotta-600" : "bg-ink-300")} style={{ height: `${Math.max(6, l * 64)}px` }} />
         ))}
@@ -159,7 +159,7 @@ export function VoiceStep({ maxSeconds, onDone, onSkip }: { maxSeconds: number; 
       <button
         type="button"
         onClick={() => (state === "recording" ? void stop() : void start())}
-        className={cx("flex size-28 items-center justify-center rounded-full text-white shadow-lg", state === "recording" ? "animate-pulse-ring bg-terracotta-600" : "bg-indigo-900")}
+        className={cx("flex size-28 items-center justify-center rounded-full text-white shadow-lg", state === "recording" ? "animate-pulse-ring bg-terracotta-600" : "bg-brand")}
         aria-label={state === "recording" ? t("stop") : t("record")}
       >
         {state === "recording" ? <Square className="size-10 fill-current" /> : <Mic className="size-12" />}
@@ -170,7 +170,7 @@ export function VoiceStep({ maxSeconds, onDone, onSkip }: { maxSeconds: number; 
         <div className="flex w-full flex-col gap-3">
           <audio src={result.url} controls className="w-full" />
           {result.transcript && (
-            <p className="rounded-[12px] bg-white p-3 text-start text-[15px]" lang={locale}>
+            <p className="rounded-sm bg-white p-3 text-start text-body-s" lang={locale}>
               <span className="block text-xs font-semibold uppercase tracking-wider text-ink-600">{t("we_heard")}</span>
               {result.transcript}
             </p>
@@ -181,7 +181,7 @@ export function VoiceStep({ maxSeconds, onDone, onSkip }: { maxSeconds: number; 
           </div>
         </div>
       )}
-      <button type="button" onClick={onSkip} className="min-h-12 font-semibold text-indigo-900 underline">{t("skip_voice")}</button>
+      <button type="button" onClick={onSkip} className="min-h-12 font-semibold text-brand underline">{t("skip_voice")}</button>
     </section>
   );
 }

@@ -89,7 +89,7 @@ function PassportView() {
           <p className="text-peacock-600">✓ {t("aadhaar_verified", { last4: p.aadhaar_last4 || "" })}</p>
         ) : (
           <>
-            <p className="text-[15px] text-ink-600">{t("aadhaar_body")}</p>
+            <p className="text-body-s text-ink-600">{t("aadhaar_body")}</p>
             <Button
               variant="verified"
               size="L"
@@ -141,7 +141,7 @@ function PassportView() {
 
 function Check({ done, label }: { done: boolean; label: string }) {
   return (
-    <p className={cx("flex items-start gap-2 text-[15px]", done ? "text-peacock-600" : "text-ink-900")}>
+    <p className={cx("flex items-start gap-2 text-body-s", done ? "text-peacock-600" : "text-ink-900")}>
       {done ? <BadgeCheck className="size-5 shrink-0" /> : <CircleDashed className="size-5 shrink-0 text-ink-300" />} {label}
     </p>
   );
@@ -149,7 +149,7 @@ function Check({ done, label }: { done: boolean; label: string }) {
 
 function QuickLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   return (
-    <Link href={href} className="flex min-h-20 flex-col items-center justify-center gap-1 rounded-[14px] border border-ink-100 bg-white text-sm font-semibold text-indigo-900">
+    <Link href={href} className="flex min-h-20 flex-col items-center justify-center gap-1 rounded-md border border-ink-100 bg-white text-sm font-semibold text-brand">
       {icon}
       {label}
     </Link>
@@ -184,10 +184,10 @@ function ProfileEditor({ profile, locale, onSaved }: { profile: Profile; locale:
     <Card className="flex flex-col gap-4 p-4">
       <h2 className="font-semibold">{t("public_profile")}</h2>
       <label className="flex items-center gap-3">
-        <span className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-indigo-50">
-          {profile.photo_url ? <img src={profile.photo_url} alt="" className="size-full object-cover" /> : <Camera className="size-6 text-indigo-900" />}
+        <span className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-brand-soft">
+          {profile.photo_url ? <img src={profile.photo_url} alt="" className="size-full object-cover" /> : <Camera className="size-6 text-brand" />}
         </span>
-        <span className="font-semibold text-indigo-900 underline">{busy === "photo" ? t("uploading") : t("change_photo")}</span>
+        <span className="font-semibold text-brand underline">{busy === "photo" ? t("uploading") : t("change_photo")}</span>
         <input
           type="file"
           accept="image/*"
@@ -233,7 +233,7 @@ function ProfileEditor({ profile, locale, onSaved }: { profile: Profile; locale:
         <Input inputMode="numeric" value={years} onChange={(e) => setYears(e.target.value.replace(/\D/g, "").slice(0, 2))} />
       </Field>
       <Field label={t("links")} hint={t("links_hint")}>
-        <textarea value={links} onChange={(e) => setLinks(e.target.value)} className="min-h-20 rounded-[8px] border border-ink-300 p-3" />
+        <textarea value={links} onChange={(e) => setLinks(e.target.value)} className="min-h-20 rounded-xs border border-ink-300 p-3" />
       </Field>
       <Field label={t("handle")} hint={profile.handle_editable ? t("handle_hint") : t("handle_locked")}>
         <Input value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} disabled={!profile.handle_editable} dir="ltr" />

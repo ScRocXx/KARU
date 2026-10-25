@@ -12,7 +12,7 @@ export function EditBanner() {
 
   return (
     <div className="relative w-full overflow-hidden rounded-sm border border-line bg-gradient-to-br from-terracotta-900 via-terracotta-800 to-ink-950 text-white min-h-[480px] lg:min-h-[520px] flex items-center shadow-sm">
-      <div className="mx-auto w-full max-w-[1360px] px-6 sm:px-10 lg:px-14 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 items-center">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 items-center">
         {/* Left Side: Editorial Story */}
         <div className="flex flex-col gap-5 max-w-xl">
           <span className="text-eyebrow text-gold-300">
@@ -46,7 +46,7 @@ export function EditBanner() {
               className="group flex items-center justify-between py-4 text-body font-serif transition-colors hover:text-gold-300"
             >
               <span>{cat.label}</span>
-              <ArrowRight className="size-4 flip-rtl text-gold-400 opacity-60 transition-transform group-hover:translate-x-1 group-hover:opacity-100" />
+              <ArrowRight className="size-4 flip-rtl text-gold-400 opacity-60 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 group-hover:opacity-100" />
             </Link>
           ))}
         </div>

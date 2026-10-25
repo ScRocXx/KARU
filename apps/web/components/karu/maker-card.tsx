@@ -1,11 +1,10 @@
 "use client";
 
-import { BadgeCheck, Pause, Play, Sparkles, UserRound } from "lucide-react";
+import { Pause, Play, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { cx } from "@/lib/format";
 import { useMe } from "@/lib/hooks";
@@ -134,7 +133,7 @@ export function MakerCard({
 
           <div className="md:col-span-8 flex flex-col gap-4">
             <div>
-              <p className="text-eyebrow text-brand mb-1">Meet the Maker</p>
+              <p className="text-eyebrow text-brand mb-1">{t("meet") || "Meet the Maker"}</p>
               <h2 id="meet-maker-heading" className="font-serif text-h2 text-text font-medium">
                 {maker.name}
               </h2>

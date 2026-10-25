@@ -43,7 +43,7 @@ export function Wordmark({
         <span
           className={cx(
             "font-serif tracking-[0.18em] leading-none uppercase font-medium",
-            isCentered ? "text-2xl sm:text-[26px]" : "text-xl sm:text-2xl",
+            isCentered ? "text-2xl sm:text-h2" : "text-xl sm:text-2xl",
             isLight ? "text-white" : "text-text"
           )}
         >

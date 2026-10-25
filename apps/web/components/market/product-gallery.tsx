@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Film, Play, X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, X, ZoomIn } from "lucide-react";
 import React, { useState } from "react";
 import { cx } from "@/lib/format";
 import type { ImageSet } from "@/lib/types";
@@ -9,8 +9,7 @@ export function ProductGallery({
   images,
   title,
   video,
-  videoLabel,
-}: {
+  }: {
   images: (ImageSet & { enhanced?: boolean })[];
   title: string;
   video: { url: string; poster: string | null } | null;
@@ -52,7 +51,7 @@ export function ProductGallery({
             type="button"
             onClick={() => setShowVideo(true)}
             className={cx(
-              "relative flex aspect-[4/5] w-16 sm:w-18 shrink-0 flex-col items-center justify-center gap-1 overflow-hidden rounded-xs border-2 text-[10px] font-semibold transition-all cursor-pointer",
+              "relative flex aspect-[4/5] w-16 sm:w-18 shrink-0 flex-col items-center justify-center gap-1 overflow-hidden rounded-xs border-2 text-caption font-semibold transition-all cursor-pointer",
               showVideo
                 ? "border-brand bg-brand text-white"
                 : "border-line bg-surface-deep text-on-dark hover:bg-olive-800"
@@ -113,7 +112,7 @@ export function ProductGallery({
         )}
 
         {/* Mobile Page Indicator */}
-        <div className="absolute top-3 end-3 rounded-full bg-black/60 px-2.5 py-0.5 text-[11px] font-mono font-medium text-white backdrop-blur-xs lg:hidden">
+        <div className="absolute top-3 end-3 rounded-full bg-black/60 px-2.5 py-0.5 text-caption font-mono font-medium text-white backdrop-blur-xs lg:hidden">
           {active + 1} / {images.length}
         </div>
       </div>

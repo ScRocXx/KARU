@@ -52,7 +52,7 @@ function Login() {
   return (
     <div className="min-h-[85vh] grid grid-cols-1 lg:grid-cols-2 items-stretch bg-surface-alt">
       {/* 50% Start Column: Artisan Hands & Quote Scrim (Hidden on mobile or short banner) */}
-      <div className="relative h-48 sm:h-64 lg:h-full min-h-[300px] overflow-hidden bg-surface-deep">
+      <div className="relative h-48 sm:h-64 lg:h-full min-h-72 overflow-hidden bg-surface-deep">
         <img
           src="/images/craft-loom.jpg"
           alt="Artisan hands weaving traditional handloom"
@@ -83,7 +83,7 @@ function Login() {
 
       {/* 50% End Column: Centered Login Card */}
       <div className="flex flex-col items-center justify-center p-6 sm:p-12 lg:p-16">
-        <div className="w-full max-w-[420px] rounded-sm border border-line bg-surface p-8 shadow-xs flex flex-col gap-6">
+        <div className="w-full max-w-md rounded-sm border border-line bg-surface p-8 shadow-xs flex flex-col gap-6">
           <div className="text-center">
             <Wordmark className="text-2xl justify-center" />
             <h1 className="font-serif text-h2 text-ink-900 mt-3">
@@ -119,7 +119,7 @@ function Login() {
 
           <GoogleButton onDone={done} />
 
-          <p className="text-center text-[11px] text-muted leading-relaxed pt-2 border-t border-line">
+          <p className="text-center text-caption text-muted leading-relaxed pt-2 border-t border-line">
             {t("terms_note") || "By signing in, you agree to Karu's Terms of Service and Privacy Policy under DPDP compliance."}
           </p>
         </div>

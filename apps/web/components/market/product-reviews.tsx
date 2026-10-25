@@ -1,10 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, ShieldCheck, Star } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { CardSkeleton } from "@/components/ui/skeleton";
 import { Stars } from "@/components/ui/stars";
 import { api } from "@/lib/api";
@@ -47,7 +46,7 @@ export function ProductReviews({
     enabled: !!endpoint,
   });
 
-  const reviews = data?.items || [];
+  const reviews = useMemo(() => data?.items || [], [data?.items]);
 
   const filteredReviews = useMemo(() => {
     let list = [...reviews];
@@ -187,7 +186,7 @@ export function ProductReviews({
                       <div className="mt-1 flex items-center gap-2">
                         <span className="font-medium text-body-s text-ink-900">{r.buyer}</span>
                         {r.city && <span className="text-caption text-muted">· {r.city}</span>}
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-verified bg-verified-soft px-1.5 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 text-caption font-medium text-verified bg-verified-soft px-1.5 py-0.5 rounded-full">
                           <CheckCircle2 className="size-3" /> {t("verified_purchase")}
                         </span>
                       </div>

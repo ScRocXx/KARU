@@ -11,7 +11,7 @@ export function MakerStrip({ makers }: { makers: Maker[] }) {
   return (
     <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
       {makers.map((m) => (
-        <Link key={m.id} href={`/m/${m.handle}`} className="flex w-64 shrink-0 flex-col gap-3 rounded-[12px] border border-ink-100 bg-white p-4 hover:border-indigo-900/30">
+        <Link key={m.id} href={`/m/${m.handle}`} className="flex w-64 shrink-0 flex-col gap-3 rounded-sm border border-ink-100 bg-white p-4 hover:border-brand/30">
           <div className="flex items-center gap-3">
             <MakerAvatar maker={m} size={56} />
             <div className="min-w-0">

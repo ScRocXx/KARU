@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, ChevronDown, Globe, Volume2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { LOCALE_COOKIE, languageNames, locales, speechTags, type Locale } from "@/i18n/config";
@@ -93,13 +92,13 @@ export function LanguageTiles({ onPick, signedIn }: { onPick: (l: Locale) => voi
             onPick(l);
           }}
           className={cx(
-            "flex min-h-24 flex-col items-start justify-between rounded-[16px] border-2 bg-white p-4 text-start transition-colors",
-            (chosen || current) === l ? "border-indigo-900 bg-indigo-50" : "border-ink-100 hover:border-indigo-900/40",
+            "flex min-h-24 flex-col items-start justify-between rounded-md border-2 bg-white p-4 text-start transition-colors",
+            (chosen || current) === l ? "border-brand bg-brand-soft" : "border-ink-100 hover:border-brand/40",
           )}
         >
           <span className="flex w-full items-center justify-between">
             <span className="text-2xl font-semibold text-ink-900">{languageNames[l].native}</span>
-            {(chosen || current) === l ? <Check className="size-5 text-indigo-900" /> : <Volume2 className="size-5 text-ink-300" />}
+            {(chosen || current) === l ? <Check className="size-5 text-brand" /> : <Volume2 className="size-5 text-ink-300" />}
           </span>
           <span className="text-sm text-ink-600" lang="en" dir="ltr">
             {languageNames[l].english}

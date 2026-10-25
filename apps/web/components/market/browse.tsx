@@ -1,7 +1,7 @@
 "use client";
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Check, ChevronDown, Grid2X2, Grid3X3, SlidersHorizontal, X } from "lucide-react";
+import { Grid2X2, Grid3X3, SlidersHorizontal, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
@@ -13,11 +13,9 @@ import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { LoadMore } from "@/components/ui/load-more";
-import { Popover } from "@/components/ui/popover";
 import { CardSkeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/lib/api";
-import { inr } from "@/lib/format";
 import type { Card } from "@/lib/types";
 
 interface SearchResult {
@@ -51,12 +49,13 @@ const PRICE_PRESETS = [
 export function Browse({
   fixed = {},
   initial,
-  showQuery,
+  showQuery = false,
 }: {
   fixed?: Record<string, string>;
   initial?: SearchResult;
   showQuery?: boolean;
 }) {
+  void showQuery;
   const t = useTranslations("browse");
   const params = useSearchParams();
   const router = useRouter();
@@ -303,7 +302,7 @@ export function Browse({
                   selected={params.get("material") === m}
                   onClick={() => setFilter("material", params.get("material") === m ? null : m)}
                 >
-                  {m} <span className="opacity-60 text-[10px]">({n})</span>
+                  {m} <span className="opacity-60 text-caption">({n})</span>
                 </FilterChip>
               ))}
             </div>
@@ -337,7 +336,7 @@ export function Browse({
         {/* Desktop Sticky Filter Sidebar (3 cols) */}
         <aside className="hidden lg:col-span-3 lg:block">
           <div className="sticky top-24 rounded-xs border border-line/60 bg-surface p-4 sm:p-5">
-            <div className="min-h-[40px] flex items-center justify-between border-b border-line/60 pb-3 mb-4">
+            <div className="min-h-10 flex items-center justify-between border-b border-line/60 pb-3 mb-4">
               <span className="text-eyebrow text-text font-semibold">Filters</span>
               {activeFilters.length > 0 && (
                 <button
@@ -356,7 +355,7 @@ export function Browse({
         {/* Results Area (9 cols) */}
         <div className="lg:col-span-9 flex flex-col gap-6">
           {/* Results Toolbar */}
-          <div className="min-h-[40px] flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-3">
+          <div className="min-h-10 flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-3">
             <div className="flex items-center gap-2">
               <span className="text-body-s font-medium text-ink-900">
                 {total} {total === 1 ? "piece" : "pieces"}

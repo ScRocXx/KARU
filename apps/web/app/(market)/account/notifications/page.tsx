@@ -26,7 +26,7 @@ function Notes() {
   }, [data?.unread, qc]);
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4 pt-6">
-      <h1 className="font-display text-[26px] md:text-4xl">{t("title")}</h1>
+      <h1 className="font-display text-h2 md:text-4xl">{t("title")}</h1>
       {isLoading ? (
         <Skeleton className="h-40" />
       ) : !data?.items.length ? (
@@ -35,8 +35,8 @@ function Notes() {
         <ul className="flex flex-col gap-2">
           {data.items.map((n) => {
             const body = (
-              <div className={cx("rounded-[14px] border bg-white p-4", n.read ? "border-ink-100" : "border-indigo-900/40")}>
-                <p className="text-[15px]">{n.body}</p>
+              <div className={cx("rounded-md border bg-white p-4", n.read ? "border-ink-100" : "border-brand/40")}>
+                <p className="text-body-s">{n.body}</p>
                 <p className="mt-1 text-xs text-ink-600">{timeAgo(n.created_at, (k, v) => tc(k, v))}</p>
               </div>
             );

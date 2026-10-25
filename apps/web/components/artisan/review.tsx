@@ -84,34 +84,34 @@ export function Processing({ jobId, onDone }: { jobId: string; onDone: () => voi
   return (
     <section className="flex flex-col items-center gap-6 py-10 text-center">
       <div className="relative flex size-32 items-center justify-center">
-        <span className="animate-pulse-ring absolute inset-0 rounded-full bg-indigo-900/10" />
-        <span className="flex size-24 items-center justify-center rounded-full bg-indigo-900 text-white">
+        <span className="animate-pulse-ring absolute inset-0 rounded-full bg-brand/10" />
+        <span className="flex size-24 items-center justify-center rounded-full bg-brand text-white">
           <Sparkles className="size-10" />
         </span>
       </div>
-      <h1 className="font-display text-[26px]">{t("listening")}</h1>
+      <h1 className="font-display text-h2">{t("listening")}</h1>
       <ol className="flex w-full max-w-xs flex-col gap-2 text-start">
         {steps.map((s, i) => (
-          <li key={s} className={cx("flex items-center gap-3 text-[15px]", i < current ? "text-peacock-600" : i === current ? "font-semibold text-ink-900" : "text-ink-300")}>
+          <li key={s} className={cx("flex items-center gap-3 text-body-s", i < current ? "text-peacock-600" : i === current ? "font-semibold text-ink-900" : "text-ink-300")}>
             <span className="flex size-6 items-center justify-center">{i < current ? "✓" : i === current ? <Spinner className="size-5" /> : "•"}</span>
             {t(`step.${s}`)}
           </li>
         ))}
       </ol>
       <div className="h-2 w-full max-w-xs overflow-hidden rounded-full bg-ink-100">
-        <div className="h-full rounded-full bg-indigo-900 transition-all" style={{ width: `${job?.progress ?? 5}%` }} />
+        <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${job?.progress ?? 5}%` }} />
       </div>
       {(preview.transcript || chips.length > 0 || preview.title) && (
-        <div className="flex w-full max-w-sm flex-col gap-3 rounded-[16px] bg-white p-4 text-start shadow-soft" aria-live="polite">
+        <div className="flex w-full max-w-sm flex-col gap-3 rounded-md bg-white p-4 text-start shadow-soft" aria-live="polite">
           {preview.transcript && (
             <div className="animate-settle">
               <p className="text-xs font-semibold text-ink-600">{tr("what_you_said")}</p>
-              <p className="line-clamp-3 text-[15px] italic text-ink-900">“{preview.transcript}”</p>
+              <p className="line-clamp-3 text-body-s italic text-ink-900">“{preview.transcript}”</p>
             </div>
           )}
           {chips.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {chips.map((c) => <span key={c} className="animate-settle rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-900">{c}</span>)}
+              {chips.map((c) => <span key={c} className="animate-settle rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand">{c}</span>)}
             </div>
           )}
           {preview.title && <p className="animate-settle font-display text-lg leading-snug">{preview.title}</p>}
@@ -262,7 +262,7 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
   const langs = Array.from(new Set([src, "en", "hi"]));
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="font-display text-[26px] leading-tight">{t("title")}</h1>
+      <h1 className="font-display text-h2 leading-tight">{t("title")}</h1>
       {listing.extraction_status === "fallback" || listing.notes_for_artisan.includes("manual_form") ? <Banner tone="warn">{t("manual_fallback")}</Banner> : null}
       {listing.notes_for_artisan.filter((n) => n !== "manual_form").map((n) => (
         <Banner key={n} tone="warn" icon={<AlertTriangle className="size-5" />}>{t.has(`note.${n}`) ? t(`note.${n}`) : t("note.generic", { field: n })}</Banner>
@@ -275,11 +275,11 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
         onRegenerate={triggerShots}
       >
         {isGeneratingShots && (
-          <div className="flex items-center gap-2 rounded-[10px] bg-indigo-50 p-3 text-sm font-medium text-indigo-900">
+          <div className="flex items-center gap-2 rounded-sm bg-brand-soft p-3 text-sm font-medium text-brand">
             <Spinner className="size-4 shrink-0" />
             <div className="flex flex-1 items-center justify-between">
               <span>{t("creating_catalogue_images")}</span>
-              <span className="text-xs text-indigo-700">{aiShots.length}/5 ready</span>
+              <span className="text-xs text-brand">{aiShots.length}/5 ready</span>
             </div>
           </div>
         )}
@@ -292,11 +292,11 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
                   <img
                     src={g.card}
                     alt=""
-                    className="aspect-[4/5] w-full rounded-[10px] object-cover shadow-sm"
+                    className="aspect-[4/5] w-full rounded-sm object-cover shadow-sm"
                   />
                 )}
                 {g.is_primary && (
-                  <span className="absolute start-1 top-1 rounded-full bg-indigo-900 px-2 text-[10px] font-semibold text-white">
+                  <span className="absolute start-1 top-1 rounded-full bg-brand px-2 text-caption font-semibold text-white">
                     Hero
                   </span>
                 )}
@@ -315,12 +315,12 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
               Array.from({ length: Math.max(0, 5 - aiShots.length) }).map((_, idx) => (
                 <div
                   key={`skeleton-${idx}`}
-                  className="relative flex aspect-[4/5] w-28 shrink-0 flex-col items-center justify-center gap-2 rounded-[10px] border-2 border-dashed border-indigo-200 bg-gradient-to-b from-indigo-50/70 to-ink-50 p-2 text-center text-ink-400 animate-pulse"
+                  className="relative flex aspect-[4/5] w-28 shrink-0 flex-col items-center justify-center gap-2 rounded-sm border-2 border-dashed border-sand-200 bg-gradient-to-b from-brand-soft/70 to-ink-50 p-2 text-center text-ink-400 animate-pulse"
                 >
-                  <div className="flex size-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-brand-soft text-brand-hover">
                     <Sparkles className="size-4 animate-spin" />
                   </div>
-                  <span className="text-[11px] font-medium text-ink-500">
+                  <span className="text-caption font-medium text-ink-500">
                     {idx === 0 ? "Creating..." : `Shot ${aiShots.length + idx + 1}`}
                   </span>
                 </div>
@@ -329,8 +329,8 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
         )}
 
         {!isGeneratingShots && aiShots.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-[12px] border-2 border-dashed border-ink-200 p-6 text-center">
-            <Sparkles className="size-8 text-indigo-900" />
+          <div className="flex flex-col items-center justify-center gap-3 rounded-sm border-2 border-dashed border-ink-200 p-6 text-center">
+            <Sparkles className="size-8 text-brand" />
             <p className="text-sm text-ink-600">{t("no_catalogue_images")}</p>
             <Button variant="secondary" size="S" onClick={triggerShots} loading={triggeringShots}>
               {t("generate_now")}
@@ -345,8 +345,8 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
           {realPhotos.map((g) => (
               <div key={g.id} className="relative w-28 shrink-0">
-                {g.card && <img src={g.card} alt="" className="aspect-[4/5] w-full rounded-[10px] object-cover" />}
-                {g.enhanced && <span className="absolute start-1 top-1 rounded-full bg-white/95 px-2 text-[11px] font-semibold text-indigo-900">{t("cleaned_up")}</span>}
+                {g.card && <img src={g.card} alt="" className="aspect-[4/5] w-full rounded-sm object-cover" />}
+                {g.enhanced && <span className="absolute start-1 top-1 rounded-full bg-white/95 px-2 text-caption font-semibold text-brand">{t("cleaned_up")}</span>}
               </div>
             ))}
         </div>
@@ -405,7 +405,7 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
                     inputMode={f.type === "number" || f.type === "integer" ? "decimal" : undefined}
                     value={Array.isArray(value) ? value.join(", ") : value === undefined || value === null ? "" : String(value)}
                     onChange={(e) => setAttrs((a) => setPath(a, f.key, fromInput(f.type, e.target.value)))}
-                    className={lowConf ? "border-haldi-500 ring-2 ring-haldi-500/30" : ""}
+                    className={lowConf ? "border-gold-500 ring-2 ring-gold-500/30" : ""}
                   />
                   <MicButton size={44} onText={(text) => setAttrs((a) => setPath(a, f.key, fromInput(f.type, text)))} />
                 </div>
@@ -457,9 +457,9 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
       </ReviewCard>
 
       {listing.transcript && (
-        <details className="rounded-[12px] bg-white p-4">
+        <details className="rounded-sm bg-white p-4">
           <summary className="cursor-pointer font-semibold">{t("what_you_said")}</summary>
-          <p className="mt-2 text-[15px]" lang={src}>{listing.transcript}</p>
+          <p className="mt-2 text-body-s" lang={src}>{listing.transcript}</p>
           {listing.transcript_provider === "browser" && <p className="mt-1 text-xs text-ink-600">{t("browser_transcript")}</p>}
         </details>
       )}
@@ -479,7 +479,7 @@ export function ReviewStep({ listing, onNext }: { listing: ArtisanListing; onNex
 function ReviewCard({ title, children, low, busy, onRegenerate, onSpeak, regenLeft }: { title: string; children: ReactNode; low?: boolean; busy?: boolean; onRegenerate?: () => void; onSpeak?: (text: string) => void; regenLeft?: number }) {
   const t = useTranslations("sell.review");
   return (
-    <div className={cx("flex flex-col gap-3 rounded-[16px] border-2 bg-white p-4", low ? "border-haldi-500" : "border-ink-100")}>
+    <div className={cx("flex flex-col gap-3 rounded-md border-2 bg-white p-4", low ? "border-gold-500" : "border-ink-100")}>
       <div className="flex items-center gap-2">
         <h2 className="flex flex-1 items-center gap-2 font-semibold">
           <Pencil className="size-4 text-ink-600" /> {title}
@@ -490,7 +490,7 @@ function ReviewCard({ title, children, low, busy, onRegenerate, onSpeak, regenLe
             type="button"
             onClick={onRegenerate}
             disabled={busy || (regenLeft ?? 1) <= 0}
-            className="tap inline-flex items-center justify-center rounded-full text-indigo-900 hover:bg-indigo-50 disabled:text-ink-300"
+            className="tap inline-flex items-center justify-center rounded-full text-brand hover:bg-brand-soft disabled:text-ink-300"
             aria-label={t("regenerate")}
             title={t("regen_left", { n: regenLeft ?? 0 })}
           >

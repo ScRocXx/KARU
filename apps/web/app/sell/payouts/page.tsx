@@ -39,7 +39,7 @@ function PayoutsView() {
       <Card className="flex flex-col gap-3 p-4">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">{t("account")}</h2>
-          <span className={cx("rounded-full px-2.5 py-0.5 text-sm font-semibold", active ? "bg-peacock-50 text-peacock-600" : data.setup.status === "failed" ? "bg-[#fbeceb] text-danger-600" : "bg-haldi-100")}>
+          <span className={cx("rounded-full px-2.5 py-0.5 text-sm font-semibold", active ? "bg-peacock-50 text-peacock-600" : data.setup.status === "failed" ? "bg-danger-50 text-danger-600" : "bg-gold-100")}>
             {t(`status.${data.setup.status}`)}
           </span>
         </div>
@@ -53,7 +53,7 @@ function PayoutsView() {
         {!data.items.length ? (
           <p className="text-ink-600">{t("none")}</p>
         ) : (
-          <ul className="divide-y divide-ink-100 rounded-[12px] border border-ink-100 bg-white">
+          <ul className="divide-y divide-ink-100 rounded-sm border border-ink-100 bg-white">
             {data.items.map((p) => (
               <li key={p.id} className="flex items-center gap-3 px-4 py-3">
                 <div className="min-w-0 flex-1">

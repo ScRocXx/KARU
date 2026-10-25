@@ -57,8 +57,8 @@ export function AddressForm({ initial, onSaved }: { initial?: Address; onSaved: 
         <Field label={t("pin")} htmlFor="a-pin"><Input id="a-pin" required inputMode="numeric" value={f.pin} onChange={set("pin")} autoComplete="postal-code" /></Field>
       </div>
       <Field label={t("state")} htmlFor="a-state"><Input id="a-state" required value={f.state} onChange={set("state")} autoComplete="address-level1" /></Field>
-      <label className="flex items-center gap-2 text-[15px]">
-        <input type="checkbox" className="size-5 accent-indigo-900" checked={f.is_default} onChange={(e) => setF({ ...f, is_default: e.target.checked })} />
+      <label className="flex items-center gap-2 text-body-s">
+        <input type="checkbox" className="size-5 accent-brand" checked={f.is_default} onChange={(e) => setF({ ...f, is_default: e.target.checked })} />
         {t("default")}
       </label>
       <Button type="submit" size="L" loading={busy}>{t("save")}</Button>

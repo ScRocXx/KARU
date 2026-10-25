@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { CategoryIcon } from "./category-icon";
-import { cx } from "@/lib/format";
 
 export interface CategoryItem {
   slug: string;

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { cx } from "@/lib/format";
 
 interface RegionTile {
   cluster: string;
@@ -33,7 +32,7 @@ export function RegionStrip() {
               <span className="font-mono text-caption uppercase text-muted">
                 {r.code} · CLUSTER
               </span>
-              <span className="text-[11px] font-semibold text-brand font-serif">
+              <span className="text-caption font-semibold text-brand font-serif">
                 {r.craft}
               </span>
             </div>
@@ -53,7 +52,7 @@ export function RegionStrip() {
                   {r.state}
                 </span>
               </div>
-              <ArrowRight className="size-3.5 flip-rtl text-muted group-hover:text-brand transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="size-3.5 flip-rtl text-muted group-hover:text-brand transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
             </div>
           </Link>
         ))}

@@ -31,15 +31,15 @@ export default async function CraftPageView({ params }: { params: Promise<{ slug
   const t = await getTranslations("craft");
   return (
     <div className="flex flex-col gap-10 pt-6">
-      <section className="rounded-[20px] bg-white p-6 md:p-10">
+      <section className="rounded-md bg-white p-6 md:p-10">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-terracotta-600">{c.regions.join(" · ")}</p>
-        <h1 className="font-display mt-2 text-[32px] md:text-5xl">{c.name}</h1>
+        <h1 className="font-display mt-2 text-h1 md:text-5xl">{c.name}</h1>
         <Woven className="my-5 max-w-xs" />
-        <p className="max-w-2xl text-[17px] leading-relaxed text-ink-900" lang={c.description_lang}>
+        <p className="max-w-2xl text-body leading-relaxed text-ink-900" lang={c.description_lang}>
           {c.description}
         </p>
         {c.gi_tag && (
-          <div className="mt-5 max-w-2xl rounded-[12px] bg-haldi-100 p-4">
+          <div className="mt-5 max-w-2xl rounded-sm bg-gold-100 p-4">
             <p className="font-semibold">{t("gi_title")}</p>
             <p className="text-sm text-ink-600">{t("gi_body")}</p>
           </div>

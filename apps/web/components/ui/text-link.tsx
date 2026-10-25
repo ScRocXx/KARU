@@ -26,7 +26,7 @@ export function TextLink({
     >
       <span>{children}</span>
       {arrow && (
-        <ArrowRight className="size-3.5 flip-rtl transition-transform group-hover:translate-x-0.5" />
+        <ArrowRight className="size-3.5 flip-rtl transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
       )}
     </Link>
   );

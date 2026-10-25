@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { GiTag } from "@/components/karu/badges";
 import { ProductCard } from "@/components/karu/product-card";
 import { TextLink } from "@/components/ui/text-link";

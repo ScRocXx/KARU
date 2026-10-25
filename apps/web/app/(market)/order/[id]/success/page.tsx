@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Download, QrCode, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 import Link from "next/link";
 import { use } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -100,7 +100,7 @@ function Success({ id }: { id: string }) {
                 {it.karu_id ? (
                   <div className="mt-2 flex flex-wrap items-center gap-2.5">
                     <KaruIdChip code={it.karu_id} />
-                    <span className="text-[11px] text-muted">Scan the tag when it arrives</span>
+                    <span className="text-caption text-muted">Scan the tag when it arrives</span>
                   </div>
                 ) : (
                   <p className="text-caption text-danger">Item refunded</p>

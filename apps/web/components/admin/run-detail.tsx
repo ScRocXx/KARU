@@ -38,16 +38,16 @@ export function RunDetailSheet({ runId, onClose }: { runId: string | null; onClo
         <div className="flex flex-col gap-4 text-sm">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {[["L1", data.l1], ["L2", data.l2], ["L3", data.l3], ["Karu Score", data.karu_score]].map(([k, v]) => (
-              <div key={k as string} className="rounded-[10px] bg-khadi-50 p-3"><p className="text-xs text-ink-600">{k}</p><p className="text-xl font-semibold">{v === null ? "—" : Number(v).toFixed(1)}</p></div>
+              <div key={k as string} className="rounded-sm bg-khadi-50 p-3"><p className="text-xs text-ink-600">{k}</p><p className="text-xl font-semibold">{v === null ? "—" : Number(v).toFixed(1)}</p></div>
             ))}
-            <div className="rounded-[10px] bg-khadi-50 p-3"><p className="text-xs text-ink-600">Verdict</p><p className="text-xl font-semibold">{data.verdict || data.status}</p></div>
+            <div className="rounded-sm bg-khadi-50 p-3"><p className="text-xs text-ink-600">Verdict</p><p className="text-xl font-semibold">{data.verdict || data.status}</p></div>
           </div>
           <p>Version {data.version} · {data.triggered_by} · {date(data.created_at)} · L2 mode {data.l2_mode}</p>
           {data.hard_fail && <p className="rounded-xs bg-danger-50 p-3 font-semibold text-danger">Hard fail: {data.hard_fail_reason}</p>}
-          {data.deferred.length > 0 && <p className="rounded-[10px] bg-haldi-100 p-3">Deferred by budget breaker: {data.deferred.join(", ")} (originality penalty 0, re-queued)</p>}
+          {data.deferred.length > 0 && <p className="rounded-sm bg-gold-100 p-3">Deferred by budget breaker: {data.deferred.join(", ")} (originality penalty 0, re-queued)</p>}
           {data.error && <p className="text-danger-600">{data.error}</p>}
           {data.layers.map((l) => (
-            <details key={l.layer} className="rounded-[10px] border border-ink-100 p-3" open>
+            <details key={l.layer} className="rounded-sm border border-ink-100 p-3" open>
               <summary className="cursor-pointer font-semibold">{l.layer} — {l.score === null ? "—" : l.score.toFixed(1)}</summary>
               <pre className="mt-2 overflow-x-auto whitespace-pre-wrap text-xs">{JSON.stringify({ sub_scores: l.sub_scores, evidence: l.evidence, models: l.models }, null, 2)}</pre>
             </details>
@@ -60,7 +60,7 @@ export function RunDetailSheet({ runId, onClose }: { runId: string | null; onClo
               </ul>
             </div>
           )}
-          <details className="rounded-[10px] border border-ink-100 p-3"><summary className="cursor-pointer font-semibold">Config snapshot</summary><pre className="mt-2 overflow-x-auto text-xs">{JSON.stringify(data.config, null, 2)}</pre></details>
+          <details className="rounded-sm border border-ink-100 p-3"><summary className="cursor-pointer font-semibold">Config snapshot</summary><pre className="mt-2 overflow-x-auto text-xs">{JSON.stringify(data.config, null, 2)}</pre></details>
         </div>
       )}
     </Sheet>

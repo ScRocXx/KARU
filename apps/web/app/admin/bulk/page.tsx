@@ -37,13 +37,13 @@ export default function AdminBulk() {
             <Card key={b.id} className="flex flex-col gap-2 p-4 text-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-base font-semibold">{b.org_name} — {b.product_type}</p>
-                <span className="rounded-full bg-indigo-50 px-2 py-0.5 font-semibold text-indigo-900">{b.status}</span>
+                <span className="rounded-full bg-brand-soft px-2 py-0.5 font-semibold text-brand">{b.status}</span>
               </div>
               <p>{b.quantity} units {b.target_price_inr ? `· target ${inr(b.target_price_inr)}` : ""} {b.deadline ? `· by ${date(b.deadline)}` : ""} {b.category ? `· ${b.category}` : ""}</p>
               {b.description && <p className="text-ink-600">{b.description}</p>}
               <p className="text-ink-600">Contact: {b.contact.name} · {b.contact.phone} · {b.contact.email} · received {date(b.created_at)}</p>
               {b.responses.length > 0 && (
-                <ul className="mt-1 divide-y divide-ink-100 rounded-[10px] border border-ink-100">
+                <ul className="mt-1 divide-y divide-ink-100 rounded-sm border border-ink-100">
                   {b.responses.map((r) => (
                     <li key={r.id} className="flex flex-wrap items-center gap-2 px-3 py-2">
                       <a href={`/m/${r.handle}`} className="flex-1 underline">{r.maker}</a>

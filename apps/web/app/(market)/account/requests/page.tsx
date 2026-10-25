@@ -29,7 +29,7 @@ function MyRequests() {
   const { data, isLoading } = useQuery({ queryKey: ["my-requests"], queryFn: () => api<{ items: Req[] }>("/me/requests") });
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4 pt-6">
-      <h1 className="font-display text-[26px] md:text-4xl">{t("requests")}</h1>
+      <h1 className="font-display text-h2 md:text-4xl">{t("requests")}</h1>
       {isLoading ? (
         <Skeleton className="h-40" />
       ) : !data?.items.length ? (
@@ -43,7 +43,7 @@ function MyRequests() {
             </p>
             <p className="text-sm font-semibold">{t(`req_status.${r.status}`)}</p>
             {r.reply && !r.reply.declined && (
-              <p className="rounded-[10px] bg-peacock-50 p-3 text-sm text-peacock-600">
+              <p className="rounded-sm bg-peacock-50 p-3 text-sm text-peacock-600">
                 {[r.reply.price_inr ? inr(r.reply.price_inr) : null, r.reply.ready_in_days ? t("ready_in", { n: r.reply.ready_in_days }) : null, r.reply.message]
                   .filter(Boolean)
                   .join(" · ")}

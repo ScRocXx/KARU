@@ -35,12 +35,12 @@ export function Drawer({
   }, [open]);
 
   const sideClasses = {
-    end: "ms-auto me-0 h-full max-h-none w-full sm:max-w-md md:max-w-[420px] rounded-none border-s border-line",
-    start: "me-auto ms-0 h-full max-h-none w-full sm:max-w-md md:max-w-[360px] rounded-none border-e border-line",
+    end: "ms-auto me-0 h-full max-h-none w-full sm:max-w-md md:max-w-md rounded-none border-s border-line",
+    start: "me-auto ms-0 h-full max-h-none w-full sm:max-w-md md:max-w-sm rounded-none border-e border-line",
     bottom: "mt-auto mb-0 w-full max-h-[85vh] rounded-t-lg border-t border-line",
   }[side];
 
-  const widthOverride = width === "wide" && side === "end" ? "sm:max-w-lg md:max-w-[540px]" : "";
+  const widthOverride = width === "wide" && side === "end" ? "sm:max-w-lg md:max-w-xl" : "";
 
   return (
     <dialog

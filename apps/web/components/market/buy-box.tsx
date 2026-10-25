@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Heart, Repeat, Share2, ShoppingBag, Truck, Zap } from "lucide-react";
+import { Check, Repeat, Share2, ShoppingBag, Truck, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useSyncExternalStore } from "react";

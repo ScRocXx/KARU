@@ -53,22 +53,22 @@ function Orders() {
       ) : (
         <ul className="flex flex-col gap-3">
           {data.items.map((o) => (
-            <li key={o.id} className="flex flex-col gap-3 rounded-[16px] border border-ink-100 bg-white p-4">
+            <li key={o.id} className="flex flex-col gap-3 rounded-md border border-ink-100 bg-white p-4">
               <div className="flex gap-3">
-                {o.image?.thumb && <img src={o.image.thumb} alt="" className="aspect-[4/5] w-20 rounded-[10px] object-cover" />}
+                {o.image?.thumb && <img src={o.image.thumb} alt="" className="aspect-[4/5] w-20 rounded-sm object-cover" />}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <p className="font-semibold leading-snug">{o.title}</p>
-                  <p className="text-[15px]">{inr(o.price_inr)} · {o.order_number}</p>
+                  <p className="text-body-s">{inr(o.price_inr)} · {o.order_number}</p>
                   <p className="text-sm text-ink-600">{t("buyer", { name: o.buyer.first_name, city: o.buyer.city || "" })} · {date(o.paid_at, locale)}</p>
                 </div>
               </div>
               {o.karu_id && (
-                <p className="flex items-center gap-2 rounded-[10px] bg-indigo-50 p-3 text-[15px] font-semibold text-indigo-900">
+                <p className="flex items-center gap-2 rounded-sm bg-brand-soft p-3 text-body-s font-semibold text-brand">
                   <QrCode className="size-5" /> {t("attach_tag", { id: o.karu_id })}
                 </p>
               )}
               {tab === "to_pack" && (
-                <details className="rounded-[10px] bg-khadi-50 p-3 text-[15px]">
+                <details className="rounded-sm bg-khadi-50 p-3 text-body-s">
                   <summary className="cursor-pointer font-semibold">{t("address")}</summary>
                   <p className="mt-2 flex gap-2"><MapPin className="size-4 shrink-0" />{[o.ship_to.name, o.ship_to.line1, o.ship_to.line2, o.ship_to.city, o.ship_to.state, o.ship_to.pin].filter(Boolean).join(", ")}</p>
                   <p className="flex gap-2"><Phone className="size-4" />{o.ship_to.phone}</p>

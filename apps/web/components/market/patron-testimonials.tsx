@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, ShieldCheck, Star } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { Stars } from "@/components/ui/stars";
 
 export interface ReviewItem {
@@ -54,7 +54,7 @@ export function PatronVoices({ reviews = [] }: { reviews?: ReviewItem[] }) {
                   <p className="text-body-s font-semibold text-white">{t.author}</p>
                   {t.city && <p className="text-caption text-sand-300/80">{t.city}</p>}
                 </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-peacock-900/60 border border-peacock-400/30 px-2 py-0.5 text-[10px] font-semibold text-peacock-200">
+                <span className="inline-flex items-center gap-1 rounded-full bg-peacock-900/60 border border-peacock-400/30 px-2 py-0.5 text-caption font-semibold text-peacock-200">
                   <CheckCircle2 className="size-3 text-peacock-400" />
                   Verified
                 </span>

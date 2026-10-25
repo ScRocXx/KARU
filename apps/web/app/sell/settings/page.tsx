@@ -51,7 +51,7 @@ function Settings({ me }: { me: Me }) {
       </Card>
       {/* API download (JSON attachment), not a page — a plain link is intended. */}
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-      <a href="/api/v1/me/export" className="font-semibold text-indigo-900 underline">{t("export")}</a>
+      <a href="/api/v1/me/export" className="font-semibold text-brand underline">{t("export")}</a>
       <Button variant="secondary" size="L" icon={<LogOut className="size-5" />} onClick={async () => { await api("/auth/logout", { method: "POST" }); qc.clear(); router.replace("/"); }}>
         {t("logout")}
       </Button>

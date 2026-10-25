@@ -1,8 +1,7 @@
 "use client";
 
-import { BadgeCheck, Download, ShieldAlert, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Download, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Woven } from "@/components/karu/ornaments";
 import { Button } from "@/components/ui/button";
 import { date } from "@/lib/format";
 import type { Maker } from "@/lib/types";
@@ -93,7 +92,7 @@ export function PassportCard({
         <div className="flex items-start justify-between gap-3 border-b border-line pb-3">
           <div>
             <span className="font-serif text-xl font-medium tracking-wide text-brand">karu</span>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">{t("title")}</p>
+            <p className="text-caption font-semibold uppercase tracking-[0.2em] text-muted">{t("title")}</p>
           </div>
           {verified ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-verified-soft px-2.5 py-1 text-xs font-semibold text-verified">
@@ -131,21 +130,21 @@ export function PassportCard({
 
         <div className={`mt-4 grid grid-cols-2 gap-3 border-t border-dashed border-line pt-3 ${compact ? "text-xs" : "text-sm"}`}>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted">{t("id")}</p>
+            <p className="text-caption uppercase tracking-wider text-muted">{t("id")}</p>
             <p className="font-mono font-semibold text-brand text-xs mt-0.5">{maker.passport.code || "—"}</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted">{t("since")}</p>
+            <p className="text-caption uppercase tracking-wider text-muted">{t("since")}</p>
             <p className="font-medium text-ink-900 text-xs mt-0.5">{date(maker.passport.member_since, locale)}</p>
           </div>
           {maker.stats && (
             <>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-muted">{t("verified_pieces")}</p>
+                <p className="text-caption uppercase tracking-wider text-muted">{t("verified_pieces")}</p>
                 <p className="font-semibold text-ink-900 text-xs mt-0.5">{maker.stats.verified_products}</p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-muted">{t("rating")}</p>
+                <p className="text-caption uppercase tracking-wider text-muted">{t("rating")}</p>
                 <p className="font-semibold text-ink-900 text-xs mt-0.5">
                   {maker.stats.rating ? `${maker.stats.rating} ★ (${maker.stats.reviews})` : "—"}
                 </p>

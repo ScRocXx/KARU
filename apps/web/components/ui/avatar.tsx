@@ -18,7 +18,7 @@ export function Avatar({
   className,
 }: AvatarProps) {
   const sizeClasses = {
-    24: "size-6 text-[10px]",
+    24: "size-6 text-caption",
     32: "size-8 text-xs",
     40: "size-10 text-caption font-semibold",
     56: "size-14 text-body font-semibold",
