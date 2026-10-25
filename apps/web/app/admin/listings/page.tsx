@@ -36,7 +36,7 @@ export default function AdminListings() {
     queryFn: () => api<{ items: AdminListing[] }>(`/admin/listings?q=${encodeURIComponent(filters.q)}&status=${filters.status}&verification=${filters.verification}`),
   });
   const act = async (path: string, label: string) => {
-    const r = reason(label);
+    const r = await reason(label);
     if (!r) return;
     try {
       await api(path, { method: "POST", body: { reason: r } });

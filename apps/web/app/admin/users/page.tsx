@@ -55,23 +55,23 @@ export default function AdminUsers() {
             <tr key={u.id}>
               <td className="px-3 py-2"><p className="font-semibold">{u.display_name || "—"}</p><p className="text-xs text-ink-600">{u.email} · {date(u.created_at)}</p></td>
               <td className="px-3 py-2">{u.roles.join(", ")}</td>
-              <td className="px-3 py-2">{u.artisan ? <><a href={`/m/${u.artisan.handle}`} className="text-indigo-900 underline">{u.artisan.public_name}</a><p className="text-xs text-ink-600">{u.artisan.district}, {u.artisan.state} · Aadhaar {u.artisan.aadhaar} · Pehchan {u.artisan.pehchan} · payout {u.artisan.payout}</p></> : "—"}</td>
+              <td className="px-3 py-2">{u.artisan ? <><a href={`/m/${u.artisan.handle}`} className="text-brand underline">{u.artisan.public_name}</a><p className="text-xs text-ink-600">{u.artisan.district}, {u.artisan.state} · Aadhaar {u.artisan.aadhaar} · Pehchan {u.artisan.pehchan} · payout {u.artisan.payout}</p></> : "—"}</td>
               <td className="px-3 py-2">{u.artisan?.passport ? <><span className="font-mono">{u.artisan.passport.code}</span><p className="text-xs">{u.artisan.passport.state}</p></> : "—"}</td>
               <td className="px-3 py-2">{u.status}</td>
               <td className="px-3 py-2">
                 <div className="flex flex-wrap gap-1">
                   {u.status === "suspended" ? (
-                    <Button size="S" variant="secondary" onClick={() => { const r = reason("Restore user"); if (r) void act(() => api(`/admin/users/${u.id}/restore`, { method: "POST", body: { reason: r } })); }}>Restore</Button>
+                    <Button size="S" variant="secondary" onClick={async () => { const r = await reason("Restore user"); if (r) void act(() => api(`/admin/users/${u.id}/restore`, { method: "POST", body: { reason: r } })); }}>Restore</Button>
                   ) : (
-                    <Button size="S" variant="danger" onClick={() => { const r = reason("Suspend user (hides listings, holds payouts)"); if (r) void act(() => api(`/admin/users/${u.id}/suspend`, { method: "POST", body: { reason: r } })); }}>Suspend</Button>
+                    <Button size="S" variant="danger" onClick={async () => { const r = await reason("Suspend user (hides listings, holds payouts)"); if (r) void act(() => api(`/admin/users/${u.id}/suspend`, { method: "POST", body: { reason: r } })); }}>Suspend</Button>
                   )}
                   {u.artisan?.passport && (
                     <Select
                       className="!min-h-9 w-36 py-1 text-xs"
                       value=""
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const state = e.target.value;
-                        const r = state && reason(`Set passport to ${state}`);
+                        const r = state ? await reason(`Set passport to ${state}`) : null;
                         if (r) void act(() => api(`/admin/passports/${u.artisan!.passport!.id}/state`, { method: "POST", body: { state, reason: r } }));
                       }}
                     >

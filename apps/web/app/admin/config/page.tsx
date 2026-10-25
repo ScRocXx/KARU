@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { AdminTitle } from "@/components/admin/shell";
+import { AdminTitle, useReason } from "@/components/admin/shell";
 import { useToast } from "@/components/toast";
 import { Banner, Button, Card, Skeleton, Tabs, Textarea } from "@/components/ui";
 import { ApiError, api } from "@/lib/api";
@@ -13,6 +13,7 @@ const KEYS = ["verification.v1", "pricing.v1", "commerce.v1", "limits.v1", "budg
 export default function AdminConfig() {
   const [key, setKey] = useState("verification.v1");
   const toast = useToast();
+  const reason = useReason();
   const { data, refetch } = useQuery({ queryKey: ["admin-config", key], queryFn: () => api<{ key: string; value: unknown; default: unknown }>(`/admin/config/${key}`) });
   const [text, setText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export default function AdminConfig() {
         <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
           <Card className="flex flex-col gap-3 p-4">
             {error && <Banner tone="danger">{error}</Banner>}
-            <Textarea value={value} onChange={(e) => setText(e.target.value)} className="min-h-[420px] font-mono text-xs" spellCheck={false} />
+            <Textarea value={value} onChange={(e) => setText(e.target.value)} className="min-h-96 font-mono text-xs" spellCheck={false} />
             <div className="flex gap-2">
               <Button
                 onClick={async () => {
@@ -37,10 +38,10 @@ export default function AdminConfig() {
                   } catch {
                     return setError("Not valid JSON");
                   }
-                  const reason = window.prompt("Reason for this change (audit log):");
-                  if (!reason || reason.trim().length < 3) return;
+                  const r = await reason("Reason for this config change (audit log)");
+                  if (!r || r.trim().length < 3) return;
                   try {
-                    await api(`/admin/config/${key}`, { method: "PUT", body: { value: parsed, reason } });
+                    await api(`/admin/config/${key}`, { method: "PUT", body: { value: parsed, reason: r } });
                     toast("Saved");
                     setText(null);
                     void refetch();
@@ -63,8 +64,8 @@ export default function AdminConfig() {
                 <Button
                   variant="danger"
                   onClick={async () => {
-                    const reason = window.prompt("Apply new verdicts? Reason:");
-                    if (reason) setRescore(await api("/admin/config/verification/rescore", { method: "POST", body: { apply: true, reason } }));
+                    const r = await reason("Apply new verdicts? Reason:");
+                    if (r) setRescore(await api("/admin/config/verification/rescore", { method: "POST", body: { apply: true, reason: r } }));
                   }}
                 >
                   Apply

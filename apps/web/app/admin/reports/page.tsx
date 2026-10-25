@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { AdminTitle, Table } from "@/components/admin/shell";
+import { AdminTitle, Table, useReason } from "@/components/admin/shell";
 import { useToast } from "@/components/toast";
 import { Button, Select, Skeleton } from "@/components/ui";
 import { api } from "@/lib/api";
@@ -24,9 +24,10 @@ interface Report {
 export default function AdminReports() {
   const [status, setStatus] = useState("open");
   const toast = useToast();
+  const reason = useReason();
   const { data, isLoading, refetch } = useQuery({ queryKey: ["admin-reports", status], queryFn: () => api<{ items: Report[] }>(`/admin/reports?status=${status}`) });
   const resolve = async (id: string, next: string) => {
-    const note = window.prompt(`Mark as ${next}. Note (saved to audit log):`) || null;
+    const note = await reason(`Mark as ${next}. Note (saved to audit log):`);
     await api(`/admin/reports/${id}`, { method: "PATCH", body: { status: next, resolution_note: note } });
     toast("Saved");
     void refetch();

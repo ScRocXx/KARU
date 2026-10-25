@@ -4,14 +4,16 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BarChart3, ClipboardList, Coins, Flag, Gauge, ListChecks, Package2, Settings2, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Wordmark } from "@/components/karu/badges";
 import { Emblem } from "@/components/karu/ornaments";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { ApiError, api } from "@/lib/api";
 import { cx } from "@/lib/format";
 import type { Me } from "@/lib/types";
@@ -70,13 +72,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-dvh bg-bg lg:grid lg:grid-cols-[240px_1fr]">
+    <ReasonProvider>
+      <div className="min-h-dvh bg-bg lg:grid lg:grid-cols-[240px_1fr]">
       {/* Sidebar: surface-deep (olive-900) with on-dark text */}
       <aside className="border-b border-white/10 bg-surface-deep text-khadi-100 lg:min-h-dvh lg:border-b-0 lg:border-e flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2.5 p-4 border-b border-white/10">
             <Wordmark tone="light" />
-            <span className="rounded-full bg-gold-500/20 border border-gold-500/60 px-2 py-0.5 font-mono text-[10px] font-bold tracking-widest text-gold-300">
+            <span className="rounded-full bg-gold-500/20 border border-gold-500/60 px-2 py-0.5 font-mono text-caption font-bold tracking-widest text-gold-300">
               STAFF
             </span>
           </div>
@@ -105,13 +108,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <div className="hidden border-t border-white/10 p-4 text-caption text-sand-400 lg:block">
           <p className="font-medium text-khadi-100 truncate">{me.display_name || me.email}</p>
-          <p className="text-[11px] font-mono mt-0.5 capitalize">{me.roles.filter((r) => r !== "buyer").join(" · ")}</p>
+          <p className="text-caption font-mono mt-0.5 capitalize">{me.roles.filter((r) => r !== "buyer").join(" · ")}</p>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <main className="min-w-0 p-4 lg:p-8 text-ink-900">{children}</main>
     </div>
+    </ReasonProvider>
   );
 }
 
@@ -126,7 +130,7 @@ function TotpGate({ me, onDone }: { me: Me; onDone: () => void }) {
       <div className="flex items-center gap-3">
         <Emblem className="size-8 text-brand" />
         <span className="font-serif text-2xl font-medium tracking-wide text-ink-900">karu</span>
-        <span className="rounded-full bg-gold-500/20 border border-gold-500/60 px-2 py-0.5 font-mono text-[10px] font-bold tracking-widest text-gold-700">
+        <span className="rounded-full bg-gold-500/20 border border-gold-500/60 px-2 py-0.5 font-mono text-caption font-bold tracking-widest text-gold-700">
           STAFF 2FA
         </span>
       </div>
@@ -214,9 +218,85 @@ export function Table({ head, children }: { head: string[]; children: ReactNode 
   );
 }
 
-export function useReason(): (label: string) => string | null {
-  return (label: string) => {
-    const r = window.prompt(`${label}\n\nReason (required, saved to the audit log):`);
-    return r && r.trim().length >= 3 ? r.trim() : null;
+interface ReasonContextType {
+  askReason: (label: string) => Promise<string | null>;
+}
+
+const ReasonContext = createContext<ReasonContextType | null>(null);
+
+export function ReasonProvider({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const [label, setLabel] = useState("");
+  const [value, setValue] = useState("");
+  const resolveRef = useRef<((val: string | null) => void) | null>(null);
+
+  const askReason = (promptLabel: string): Promise<string | null> => {
+    setLabel(promptLabel);
+    setValue("");
+    setOpen(true);
+    return new Promise<string | null>((resolve) => {
+      resolveRef.current = resolve;
+    });
   };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (resolveRef.current) {
+      resolveRef.current(null);
+      resolveRef.current = null;
+    }
+  };
+
+  const handleConfirm = () => {
+    if (value.trim().length >= 3) {
+      const res = value.trim();
+      setOpen(false);
+      if (resolveRef.current) {
+        resolveRef.current(res);
+        resolveRef.current = null;
+      }
+    }
+  };
+
+  return (
+    <ReasonContext.Provider value={{ askReason }}>
+      {children}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        title="Reason Required"
+        description={`${label} (minimum 3 characters for audit log)`}
+        size="sm"
+      >
+        <div className="flex flex-col gap-4 mt-2">
+          <Textarea
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Reason for audit log..."
+            rows={3}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              disabled={value.trim().length < 3}
+              onClick={handleConfirm}
+            >
+              Confirm
+            </Button>
+          </div>
+        </div>
+      </Dialog>
+    </ReasonContext.Provider>
+  );
+}
+
+export function useReason(): (label: string) => Promise<string | null> {
+  const ctx = useContext(ReasonContext);
+  if (!ctx) {
+    return async () => null;
+  }
+  return ctx.askReason;
 }
