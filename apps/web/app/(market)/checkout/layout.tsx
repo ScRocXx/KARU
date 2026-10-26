@@ -12,9 +12,7 @@ export default function CheckoutLayout({ children }: { children: React.ReactNode
       {/* Minimal Distraction-Free Checkout Header */}
       <header className="border-b border-line bg-surface py-4">
         <div className="container-page flex items-center justify-between">
-          <Link href="/" aria-label="Karu Home">
-            <Wordmark />
-          </Link>
+          <Wordmark />
 
           <div className="flex items-center gap-2 text-caption font-semibold uppercase tracking-wider text-muted">
             <Lock className="size-3.5 text-verified" />

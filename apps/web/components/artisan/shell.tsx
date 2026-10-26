@@ -53,9 +53,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
       <div className="min-h-dvh bg-surface-alt">
         <header className="border-b border-line bg-surface py-3.5 px-4">
           <div className="mx-auto flex max-w-5xl items-center justify-between">
-            <Link href="/" aria-label="Karu Home">
-              <Wordmark />
-            </Link>
+            <Wordmark />
             <LanguageSwitcher signedIn={!!me} />
           </div>
         </header>
@@ -82,9 +80,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
         <div className="flex flex-col gap-6">
           {/* Logo & Studio Tag */}
           <div className="flex items-center gap-2.5 px-2 pt-2">
-            <Link href="/" aria-label="Karu">
-              <Wordmark />
-            </Link>
+            <Wordmark />
             <span className="rounded-full bg-brand px-2 py-0.5 text-caption font-bold uppercase tracking-wider text-white">
               STUDIO
             </span>
@@ -172,9 +168,7 @@ export function ArtisanShell({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur lg:hidden">
           <div className="mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-2 shrink-0">
-              <Link href="/sell" aria-label="Karu">
-                <Wordmark />
-              </Link>
+              <Wordmark href="/sell" />
               <span className="rounded-full bg-brand px-2 py-0.5 text-caption font-bold uppercase tracking-wider text-white">
                 STUDIO
               </span>

@@ -15,25 +15,20 @@ export function Wordmark({
   showTagline = true,
   className,
   light,
+  href = "/",
 }: {
   layout?: "centered" | "inline";
   tone?: "dark" | "light";
   showTagline?: boolean;
   className?: string;
   light?: boolean;
+  href?: string | false;
 }) {
   const isLight = light || tone === "light";
   const isCentered = layout === "centered";
 
-  return (
-    <Link
-      href="/"
-      className={cx(
-        "group inline-flex items-center select-none transition-opacity hover:opacity-90",
-        isCentered ? "flex-col items-center text-center gap-1.5" : "flex-row items-center gap-3",
-        className
-      )}
-    >
+  const content = (
+    <>
       <Emblem
         size={isCentered ? 30 : 26}
         tone={isLight ? "gold" : "brand"}
@@ -60,8 +55,24 @@ export function Wordmark({
           </span>
         )}
       </div>
-    </Link>
+    </>
   );
+
+  const classes = cx(
+    "group inline-flex items-center select-none transition-opacity hover:opacity-90",
+    isCentered ? "flex-col items-center text-center gap-1.5" : "flex-row items-center gap-3",
+    className
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={classes}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={classes}>{content}</div>;
 }
 
 /** VerifiedBadge: Pill (rounded-full). sm 24px (cards), lg 32px (PDP, /k). */

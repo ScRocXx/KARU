@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   return (
-    <html lang={locale} dir={rtlLocales.has(locale) ? "rtl" : "ltr"} className={fontVariables}>
+    <html lang={locale} dir={rtlLocales.has(locale) ? "rtl" : "ltr"} className={fontVariables} data-scroll-behavior="smooth">
       <body className="min-h-dvh">{children}</body>
     </html>
   );
