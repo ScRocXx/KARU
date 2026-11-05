@@ -32,7 +32,7 @@
 
 </div>
 
-## 📌 Executive Summary
+## 📌Executive Summary
 
 India is home to over **7 million master artisans** generating timeless handloom and handicraft treasures. Yet, the craft ecosystem suffers from a catastrophic dual crisis:
 1. **The Counterfeit Epidemic:** Power-loom replicas and industrial machine prints masquerade as authentic Geographical Indication (GI) handcrafts, undercutting genuine makers and deceiving consumers.
